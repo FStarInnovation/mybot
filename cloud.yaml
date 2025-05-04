@@ -1,0 +1,15 @@
+name: mybot
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+    resources:
+      cpu: 1
+      memory: 512
+    domains:
+      - mybot.laravel.app
+    env:
+      APP_ENV: production
+      APP_KEY: base64:xxx # заменим позже
+      LOG_CHANNEL: stderr
+      DB_CONNECTION: sqlite
