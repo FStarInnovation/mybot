@@ -17,7 +17,7 @@ class SupabaseController extends Controller
                 'apikey' => env('SUPABASE_API_KEY'),
                 'Authorization' => 'Bearer ' . env('SUPABASE_API_KEY'),
             ])->get($url, [
-                'select' => 'title,price,brand',
+                'select' => '*',
                 'limit' => 3
             ]);
 
