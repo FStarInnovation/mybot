@@ -1,15 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\SiteScanController;
 use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\Controller; // LLM Bridge
 use App\Http\Controllers\SupabaseController;
 
-// Универсальные маршруты через web.php
-
-Route::match(['get', 'post'], '/scan-sites', [SiteScanController::class, 'scan']);
+// Универсальные маршруты (web)
+Route::post('/scan-sites', [SiteScanController::class, 'scan']);
 Route::get('/results', [ResultsController::class, 'index']);
 Route::post('/llm', [Controller::class, 'queryLLM']);
 Route::match(['get', 'post'], '/supabase-test', [SupabaseController::class, 'testQuery']);
-Route::get('/supabase-test', [SupabaseController::class, 'testQuery']);
+
+// ✅ Маршрут для очистки кеша
+Route::get('/clear-cache', function () {
+    Artisan::call('optimize:clear');
+    return '✅ Laravel cache cleared!';
+});
