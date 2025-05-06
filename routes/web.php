@@ -1,7 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SiteScanController;
+use App\Http\Controllers\ResultsController;
+use App\Http\Controllers\Controller; // LLM Bridge
+use App\Http\Controllers\SupabaseController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Универсальные маршруты через web.php
+
+Route::match(['get', 'post'], '/scan-sites', [SiteScanController::class, 'scan']);
+Route::get('/results', [ResultsController::class, 'index']);
+Route::post('/llm', [Controller::class, 'queryLLM']);
+Route::match(['get', 'post'], '/supabase-test', [SupabaseController::class, 'testQuery']);

@@ -1,21 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SiteScanController;
 use App\Http\Controllers\ResultsController;
+use App\Http\Controllers\Controller; // LLM Bridge
+use App\Http\Controllers\SupabaseController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Здесь определяются маршруты, доступные по префиксу /api.
-|
-*/
-
-Route::middleware('api')->group(function () {
-    // POST /api/scan-sites  → запускает сканирование
-    Route::post('/scan-sites', [\App\Http\Controllers\SiteScanController::class, 'scan']);
-
-    // GET  /api/results     → возвращает результаты
-    Route::get('/results',   [ResultsController::class,        'index']);
-});
+Route::post('/scan-sites', [SiteScanController::class, 'scan']);
+Route::get('/results', [ResultsController::class, 'index']);
+Route::post('/llm', [Controller::class, 'queryLLM']);
+Route::post('/supabase-test', [SupabaseController::class, 'testQuery']);
