@@ -1,11 +1,13 @@
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 public function query(Request $request)
 {
     $prompt = $request->input('prompt');
     $pharmacy = $request->input('pharmacy', 'Farmacity');
 
-    // Получаем вектор эмбеддинга через API LLM
+    // Получаем эмбеддинг из LLM
     $embeddingResponse = Http::timeout(20)->post(env('LLM_API_URL'), [
         'prompt' => $prompt,
         'temperature' => 0.7,
@@ -19,12 +21,12 @@ public function query(Request $request)
         return response()->json(['error' => 'Embedding not returned from LLM.'], 400);
     }
 
-    // Поиск по вектору
+    // Поиск похожих товаров по embedding
     $results = DB::select("
-        SELECT *, 1 - (embedding <=> ?) AS similarity
-        FROM match_documents('farma', ?, 5)
+        SELECT *
+        FROM match_documents('farma', 'embedding', 5, ?)
         ORDER BY similarity DESC
-    ", [json_encode($embedding), 'embedding']);
+    ", [json_encode($embedding)]);
 
     return response()->json([
         'prompt' => $prompt,
