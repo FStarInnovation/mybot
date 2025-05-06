@@ -12,3 +12,4 @@ Route::match(['get', 'post'], '/scan-sites', [SiteScanController::class, 'scan']
 Route::get('/results', [ResultsController::class, 'index']);
 Route::post('/llm', [Controller::class, 'queryLLM']);
 Route::match(['get', 'post'], '/supabase-test', [SupabaseController::class, 'testQuery']);
+Route::get('/supabase-test', [SupabaseController::class, 'testQuery']);
