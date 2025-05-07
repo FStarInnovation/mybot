@@ -17,10 +17,14 @@ class SupabaseService
 
     public function get(string $table, array $filters = []): array
     {
+        $query = collect($filters)->map(function ($v, $k) {
+            return urlencode($k) . '=' . urlencode($v);
+        })->implode('&');
+
         $response = Http::withHeaders([
             'apikey' => $this->apiKey,
             'Authorization' => 'Bearer ' . $this->apiKey,
-        ])->get("{$this->baseUrl}/{$table}", $filters);
+        ])->get("{$this->baseUrl}/{$table}?{$query}");
 
         if ($response->failed()) {
             throw new \Exception("Supabase error: " . $response->body());
