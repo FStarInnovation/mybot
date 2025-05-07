@@ -1,26 +1,31 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LLMController;
-use App\Services\SupabaseService;
+namespace App\Services;
 
-Route::post('/llm', [LLMController::class, 'handle']);
+use Illuminate\Support\Facades\Http;
 
-Route::get('/supabase-test', function () {
-    $service = app(SupabaseService::class);
+class SupabaseService
+{
+    protected string $baseUrl;
+    protected string $apiKey;
 
-    try {
-        $data = $service->get('farma', [
-            'select' => 'title,price_num',
-            'order' => 'price_num.desc',
-            'limit' => 5
-        ]);
-
-        return response()->json($data);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'error' => true,
-            'message' => $e->getMessage()
-        ], 500);
+    public function __construct()
+    {
+        $this->baseUrl = rtrim(env('SUPABASE_URL'), '/') . '/rest/v1';
+        $this->apiKey = env('SUPABASE_API_KEY');
     }
-});
+
+    public function get(string $table, array $filters = []): array
+    {
+        $response = Http::withHeaders([
+            'apikey' => $this->apiKey,
+            'Authorization' => 'Bearer ' . $this->apiKey,
+        ])->get("{$this->baseUrl}/{$table}", $filters);
+
+        if ($response->failed()) {
+            throw new \Exception("Supabase error: " . $response->body());
+        }
+
+        return $response->json();
+    }
+}
