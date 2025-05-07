@@ -16,4 +16,4 @@ Route::post('/supabase-test', [SupabaseController::class, 'testQuery']);
 
 Route::get('/supabase-test', [SupabaseController::class, 'testQuery']);
 
-Route::post('/query', [LlmBridgeController::class, 'query']);
+Route::post('/query', [LlmBridgeController::class, 'query'])->name('api.query');
