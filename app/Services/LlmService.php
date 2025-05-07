@@ -6,14 +6,15 @@ use Illuminate\Support\Facades\Http;
 
 class LlmService
 {
-    public function complete(array $messages): string
+    public function complete(string $prompt): string
     {
         $response = Http::post(config('services.llm.endpoint'), [
-            'model' => 'mistral',
-            'messages' => $messages,
-            'stream' => false,
+            'model' => config('services.llm.model', 'mistral'),
+            'prompt' => $prompt,
+            'temperature' => (float) config('services.llm.temp', 0.7),
+            'max_tokens' => (int) config('services.llm.max_tokens', 200),
         ]);
 
-        return $response->json('choices.0.message.content');
+        return $response->json('content');
     }
 }
