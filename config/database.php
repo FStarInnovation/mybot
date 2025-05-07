@@ -1,22 +1,20 @@
 <?php
 
-use Illuminate\Support\Str;
-
 return [
 
+    // Указываем фиктивный драйвер, чтобы Laravel не падал
     'default' => env('DB_CONNECTION', 'none'),
 
     'connections' => [
-
         'none' => [
-            'driver' => 'array',
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
         ],
-
     ],
 
     'migrations' => [
         'table' => 'migrations',
-        'update_date_on_publish' => true,
     ],
 
     'redis' => [],
