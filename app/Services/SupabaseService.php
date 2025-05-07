@@ -17,8 +17,11 @@ class SupabaseService
 
     public function get(string $table, array $filters = []): array
     {
-        $query = collect($filters)->map(function ($v, $k) {
-            return urlencode($k) . '=' . urlencode($v);
+        $query = collect($filters)->flatMap(function ($v, $k) {
+            if (is_array($v)) {
+                return collect($v)->map(fn($item) => urlencode($k) . '=' . urlencode($item));
+            }
+            return [urlencode($k) . '=' . urlencode($v)];
         })->implode('&');
 
         $response = Http::withHeaders([

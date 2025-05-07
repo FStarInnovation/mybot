@@ -4,9 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\SiteScanController;
 use App\Http\Controllers\ResultsController;
-use App\Http\Controllers\Controller; // LLM Bridge
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\SupabaseController;
-use App\Services\SupabaseService;
 
 // Маршрут для корневого пути
 Route::get('/', function () {
@@ -18,7 +17,7 @@ Route::post('/scan-sites', [SiteScanController::class, 'scan']);
 Route::get('/results', [ResultsController::class, 'index']);
 Route::post('/llm', [Controller::class, 'queryLLM']);
 
-Route::match(['get', 'post'], '/supabase-test', [SupabaseController::class, 'queryTopPrices']);
+Route::get('/supabase', [SupabaseController::class, 'fetchTopExpensive']);
 
 // Маршрут для очистки кеша
 Route::get('/clear-cache', function () {
