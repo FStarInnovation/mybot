@@ -11,7 +11,7 @@ class SupabaseService
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(env('SUPABASE_URL'), '/') . '/rest/v1';
+        $this->baseUrl = rtrim(env('SUPABASE_API_URL'), '/');
         $this->apiKey = env('SUPABASE_API_KEY');
     }
 
