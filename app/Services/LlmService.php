@@ -7,12 +7,12 @@ public function complete(string $prompt): string
         'max_tokens' => (int) config('services.llm.max_tokens', 200),
     ]);
 
-    $json = $response->json();
+    $json = json_decode($response->body(), true);
 
-    if (!isset($json['content'])) {
-        logger()->error('LLM response missing content', ['response' => $json]);
+    if (!isset($json['content']) || empty($json['content'])) {
+        logger()->error('LLM response missing or empty content', ['response' => $json]);
         throw new \RuntimeException('LLM did not return content.');
     }
 
-    return $json['content'];
+    return trim($json['content']);
 }
