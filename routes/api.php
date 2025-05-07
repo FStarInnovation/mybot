@@ -17,3 +17,4 @@ Route::post('/supabase-test', [SupabaseController::class, 'testQuery']);
 Route::get('/supabase-test', [SupabaseController::class, 'testQuery']);
 
 Route::post('/query', [LlmBridgeController::class, 'query'])->name('api.query');
+Route::get('/ping', fn() => response()->json(['pong' => true]));
