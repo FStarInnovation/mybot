@@ -19,7 +19,7 @@ class SupabaseController extends Controller
         try {
             $data = $this->supabase->get('farma', [
                 'select' => 'title,price_num',
-                'price_num' => 'not.is.null',
+                'price_num' => ['not.is.null', 'gt.10000'],
                 'order' => 'price_num.desc',
                 'limit' => 10,
             ]);

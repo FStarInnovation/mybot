@@ -17,9 +17,15 @@ class SupabaseService
 
     public function get(string $table, array $filters = []): array
     {
-        $query = collect($filters)->map(function ($value, $key) {
-            // если value содержит оператор (например: "gt.10000" или "not.is.null")
-            return urlencode($key) . '=' . urlencode($value);
+        $query = collect($filters)->flatMap(function ($value, $key) {
+            if (is_array($value)) {
+                return collect($value)->map(fn($v) => [urlencode($key) => urlencode($v)]);
+            }
+            return [[urlencode($key) => urlencode($value)]];
+        })->map(function ($pair) {
+            $k = array_key_first($pair);
+            $v = $pair[$k];
+            return "{$k}={$v}";
         })->implode('&');
 
         $response = Http::withHeaders([
