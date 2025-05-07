@@ -14,13 +14,14 @@ class SupabaseController extends Controller
         $this->supabase = $supabase;
     }
 
-    public function queryTopPrices(): JsonResponse
+    public function fetchTopExpensive(): JsonResponse
     {
         try {
             $data = $this->supabase->get('farma', [
                 'select' => 'title,price_num',
+                'price_num' => 'not.is.null',
                 'order' => 'price_num.desc',
-                'limit' => 10
+                'limit' => 10,
             ]);
             return response()->json($data);
         } catch (\Throwable $e) {
