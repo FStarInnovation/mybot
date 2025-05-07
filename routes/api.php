@@ -10,8 +10,10 @@ use App\Http\Controllers\LlmBridgeController;
 
 Route::post('/scan-sites', [SiteScanController::class, 'scan']);
 Route::get('/results', [ResultsController::class, 'index']);
+
 Route::post('/llm', [Controller::class, 'queryLLM']);
 Route::post('/supabase-test', [SupabaseController::class, 'testQuery']);
+
 Route::get('/supabase-test', [SupabaseController::class, 'testQuery']);
-Route::post('/query', [QueryController::class, 'handle']);
+
 Route::post('/query', [LlmBridgeController::class, 'query']);
