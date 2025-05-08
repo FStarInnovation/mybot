@@ -12,8 +12,8 @@ Route::post('/scan-sites', [SiteScanController::class, 'scan']);
 Route::get('/results', [ResultsController::class, 'index']);
 
 Route::post('/llm', [Controller::class, 'queryLLM']);
+Route::post('/llm/query', [SupabaseController::class, 'queryEmbedding']); // ← 🔥 Добавлено
 Route::post('/supabase-test', [SupabaseController::class, 'testQuery']);
-
 Route::get('/supabase-test', [SupabaseController::class, 'testQuery']);
 
 Route::post('/query', [LlmBridgeController::class, 'query'])->name('api.query');

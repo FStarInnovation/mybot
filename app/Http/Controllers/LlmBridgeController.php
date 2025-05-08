@@ -17,31 +17,19 @@ class LlmBridgeController extends Controller
             return response()->json(['error' => 'Prompt is required.'], 422);
         }
 
-        // Получение embedding-вектора от LLM
-        $llmResponse = Http::timeout(20)->post(env('LLM_API_URL'), [
-            'model' => env('LLM_API_MODEL', 'mistral'),
-            'prompt' => $prompt,
-            'temperature' => 0.7,
-            'max_tokens' => 100
-        ]);
-
-        if (!$llmResponse->ok()) {
-            return response()->json(['error' => 'LLM API request failed.'], 502);
-        }
-
-        $embedding = $llmResponse->json('embedding');
-
+        $embedding = $request->input('embedding');
         if (!$embedding || !is_array($embedding)) {
-            return response()->json(['error' => 'Invalid embedding response.'], 400);
+            return response()->json(['error' => 'Embedding is required and must be an array.'], 422);
         }
 
         // Выполнение поиска по вектору с помощью Supabase встроенной функции
         try {
             $results = DB::select("
-                SELECT id, content, metadata, 1 - (embedding <=> ?) AS similarity
-                FROM match_documents('farma', 'embedding', 5)
-                ORDER BY similarity DESC
-            ", [json_encode($embedding)]);
+                SELECT id, title, price_num, brand, url, 1 - (embedding <-> ?::vector) AS similarity
+                FROM farma
+                ORDER BY embedding <-> ?::vector
+                LIMIT 5
+            ", [json_encode($embedding), json_encode($embedding)]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Supabase vector search failed.', 'details' => $e->getMessage()], 500);
         }

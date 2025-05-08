@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use App\Services\SupabaseService;
 
 class SupabaseController extends Controller
@@ -14,15 +15,26 @@ class SupabaseController extends Controller
         $this->supabase = $supabase;
     }
 
-    public function fetchTopExpensive(): JsonResponse
+    public function queryEmbedding(Request $request): JsonResponse
     {
+        $prompt = $request->input('prompt');
+        $embedding = $request->input('embedding');
+
+        if (!is_array($embedding) || count($embedding) !== 768) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Embedding vector must be an array of 768 floats.'
+            ], 400);
+        }
+
         try {
-            $data = $this->supabase->get('farma', [
-                'select' => 'title,price_num',
-                'price_num' => ['not.is.null', 'gt.10000'],
-                'order' => 'price_num.desc',
-                'limit' => 10,
+            $data = $this->supabase->post('/rpc/match_documents', [
+                'query_embedding' => $embedding,
+                'match_count' => 3,
+                'table_name' => 'farma',
+                'filter' => '',
             ]);
+
             return response()->json($data);
         } catch (\Throwable $e) {
             return response()->json([
