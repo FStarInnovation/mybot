@@ -12,9 +12,9 @@ class SupabaseService
     public function __construct()
     {
         $this->client = new Client([
-            'base_uri' => env('SUPABASE_URL'),
+            'base_uri' => rtrim(env('SUPABASE_URL'), '/') . '/',   // always ends with single “/”
             'headers'  => [
-                'apikey'       => env('SUPABASE_ANON_KEY'),
+                'apikey'       => env('SUPABASE_SERVICE_KEY'),         // use service‑role key for RPC
                 'Authorization'=> 'Bearer ' . env('SUPABASE_SERVICE_KEY'),
                 'Content-Type' => 'application/json',
             ],
@@ -31,6 +31,8 @@ class SupabaseService
      */
     public function post(string $endpoint, array $payload): array
     {
+        $endpoint = ltrim($endpoint, '/');    // prevent leading “/” from wiping base_uri path
+
         try {
             $resp = $this->client->post($endpoint, [
                 'json' => $payload,
