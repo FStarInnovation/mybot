@@ -20,8 +20,8 @@ class SupabaseService
     {
         // Позволяем передать mock‑клиент при тестировании
         $this->client = $client ?: new Client([
-            // https://<project>.supabase.co/rest/v1/
-            'base_uri'   => rtrim(env('SUPABASE_URL'), '/') . '/rest/v1/',
+            // https://<project>.supabase.co/
+            'base_uri'   => rtrim(env('SUPABASE_URL'), '/') . '/',
             'headers'    => [
                 'apikey'        => env('SUPABASE_SERVICE_KEY'),
                 'Authorization' => 'Bearer ' . env('SUPABASE_SERVICE_KEY'),
@@ -43,7 +43,7 @@ class SupabaseService
      */
     public function rpc(string $functionName, array $args = []): array
     {
-        return $this->request("rpc/{$functionName}", $args);
+        return $this->request("rest/v1/rpc/{$functionName}", $args);
     }
 
     /**
@@ -79,5 +79,16 @@ class SupabaseService
         }
 
         return $json;
+    }
+    /**
+     * Backward-compatibility alias for POST requests.
+     *
+     * @param string $endpoint
+     * @param array $payload
+     * @return array
+     */
+    public function post(string $endpoint, array $payload): array
+    {
+        return $this->request(ltrim($endpoint, '/'), $payload);
     }
 }
