@@ -27,7 +27,7 @@ class QueryController extends Controller
         $supabaseQuery = Http::withHeaders([
             'apikey' => env('SUPABASE_API_KEY'),
             'Authorization' => 'Bearer ' . env('SUPABASE_API_KEY'),
-        ])->post(env('SUPABASE_URL') . '/rest/v1/rpc/match_documents', [
+        ])->post(rtrim(env('SUPABASE_URL'), '/') . '/rpc/match_documents', [
             'query_embedding' => $embedding,
             'match_count' => 5,
         ]);

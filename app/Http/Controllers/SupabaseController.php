@@ -39,7 +39,7 @@ class SupabaseController extends Controller
 
         /** 3. Запрашиваем Supabase */
         try {
-            $result = $this->supabase->post('/rpc/match_documents', [
+            $result = $this->supabase->rpc('match_documents', [
                 'query_embedding' => $embedding,
                 'match_count'     => 3,
                 'table_name'      => 'farma',
