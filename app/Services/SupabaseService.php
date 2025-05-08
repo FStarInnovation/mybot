@@ -39,4 +39,19 @@ class SupabaseService
 
         return $response->json();
     }
+
+    public function post(string $endpoint, array $payload = []): array
+    {
+        $response = Http::withHeaders([
+            'apikey' => $this->apiKey,
+            'Authorization' => 'Bearer ' . $this->apiKey,
+            'Content-Type' => 'application/json',
+        ])->post("{$this->baseUrl}/{$endpoint}", $payload);
+
+        if ($response->failed()) {
+            throw new \Exception("Supabase POST error: " . $response->body());
+        }
+
+        return $response->json();
+    }
 }
