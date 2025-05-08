@@ -19,10 +19,10 @@ class LlmBridgeController extends Controller
 
         // Получение embedding-вектора от LLM
         $llmResponse = Http::timeout(20)->post(env('LLM_API_URL'), [
+            'model' => env('LLM_API_MODEL', 'mistral'),
             'prompt' => $prompt,
             'temperature' => 0.7,
-            'max_tokens' => 0,
-            'stream' => false
+            'max_tokens' => 100
         ]);
 
         if (!$llmResponse->ok()) {
