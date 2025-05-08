@@ -17,30 +17,40 @@ class SupabaseController extends Controller
 
     public function queryEmbedding(Request $request): JsonResponse
     {
-        $data = $request->json()->all();
-        $prompt = $data['prompt'] ?? null;
-        $embedding = $data['embedding'] ?? null;
-
-        if (!is_array($embedding) || count($embedding) !== 768) {
+        /** 1. Гарантированно декодируем JSON */
+        $data = json_decode($request->getContent(), true);
+        if (! is_array($data)) {
             return response()->json([
-                'error' => true,
-                'message' => 'Embedding vector must be an array of 768 floats.'
+                'error'   => true,
+                'message' => 'Некорректный JSON‑документ',
             ], 400);
         }
 
+        /** 2. Проверяем обязательные поля */
+        $prompt    = $data['prompt']    ?? null;
+        $embedding = $data['embedding'] ?? null;
+
+        if (! $prompt || ! is_array($embedding) || count($embedding) !== 768) {
+            return response()->json([
+                'error'   => true,
+                'message' => 'Нужно передать "prompt" и массив "embedding" из 768 чисел',
+            ], 400);
+        }
+
+        /** 3. Запрашиваем Supabase */
         try {
-            $data = $this->supabase->post('/rpc/match_documents', [
+            $result = $this->supabase->post('/rpc/match_documents', [
                 'query_embedding' => $embedding,
-                'match_count' => 3,
-                'table_name' => 'farma',
-                'filter' => '',
+                'match_count'     => 3,
+                'table_name'      => 'farma',
+                'filter'          => '',
             ]);
 
-            return response()->json($data);
+            return response()->json($result);
         } catch (\Throwable $e) {
             return response()->json([
-                'error' => true,
-                'message' => $e->getMessage()
+                'error'   => true,
+                'message' => 'Supabase POST error: ' . $e->getMessage(),
             ], 500);
         }
     }
