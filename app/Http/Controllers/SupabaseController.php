@@ -17,8 +17,9 @@ class SupabaseController extends Controller
 
     public function queryEmbedding(Request $request): JsonResponse
     {
-        $prompt = $request->input('prompt');
-        $embedding = $request->input('embedding');
+        $data = $request->json()->all();
+        $prompt = $data['prompt'] ?? null;
+        $embedding = $data['embedding'] ?? null;
 
         if (!is_array($embedding) || count($embedding) !== 768) {
             return response()->json([
