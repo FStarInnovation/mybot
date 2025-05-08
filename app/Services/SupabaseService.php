@@ -46,7 +46,11 @@ class SupabaseService
             'apikey' => $this->apiKey,
             'Authorization' => 'Bearer ' . $this->apiKey,
             'Content-Type' => 'application/json',
-        ])->post("{$this->baseUrl}/{$endpoint}", $payload);
+        ])->post("{$this->baseUrl}/rpc/{$endpoint}", [
+            'filter' => new \stdClass(),
+            'match_count' => 5,
+            'query_embedding' => $payload['embedding']
+        ]);
 
         if ($response->failed()) {
             throw new \Exception("Supabase POST error: " . $response->body());
