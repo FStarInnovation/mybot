@@ -2,60 +2,49 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 
 class SupabaseService
 {
-    protected string $baseUrl;
-    protected string $apiKey;
+    protected Client $client;
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(env('SUPABASE_API_URL'), '/');
-        $this->apiKey = env('SUPABASE_API_KEY');
-    }
-
-    public function get(string $table, array $filters = []): array
-    {
-        $query = collect($filters)->flatMap(function ($value, $key) {
-            if (is_array($value)) {
-                return collect($value)->map(fn($v) => [urlencode($key) => urlencode($v)]);
-            }
-            return [[urlencode($key) => urlencode($value)]];
-        })->map(function ($pair) {
-            $k = array_key_first($pair);
-            $v = $pair[$k];
-            return "{$k}={$v}";
-        })->implode('&');
-
-        $response = Http::withHeaders([
-            'apikey' => $this->apiKey,
-            'Authorization' => 'Bearer ' . $this->apiKey,
-        ])->get("{$this->baseUrl}/{$table}?{$query}");
-
-        if ($response->failed()) {
-            throw new \Exception("Supabase error: " . $response->body());
-        }
-
-        return $response->json();
-    }
-
-    public function post(string $endpoint = 'match_documents', array $payload = []): array
-    {
-        $response = Http::withHeaders([
-            'apikey' => $this->apiKey,
-            'Authorization' => 'Bearer ' . $this->apiKey,
-            'Content-Type' => 'application/json',
-        ])->post("{$this->baseUrl}/rpc/{$endpoint}", [
-            'filter' => '{}',
-            'match_count' => 5,
-            'query_embedding' => $payload['embedding'],
+        $this->client = new Client([
+            'base_uri' => env('SUPABASE_URL'),
+            'headers'  => [
+                'apikey'       => env('SUPABASE_ANON_KEY'),
+                'Authorization'=> 'Bearer ' . env('SUPABASE_SERVICE_KEY'),
+                'Content-Type' => 'application/json',
+            ],
+            'http_errors' => false,
+            'timeout'     => 15,
         ]);
+    }
 
-        if ($response->failed()) {
-            throw new \Exception("Supabase POST error: " . $response->body());
+    /**
+     * Вызов RPC‑функции в Supabase.
+     *
+     * @param string $endpoint   например: '/rpc/match_documents'
+     * @param array  $payload    уже готовый ассоц‑массив тела запроса
+     */
+    public function post(string $endpoint, array $payload): array
+    {
+        try {
+            $resp = $this->client->post($endpoint, [
+                'json' => $payload,
+            ]);
+
+            $json = json_decode($resp->getBody()->getContents(), true);
+
+            if ($resp->getStatusCode() >= 400) {
+                throw new \RuntimeException(json_encode($json, JSON_UNESCAPED_UNICODE));
+            }
+
+            return $json;
+        } catch (GuzzleException|\Throwable $e) {
+            throw new \RuntimeException($e->getMessage());
         }
-
-        return $response->json();
     }
 }
