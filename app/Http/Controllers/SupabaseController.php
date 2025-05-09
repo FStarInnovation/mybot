@@ -42,13 +42,12 @@ class SupabaseController extends Controller
 
         /** 3. Запрашиваем Supabase */
         try {
-            $vector = '[' . implode(',', $embedding) . ']';
-
-            \Log::info('[LLM DEBUG] embedding vector as string: ' . $vector);
+            \Log::info('[LLM DEBUG] embedding vector as array: ' . json_encode($embedding));
 
             $result = $this->supabase->rpc('match_documents', [
-                'query_embedding' => $vector,
+                'query_embedding' => $embedding,
                 'match_count'     => 3,
+                'match_threshold' => $data['match_threshold'] ?? 0.7,
             ]);
 
             return response()->json($result);
