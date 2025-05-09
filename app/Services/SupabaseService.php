@@ -21,7 +21,7 @@ class SupabaseService
         // Позволяем передать mock‑клиент при тестировании
         $this->client = $client ?: new Client([
             // https://<project>.supabase.co/
-            'base_uri'   => rtrim(env('SUPABASE_URL'), '/') . '/rest/v1/',
+            'base_uri'   => rtrim(env('SUPABASE_URL'), '/') . '/',
             'headers'    => [
                 'apikey'        => env('SUPABASE_SERVICE_KEY'),
                 'Authorization' => 'Bearer ' . env('SUPABASE_SERVICE_KEY'),
@@ -29,7 +29,7 @@ class SupabaseService
             ],
             'http_errors' => false,
             'timeout'     => 15,
-            'debug'       => fopen(storage_path('logs/guzzle.log'), 'a'),
+            'debug'       => true,
         ]);
     }
 
