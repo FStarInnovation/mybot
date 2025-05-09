@@ -42,13 +42,20 @@ class SupabaseController extends Controller
 
         /** 3. Запрашиваем Supabase */
         try {
+            $vector = '[' . implode(',', $embedding) . ']';
+
+            \Log::info('[LLM DEBUG] embedding vector as string: ' . $vector);
+
             $result = $this->supabase->rpc('match_documents', [
-                'query_embedding' => $embedding,
+                'query_embedding' => $vector,
                 'match_count'     => 3,
             ]);
 
             return response()->json($result);
         } catch (\Throwable $e) {
+            \Log::error('[LLM ERROR] Ошибка запроса к Supabase', [
+                'exception' => $e->getMessage()
+            ]);
             return response()->json([
                 'error'   => true,
                 'message' => 'Supabase POST error: ' . $e->getMessage(),
