@@ -21,7 +21,7 @@ class SupabaseService
         // Позволяем передать mock‑клиент при тестировании
         $this->client = $client ?: new Client([
             // https://<project>.supabase.co/
-            'base_uri'   => rtrim(env('SUPABASE_URL'), '/') . '/',
+            'base_uri'   => rtrim(env('SUPABASE_URL'), '/') . '/rest/v1/',
             'headers'    => [
                 'apikey'        => env('SUPABASE_SERVICE_KEY'),
                 'Authorization' => 'Bearer ' . env('SUPABASE_SERVICE_KEY'),
