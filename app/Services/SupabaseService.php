@@ -86,6 +86,20 @@ class SupabaseService
         return $json;
     }
     /**
+     * Обёртка над RPC‑вызовом match_documents.
+     *
+     * @param float[] $embedding
+     * @param int     $matchCount
+     * @return array
+     */
+    public function matchDocuments(array $embedding, int $matchCount = 3): array
+    {
+        return $this->rpc('match_documents', [
+            'query_embedding' => $embedding,
+            'match_count' => $matchCount,
+        ]);
+    }
+    /**
      * Backward-compatibility alias for POST requests.
      *
      * @param string $endpoint
