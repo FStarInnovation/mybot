@@ -8,34 +8,31 @@ use App\Services\SupabaseService;
 
 class LlmBridgeController extends Controller
 {
-    public function query(Request $request, SupabaseService $supabase)
+    public function query(Request $request)
     {
         $prompt = $request->input('prompt');
-
-        if (!$prompt) {
-            return response()->json(['error' => 'Prompt is required.'], 422);
-        }
-
         $embedding = $request->input('embedding');
-        if (!$embedding || !is_array($embedding)) {
-            return response()->json(['error' => 'Embedding is required and must be an array.'], 422);
+
+        if (!$prompt || !$embedding || !is_array($embedding)) {
+            return response()->json(['error' => true, 'message' => 'Prompt и embedding обязательны.'], 422);
         }
 
         try {
-            $results = $supabase->callRpc('match_documents', [
+            $supabase = app()->make(\App\Services\SupabaseService::class);
+
+            $results = $supabase->rpc('match_documents', [
                 'query_embedding' => $embedding,
-                'match_count'     => 5,
-                'filter'          => null,   // можно передать JSON‑фильтр, если понадобится
+                'match_count'     => 3
             ]);
         } catch (\Throwable $e) {
             return response()->json([
-                'error'   => true,
-                'message' => 'Supabase RPC failed: ' . $e->getMessage(),
+                'error' => true,
+                'message' => 'Supabase RPC error: ' . $e->getMessage(),
             ], 500);
         }
 
         return response()->json([
-            'prompt' => $prompt,
+            'prompt'  => $prompt,
             'results' => $results
         ]);
     }

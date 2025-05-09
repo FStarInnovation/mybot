@@ -42,8 +42,6 @@ class SupabaseController extends Controller
             $result = $this->supabase->rpc('match_documents', [
                 'query_embedding' => $embedding,
                 'match_count'     => 3,
-                'table_name'      => 'farma',
-                'filter'          => '',
             ]);
 
             return response()->json($result);
