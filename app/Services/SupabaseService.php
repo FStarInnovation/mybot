@@ -27,9 +27,9 @@ class SupabaseService
                 'Authorization' => 'Bearer ' . env('SUPABASE_SERVICE_KEY'),
                 'Content-Type'  => 'application/json',
             ],
-            'http_errors' => false, // обрабатываем сами
+            'http_errors' => false,
             'timeout'     => 15,
-            'debug'       => true, // 🔍 включаем отладку
+            'debug'       => fopen(storage_path('logs/guzzle.log'), 'a'),
         ]);
     }
 
@@ -55,6 +55,8 @@ class SupabaseService
      */
     public function request(string $endpoint, array $payload): array
     {
+        \Log::info('[SupabaseService] Запрос к Supabase', ['endpoint' => $endpoint, 'payload' => $payload]);
+
         // ВАЖНО: убираем ведущий «/», иначе Guzzle отбросит base_uri‑path
         $endpoint = ltrim($endpoint, '/');
 
@@ -78,6 +80,8 @@ class SupabaseService
         if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
             throw new \RuntimeException('Invalid JSON returned from Supabase: ' . json_last_error_msg());
         }
+
+        \Log::info('[SupabaseService] Ответ от Supabase', ['status' => $resp->getStatusCode(), 'body' => $body, 'json' => $json]);
 
         return $json;
     }
