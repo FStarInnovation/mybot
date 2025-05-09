@@ -10,6 +10,7 @@ class LlmBridgeController extends Controller
 {
     public function query(Request $request)
     {
+        \Log::info('LLM запрос пришел:', $request->all());
         $prompt = $request->input('prompt');
         $embedding = $request->input('embedding');
 
