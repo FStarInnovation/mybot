@@ -29,6 +29,7 @@ class SupabaseService
             ],
             'http_errors' => false, // обрабатываем сами
             'timeout'     => 15,
+            'debug'       => true, // 🔍 включаем отладку
         ]);
     }
 
