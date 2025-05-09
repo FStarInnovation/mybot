@@ -19,18 +19,21 @@ class SupabaseController extends Controller
     {
         /** 1. Гарантированно декодируем JSON */
         $data = json_decode($request->getContent(), true);
-        if (! is_array($data)) {
-            return response()->json([
-                'error'   => true,
-                'message' => 'Некорректный JSON‑документ',
-            ], 400);
-        }
+        \Log::info('[LLM DEBUG] Входной JSON:', $data);
 
         /** 2. Проверяем обязательные поля */
-        $prompt    = $data['prompt']    ?? null;
-        $embedding = $data['embedding'] ?? null;
+        $prompt    = $data['prompt'] ?? null;
+        $embedding = $data['embedding'] ?? $data['query_embedding'] ?? null;
+
+        \Log::info('[LLM DEBUG] prompt: ' . $prompt);
+        \Log::info('[LLM DEBUG] embedding count: ' . (is_array($embedding) ? count($embedding) : 'не массив'));
 
         if (! $prompt || ! is_array($embedding) || count($embedding) !== 768) {
+            \Log::warning('[LLM DEBUG] Неверный формат запроса', [
+                'prompt' => $prompt,
+                'embedding_is_array' => is_array($embedding),
+                'embedding_count' => is_array($embedding) ? count($embedding) : null
+            ]);
             return response()->json([
                 'error'   => true,
                 'message' => 'Нужно передать "prompt" и массив "embedding" из 768 чисел',
