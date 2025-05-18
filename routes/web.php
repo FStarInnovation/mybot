@@ -50,7 +50,8 @@ use App\Http\Controllers\LlmBridgeController;
 
 Route::get('/llm/test', function () {
     $controller = new LlmBridgeController();
-    return $controller->handleRequest(request()->merge([
-        'question' => '¿Cuál es el ibuprofeno 400 mg más barato?'
+    return $controller->query(request()->merge([
+        'prompt' => '¿Cuál es el ibuprofeno 400 mg más barato?',
+        'embedding' => array_fill(0, 768, 0.01)
     ]));
 });
