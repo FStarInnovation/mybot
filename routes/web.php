@@ -2,10 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\SiteScanController;
 use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\SupabaseController;
+use App\Http\Controllers\TestLlmUIController;
+use App\Http\Controllers\LlmBridgeController;
 
 // Маршрут для корневого пути
 Route::get('/', function () {
@@ -24,8 +27,6 @@ Route::get('/clear-cache', function () {
     Artisan::call('optimize:clear');
     return '✅ Laravel cache cleared!';
 });
-
-use Illuminate\Support\Facades\Http;
 
 Route::get('/test-vector-match', function () {
     $embedding = include base_path('vector.php');
@@ -46,8 +47,6 @@ Route::get('/test-vector-match', function () {
         : ['error' => $response->status(), 'body' => $response->body()];
 });
 
-use App\Http\Controllers\LlmBridgeController;
-
 Route::get('/llm/test', function () {
     $controller = new LlmBridgeController();
     return $controller->query(request()->merge([
@@ -55,3 +54,8 @@ Route::get('/llm/test', function () {
         'embedding' => array_fill(0, 768, 0.01)
     ]));
 });
+
+Route::get('/llm/form', [TestLlmUIController::class, 'showForm']);
+Route::post('/llm/form', [TestLlmUIController::class, 'handleForm']);
+// Обработка формы по новому пути (соответствует action в шаблоне)
+Route::post('/llm/query', [TestLlmUIController::class, 'handleForm']);
