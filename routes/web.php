@@ -57,5 +57,4 @@ Route::get('/llm/test', function () {
 
 Route::get('/llm/form', [TestLlmUIController::class, 'showForm']);
 Route::post('/llm/form', [TestLlmUIController::class, 'handleForm']);
-// Обработка формы по новому пути (соответствует action в шаблоне)
 Route::post('/llm/query', [TestLlmUIController::class, 'handleForm']);
