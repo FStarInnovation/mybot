@@ -21,6 +21,8 @@ Route::get('/admin/dashboard', function () {
 });
 
 // Универсальные маршруты (web)
+Route::get('/llm/form', [TestLlmUIController::class, 'showForm']);
+Route::post('/llm/query', [TestLlmUIController::class, 'handleForm']);
 Route::post('/scan-sites', [SiteScanController::class, 'scan']);
 Route::get('/results', [ResultsController::class, 'index']);
 Route::post('/llm', [Controller::class, 'queryLLM']);

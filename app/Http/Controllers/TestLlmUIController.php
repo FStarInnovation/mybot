@@ -11,16 +11,26 @@ class TestLlmUIController extends Controller
      */
     public function showForm()
     {
-        // Returning default welcome view as placeholder
-        return view('welcome');
+        return view('llm-form');
     }
 
     /**
-     * Handle form submission (stub).
+     * Handle form submission with LLM query.
      */
     public function handleForm(Request $request)
     {
-        // Placeholder: redirect back
-        return redirect()->back();
+        // Validate the request
+        $validated = $request->validate([
+            'query' => 'required|string|max:1000',
+        ]);
+        
+        // Process the query (placeholder for actual LLM processing)
+        $response = 'Response to: ' . $validated['query'];
+        
+        // Return response with original query
+        return view('llm-response', [
+            'query' => $validated['query'],
+            'response' => $response
+        ]);
     }
 }
