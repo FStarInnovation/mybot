@@ -35,6 +35,12 @@ Route::get('/clear-cache', function () {
     return '✅ Laravel cache cleared!';
 });
 
+// SPA маршрут для SvelteKit приложения
+// Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
+Route::get('/{path?}', function () {
+    return view('app');
+})->where('path', '^(?!api|llm).*')->name('spa');
+
 Route::get('/test-vector-match', function () {
     $embedding = include base_path('vector.php');
 
