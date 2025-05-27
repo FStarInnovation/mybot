@@ -35,11 +35,7 @@ Route::get('/clear-cache', function () {
     return '✅ Laravel cache cleared!';
 });
 
-// SPA маршрут для SvelteKit приложения
-// Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
-Route::get('/{path?}', function () {
-    return view('app');
-})->where('path', '^(?!api|llm).*')->name('spa');
+
 
 Route::get('/test-vector-match', function () {
     $embedding = include base_path('vector.php');
@@ -71,3 +67,9 @@ Route::get('/llm/test', function () {
 Route::get('/llm/form', [TestLlmUIController::class, 'showForm']);
 Route::post('/llm/form', [TestLlmUIController::class, 'handleForm']);
 Route::post('/llm/query', [TestLlmUIController::class, 'handleForm']);
+
+// SPA маршрут для SvelteKit приложения
+// Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
+Route::get('/{path?}', function () {
+    return view('app');
+})->where('path', '.*')->name('spa');

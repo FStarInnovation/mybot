@@ -13,6 +13,10 @@ const config = {
     },
     files: {
       assets: 'static'
+    },
+    paths: {
+      base: '',
+      relative: false
     }
   }
 };

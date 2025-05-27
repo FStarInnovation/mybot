@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Farmabot</title>
     
+    <!-- Базовый URL для SvelteKit -->
+    <base href="/">
+    
     <!-- Ссылки на собранные SvelteKit ассеты -->
     <link rel="stylesheet" href="{{ asset('build/_app/immutable/assets/0.DdC7Ipbr.css') }}">
     <link rel="manifest" href="{{ asset('build/manifest.webmanifest') }}">
@@ -17,8 +20,8 @@
     <div id="app"></div>
     
     <!-- Подключение собранных SvelteKit скриптов -->
-    <script src="{{ asset('build/_app/immutable/entry/app.CB_uRnhw.js') }}" type="module"></script>
-    <script src="{{ asset('build/_app/immutable/entry/start.SZVHkOqH.js') }}" type="module"></script>
+    <script src="{{ asset('build/_app/immutable/entry/app.DWltJjdc.js') }}" type="module"></script>
+    <script src="{{ asset('build/_app/immutable/entry/start.C3jr5oCD.js') }}" type="module"></script>
     
     <!-- Регистрация Service Worker для PWA -->
     <script src="{{ asset('build/registerSW.js') }}" type="module"></script>
