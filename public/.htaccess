@@ -2,6 +2,16 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
+    
+    # Правильные MIME-типы для SvelteKit ассетов
+    <IfModule mod_mime.c>
+        AddType text/javascript .js
+        AddType text/css .css
+        AddType application/json .json
+        AddType image/svg+xml .svg
+        AddType image/png .png
+        AddType application/manifest+json .webmanifest
+    </IfModule>
 
     RewriteEngine On
 
