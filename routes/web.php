@@ -12,7 +12,12 @@ use App\Http\Controllers\LlmBridgeController;
 
 // Маршрут для корневого пути
 Route::get('/', function () {
-    return view('welcome'); // Возвращает resources/views/welcome.blade.php
+    return 'MyBot is running! <a href="/llm/form">Go to LLM Interface</a>';
+});
+
+// Add a new route for admin dashboard
+Route::get('/admin/dashboard', function () {
+    return 'Admin Dashboard - <a href="/llm/form">Go to LLM Interface</a>';
 });
 
 // Универсальные маршруты (web)
