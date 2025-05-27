@@ -8,3 +8,11 @@ build:
     - php artisan config:cache
     - php artisan route:cache
     - php artisan view:cache
+
+start:
+  command: |
+    # php-fpm in foreground (flag -F)
+    php-fpm -F &
+
+    # nginx as main PID 1 (exec replaces current shell)
+    exec nginx -g 'daemon off;'
