@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
+     * Disable transactions for this migration so dropIfExists works correctly.
+     */
+    public $withinTransaction = false;
+
+    /**
      * Get the migration connection name.
      */
     public function getConnection(): ?string
