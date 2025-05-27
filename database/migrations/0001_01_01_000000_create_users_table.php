@@ -8,9 +8,14 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * 
+     * Таблицы аутентификации отключены, так как на данном этапе не требуются.
+     * Личный кабинет пользователей будет реализован позже.
      */
     public function up(): void
     {
+        // Аутентификация временно отключена
+        /*
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -35,6 +40,7 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+        */
     }
 
     /**
@@ -42,8 +48,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Аутентификация временно отключена
+        /*
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        */
     }
 };
