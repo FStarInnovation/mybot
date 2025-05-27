@@ -17,6 +17,24 @@ return [
         'table' => 'migrations',
     ],
 
-    'redis' => [],
+    'redis' => [
+        'client' => env('REDIS_CLIENT', 'predis'),
+
+        'options' => [
+            'prefix' => env('REDIS_PREFIX', 'mybot_database_'),
+        ],
+
+        'default' => [
+            'url' => env('REDIS_URL'),
+            'token' => env('REDIS_TOKEN'),
+            'scheme' => 'tls',
+        ],
+
+        'cache' => [
+            'url' => env('REDIS_URL'),
+            'token' => env('REDIS_TOKEN'),
+            'scheme' => 'tls',
+        ],
+    ],
 
 ];
