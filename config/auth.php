@@ -15,8 +15,8 @@ return [
 
     'defaults' => [
         // Аутентификация временно отключена
-        'guard' => env('AUTH_GUARD', 'none'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'none'),
+        'guard' => env('AUTH_GUARD', 'web'),
+        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
     /*
