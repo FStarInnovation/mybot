@@ -2,6 +2,25 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
+    
+    # Правильные MIME типы для SvelteKit ассетов
+    <IfModule mod_mime.c>
+        AddType text/javascript .js
+        AddType text/css .css
+        AddType application/manifest+json .webmanifest
+    </IfModule>
+    
+    # Кэширование для статических ассетов
+    <IfModule mod_expires.c>
+        ExpiresActive on
+        ExpiresByType text/javascript "access plus 1 month"
+        ExpiresByType text/css "access plus 1 month"
+        ExpiresByType application/manifest+json "access plus 1 month"
+        ExpiresByType image/png "access plus 1 month"
+        ExpiresByType image/jpeg "access plus 1 month"
+        ExpiresByType image/gif "access plus 1 month"
+        ExpiresByType image/svg+xml "access plus 1 month"
+    </IfModule>
 
     RewriteEngine On
 
