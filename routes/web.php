@@ -68,6 +68,41 @@ Route::get('/llm/form', [TestLlmUIController::class, 'showForm']);
 Route::post('/llm/form', [TestLlmUIController::class, 'handleForm']);
 Route::post('/llm/query', [TestLlmUIController::class, 'handleForm']);
 
+// Специальный маршрут для ассетов SvelteKit с правильными MIME-типами
+Route::get('build/{path?}', function ($path = '') {
+    $fullPath = public_path('build/' . $path);
+    
+    if (file_exists($fullPath) && !is_dir($fullPath)) {
+        $extension = pathinfo($fullPath, PATHINFO_EXTENSION);
+        
+        $mimeTypes = [
+            'js' => 'text/javascript',
+            'mjs' => 'text/javascript',
+            'css' => 'text/css',
+            'json' => 'application/json',
+            'webmanifest' => 'application/manifest+json',
+            'png' => 'image/png',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'svg' => 'image/svg+xml',
+            'ico' => 'image/x-icon',
+        ];
+        
+        // Специальные случаи
+        if (empty($extension)) {
+            if (str_ends_with($path, 'registerSW') || str_ends_with($path, 'sw')) {
+                return response()->file($fullPath, ['Content-Type' => 'text/javascript']);
+            }
+        }
+        
+        if (isset($mimeTypes[$extension])) {
+            return response()->file($fullPath, ['Content-Type' => $mimeTypes[$extension]]);
+        }
+    }
+    
+    return response()->file($fullPath);
+})->where('path', '.*');
+
 // SPA маршрут для SvelteKit приложения
 // Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
 Route::get('/{path?}', function () {
