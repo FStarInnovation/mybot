@@ -9,11 +9,40 @@ use Illuminate\Support\Facades\Route;
 class MiddlewareServiceProvider extends ServiceProvider
 {
     /**
+     * All middleware to be registered.
+     *
+     * @var array
+     */
+    protected $middleware = [
+        SvelteKitAssetsMiddleware::class,
+    ];
+
+    /**
+     * Route middleware groups to be registered.
+     *
+     * @var array
+     */
+    protected $middlewareGroups = [
+        'web' => [
+            SvelteKitAssetsMiddleware::class,
+        ],
+    ];
+
+    /**
+     * Named middleware aliases to be registered.
+     *
+     * @var array
+     */
+    protected $routeMiddleware = [
+        'svelte-assets' => SvelteKitAssetsMiddleware::class,
+    ];
+
+    /**
      * Register services.
      */
     public function register(): void
     {
-        //
+        // Ничего не регистрируем на этапе register
     }
 
     /**
@@ -21,10 +50,52 @@ class MiddlewareServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Регистрируем middleware глобально
-        app('router')->aliasMiddleware('svelte-assets', SvelteKitAssetsMiddleware::class);
+        $this->registerMiddleware();
+        $this->registerMiddlewareGroups();
+        $this->registerRouteMiddleware();
+    }
+    
+    /**
+     * Register global middleware.
+     *
+     * @return void
+     */
+    protected function registerMiddleware()
+    {
+        $router = $this->app['router'];
         
-        // Применяем middleware к маршрутам для ассетов
-        app('router')->pushMiddlewareToGroup('web', SvelteKitAssetsMiddleware::class);
+        foreach ($this->middleware as $middleware) {
+            $router->middleware($middleware);
+        }
+    }
+    
+    /**
+     * Register middleware groups.
+     *
+     * @return void
+     */
+    protected function registerMiddlewareGroups()
+    {
+        $router = $this->app['router'];
+        
+        foreach ($this->middlewareGroups as $group => $middlewares) {
+            foreach ($middlewares as $middleware) {
+                $router->pushMiddlewareToGroup($group, $middleware);
+            }
+        }
+    }
+    
+    /**
+     * Register route middleware aliases.
+     *
+     * @return void
+     */
+    protected function registerRouteMiddleware()
+    {
+        $router = $this->app['router'];
+        
+        foreach ($this->routeMiddleware as $key => $middleware) {
+            $router->aliasMiddleware($key, $middleware);
+        }
     }
 }
