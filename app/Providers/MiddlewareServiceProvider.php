@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Http\Middleware\SvelteKitAssetsMiddleware;
+use App\Http\Middleware\StaticFilesMiddleware;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 
@@ -14,8 +15,7 @@ class MiddlewareServiceProvider extends ServiceProvider
      * @var array
      */
     protected $middleware = [
-        // Отключено: ассеты обслуживаются как статические файлы
-        // SvelteKitAssetsMiddleware::class,
+        StaticFilesMiddleware::class,
     ];
 
     /**
@@ -25,8 +25,7 @@ class MiddlewareServiceProvider extends ServiceProvider
      */
     protected $middlewareGroups = [
         'web' => [
-            // Отключено: ассеты обслуживаются как статические файлы
-            // SvelteKitAssetsMiddleware::class,
+            StaticFilesMiddleware::class,
         ],
     ];
 
@@ -36,8 +35,7 @@ class MiddlewareServiceProvider extends ServiceProvider
      * @var array
      */
     protected $routeMiddleware = [
-        // Отключено: ассеты обслуживаются как статические файлы
-        // 'svelte-assets' => SvelteKitAssetsMiddleware::class,
+        'static-files' => StaticFilesMiddleware::class,
     ];
 
     /**

@@ -68,7 +68,51 @@ Route::get('/llm/form', [TestLlmUIController::class, 'showForm']);
 Route::post('/llm/form', [TestLlmUIController::class, 'handleForm']);
 Route::post('/llm/query', [TestLlmUIController::class, 'handleForm']);
 
-// Ассеты SvelteKit обслуживаются напрямую как статические файлы в /public/build
+// Ключевые маршруты для SvelteKit ассетов
+Route::get('build/manifest.webmanifest', function () {
+    return response()->file(public_path('build/manifest.webmanifest'), [
+        'Content-Type' => 'application/manifest+json',
+        'Cache-Control' => 'public, max-age=2592000',
+    ]);
+});
+
+Route::get('build/registerSW.js', function () {
+    return response()->file(public_path('build/registerSW.js'), [
+        'Content-Type' => 'text/javascript',
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+});
+
+Route::get('build/sw.js', function () {
+    return response()->file(public_path('build/sw.js'), [
+        'Content-Type' => 'text/javascript',
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+});
+
+// Общие маршруты для JavaScript и CSS файлов
+Route::get('build/_app/immutable/entry/{file}.js', function ($file) {
+    return response()->file(public_path("build/_app/immutable/entry/{$file}.js"), [
+        'Content-Type' => 'text/javascript',
+        'Cache-Control' => 'public, max-age=2592000',
+    ]);
+});
+
+Route::get('build/_app/immutable/chunks/{file}.js', function ($file) {
+    return response()->file(public_path("build/_app/immutable/chunks/{$file}.js"), [
+        'Content-Type' => 'text/javascript',
+        'Cache-Control' => 'public, max-age=2592000',
+    ]);
+});
+
+Route::get('build/_app/immutable/assets/{file}.css', function ($file) {
+    return response()->file(public_path("build/_app/immutable/assets/{$file}.css"), [
+        'Content-Type' => 'text/css',
+        'Cache-Control' => 'public, max-age=2592000',
+    ]);
+});
+
+// Остальные ассеты обслуживаются напрямую или через StaticFilesMiddleware
 
 // SPA маршрут для SvelteKit приложения
 // Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
