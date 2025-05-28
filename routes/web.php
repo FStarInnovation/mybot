@@ -10,6 +10,10 @@ use App\Http\Controllers\SupabaseController;
 use App\Http\Controllers\TestLlmUIController;
 use App\Http\Controllers\LlmBridgeController;
 
+// Health‑check endpoint for load balancer / platform probes
+Route::get('/healthz', fn () => response()->json(['status' => 'ok']));
+
+
 // Маршрут для корневого пути
 Route::get('/', function () {
     return 'MyBot is running! <a href="/llm/form">Go to LLM Interface</a>';
@@ -21,8 +25,6 @@ Route::get('/admin/dashboard', function () {
 });
 
 // Универсальные маршруты (web)
-Route::get('/llm/form', [TestLlmUIController::class, 'showForm']);
-Route::post('/llm/query', [TestLlmUIController::class, 'handleForm']);
 Route::post('/scan-sites', [SiteScanController::class, 'scan']);
 Route::get('/results', [ResultsController::class, 'index']);
 Route::post('/llm', [Controller::class, 'queryLLM']);
