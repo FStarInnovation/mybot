@@ -14,7 +14,8 @@ class MiddlewareServiceProvider extends ServiceProvider
      * @var array
      */
     protected $middleware = [
-        SvelteKitAssetsMiddleware::class,
+        // Отключено: ассеты обслуживаются как статические файлы
+        // SvelteKitAssetsMiddleware::class,
     ];
 
     /**
@@ -24,7 +25,8 @@ class MiddlewareServiceProvider extends ServiceProvider
      */
     protected $middlewareGroups = [
         'web' => [
-            SvelteKitAssetsMiddleware::class,
+            // Отключено: ассеты обслуживаются как статические файлы
+            // SvelteKitAssetsMiddleware::class,
         ],
     ];
 
@@ -34,7 +36,8 @@ class MiddlewareServiceProvider extends ServiceProvider
      * @var array
      */
     protected $routeMiddleware = [
-        'svelte-assets' => SvelteKitAssetsMiddleware::class,
+        // Отключено: ассеты обслуживаются как статические файлы
+        // 'svelte-assets' => SvelteKitAssetsMiddleware::class,
     ];
 
     /**

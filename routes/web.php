@@ -68,42 +68,7 @@ Route::get('/llm/form', [TestLlmUIController::class, 'showForm']);
 Route::post('/llm/form', [TestLlmUIController::class, 'handleForm']);
 Route::post('/llm/query', [TestLlmUIController::class, 'handleForm']);
 
-// Специальный маршрут для ассетов SvelteKit
-Route::get('build/manifest.webmanifest', function () {
-    return response()->file(public_path('build/manifest.webmanifest'), [
-        'Content-Type' => 'application/manifest+json'
-    ]);
-});
-
-Route::get('build/registerSW.js', function () {
-    return response()->file(public_path('build/registerSW.js'), [
-        'Content-Type' => 'text/javascript'
-    ]);
-});
-
-Route::get('build/sw.js', function () {
-    return response()->file(public_path('build/sw.js'), [
-        'Content-Type' => 'text/javascript'
-    ]);
-});
-
-Route::get('build/_app/immutable/assets/{file}.css', function ($file) {
-    return response()->file(public_path("build/_app/immutable/assets/{$file}.css"), [
-        'Content-Type' => 'text/css'
-    ]);
-});
-
-Route::get('build/_app/immutable/entry/{file}.js', function ($file) {
-    return response()->file(public_path("build/_app/immutable/entry/{$file}.js"), [
-        'Content-Type' => 'text/javascript'
-    ]);
-});
-
-Route::get('build/_app/immutable/chunks/{file}.js', function ($file) {
-    return response()->file(public_path("build/_app/immutable/chunks/{$file}.js"), [
-        'Content-Type' => 'text/javascript'
-    ]);
-});
+// Ассеты SvelteKit обслуживаются напрямую как статические файлы в /public/build
 
 // SPA маршрут для SvelteKit приложения
 // Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
