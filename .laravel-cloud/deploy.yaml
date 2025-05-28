@@ -1,0 +1,32 @@
+hooks:
+  postBuild:
+    - description: Ensure Node.js is installed
+      script: |
+        echo "Checking for Node.js..."
+        if ! command -v node &> /dev/null; then
+          echo "Installing Node.js..."
+          curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+          apt-get install -y nodejs
+        fi
+        echo "Node.js version: $(node -v)"
+        echo "NPM version: $(npm -v)"
+    
+    - description: Install Node.js dependencies and build frontend
+      script: |
+        cd /var/www/html
+        
+        echo "Installing Node.js dependencies..."
+        cd frontend
+        npm ci
+        
+        echo "Building SvelteKit frontend..."
+        npm run build
+        
+        echo "Copying built files to public directory..."
+        mkdir -p ../public/build
+        cp -R .svelte-kit/output/client/* ../public/build/
+        
+        echo "Setting correct permissions..."
+        chmod -R 755 ../public/build
+        
+        echo "Frontend build completed successfully!"
