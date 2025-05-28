@@ -8,13 +8,12 @@ export default defineConfig({
     sveltekit(),
     VitePWA({
       // Используем автоматический режим вместо injectManifest для совместимости с SvelteKit
-      mode: 'development',
       base: '/',
       strategies: 'generateSW',
       registerType: 'autoUpdate',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        navigateFallback: null
+        navigateFallback: '/'
       },
       includeAssets: ['favicon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
@@ -26,13 +25,13 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: '/build/pwa-192x192.png',
+            src: '/pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: '/build/pwa-512x512.png',
+            src: '/pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
@@ -40,7 +39,7 @@ export default defineConfig({
         ]
       },
       devOptions: {
-        enabled: true,
+        enabled: false,
         type: 'module'
       }
     })
