@@ -1,3 +1,20 @@
+@php
+    /**
+     * Возвращает URL первого файла, подходящего под шаблон.
+     */
+    function svelte_asset(string $pattern): string
+    {
+        $matches = glob(public_path($pattern));
+        if (!$matches) {
+            return '';
+        }
+        // Берём первый найденный файл
+        $path = $matches[0];
+        // Превращаем абсолютный путь в относительный к public
+        $relative = ltrim(str_replace(public_path(), '', $path), '/');
+        return asset($relative);
+    }
+@endphp
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,7 +26,7 @@
     <base href="/">
     
     <!-- Ссылки на собранные SvelteKit ассеты -->
-    <link rel="stylesheet" href="{{ asset('build/_app/immutable/assets/0.DdC7Ipbr.css') }}">
+    <link rel="stylesheet" href="{{ svelte_asset('build/_app/immutable/assets/*.css') }}">
     <link rel="manifest" href="{{ asset('build/manifest.webmanifest') }}">
     
     <!-- PWA мета-теги -->
@@ -20,8 +37,8 @@
     <div id="app"></div>
     
     <!-- Подключение собранных SvelteKit скриптов -->
-    <script src="{{ asset('build/_app/immutable/entry/app.DWltJjdc.js') }}" type="module"></script>
-    <script src="{{ asset('build/_app/immutable/entry/start.C3jr5oCD.js') }}" type="module"></script>
+    <script src="{{ svelte_asset('build/_app/immutable/entry/app.*.js') }}" type="module"></script>
+    <script src="{{ svelte_asset('build/_app/immutable/entry/start.*.js') }}" type="module"></script>
     
     <!-- Регистрация Service Worker для PWA -->
     <script src="{{ asset('build/registerSW.js') }}" type="module"></script>
