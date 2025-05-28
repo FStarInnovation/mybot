@@ -68,40 +68,42 @@ Route::get('/llm/form', [TestLlmUIController::class, 'showForm']);
 Route::post('/llm/form', [TestLlmUIController::class, 'handleForm']);
 Route::post('/llm/query', [TestLlmUIController::class, 'handleForm']);
 
-// Специальный маршрут для ассетов SvelteKit с правильными MIME-типами
-Route::get('build/{path?}', function ($path = '') {
-    $fullPath = public_path('build/' . $path);
-    
-    if (file_exists($fullPath) && !is_dir($fullPath)) {
-        $extension = pathinfo($fullPath, PATHINFO_EXTENSION);
-        
-        $mimeTypes = [
-            'js' => 'text/javascript',
-            'mjs' => 'text/javascript',
-            'css' => 'text/css',
-            'json' => 'application/json',
-            'webmanifest' => 'application/manifest+json',
-            'png' => 'image/png',
-            'jpg' => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'svg' => 'image/svg+xml',
-            'ico' => 'image/x-icon',
-        ];
-        
-        // Специальные случаи
-        if (empty($extension)) {
-            if (str_ends_with($path, 'registerSW') || str_ends_with($path, 'sw')) {
-                return response()->file($fullPath, ['Content-Type' => 'text/javascript']);
-            }
-        }
-        
-        if (isset($mimeTypes[$extension])) {
-            return response()->file($fullPath, ['Content-Type' => $mimeTypes[$extension]]);
-        }
-    }
-    
-    return response()->file($fullPath);
-})->where('path', '.*');
+// Специальный маршрут для ассетов SvelteKit
+Route::get('build/manifest.webmanifest', function () {
+    return response()->file(public_path('build/manifest.webmanifest'), [
+        'Content-Type' => 'application/manifest+json'
+    ]);
+});
+
+Route::get('build/registerSW.js', function () {
+    return response()->file(public_path('build/registerSW.js'), [
+        'Content-Type' => 'text/javascript'
+    ]);
+});
+
+Route::get('build/sw.js', function () {
+    return response()->file(public_path('build/sw.js'), [
+        'Content-Type' => 'text/javascript'
+    ]);
+});
+
+Route::get('build/_app/immutable/assets/{file}.css', function ($file) {
+    return response()->file(public_path("build/_app/immutable/assets/{$file}.css"), [
+        'Content-Type' => 'text/css'
+    ]);
+});
+
+Route::get('build/_app/immutable/entry/{file}.js', function ($file) {
+    return response()->file(public_path("build/_app/immutable/entry/{$file}.js"), [
+        'Content-Type' => 'text/javascript'
+    ]);
+});
+
+Route::get('build/_app/immutable/chunks/{file}.js', function ($file) {
+    return response()->file(public_path("build/_app/immutable/chunks/{$file}.js"), [
+        'Content-Type' => 'text/javascript'
+    ]);
+});
 
 // SPA маршрут для SvelteKit приложения
 // Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
