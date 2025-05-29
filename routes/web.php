@@ -33,6 +33,11 @@ Route::get('/supabase', [SupabaseController::class, 'fetchTopExpensive']);
 // Маршрут для очистки кеша
 Route::get('/clear-cache', function () {
     Artisan::call('optimize:clear');
+    Artisan::call('route:cache');
+    Artisan::call('route:clear');
+    Artisan::call('config:clear');
+    Artisan::call('view:clear');
+    Artisan::call('cache:clear');
     return '✅ Laravel cache cleared!';
 });
 
@@ -113,9 +118,21 @@ Route::get('build/_app/immutable/assets/{file}.css', function ($file) {
 
 // Остальные ассеты обслуживаются напрямую или через StaticFilesMiddleware
 
-// Явные маршруты для /chat, обрабатываемые контроллером
-Route::get('/chat', [App\Http\Controllers\SpaController::class, 'serve']);
-Route::get('/chat/{any}', [App\Http\Controllers\SpaController::class, 'serve'])->where('any', '.*');
+// Диагностический маршрут для проверки доступности /chat
+Route::get('/chat-test', function() {
+    return 'Chat route is working through Laravel - ' . date('Y-m-d H:i:s');
+});
+
+// Максимально прямой маршрут для /chat - возвращает явно содержимое index.html
+Route::get('/chat', function() {
+    $html = file_get_contents(public_path('build/index.html'));
+    return response($html, 200)->header('Content-Type', 'text/html');
+});
+
+Route::get('/chat/{any}', function() {
+    $html = file_get_contents(public_path('build/index.html'));
+    return response($html, 200)->header('Content-Type', 'text/html');
+})->where('any', '.*');
 
 // SPA fallback for client-side routing
 Route::get('/{path?}', function () {
