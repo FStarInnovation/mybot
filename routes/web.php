@@ -123,23 +123,16 @@ Route::get('/chat-test', function() {
     return 'Chat route is working through Laravel - ' . date('Y-m-d H:i:s');
 });
 
-// Маршрут /chat с использованием Blade-шаблона вместо SPA
-Route::get('/chat', function() {
-    return view('chat');
-});
+// Вернулись к работающей конфигурации без явного маршрута для /chat
 
-Route::get('/chat/{any}', function() {
-    return view('chat');
-})->where('any', '.*');
-
-// SPA fallback for client-side routing
+// SPA fallback for client-side routing включая /chat
 Route::get('/{path?}', function () {
-    return response()->file(public_path('build/index.html'));
-})->where('path', '(?!chat).*')->name('spa');
+    return response()->file(public_path('index.html'));
+})->where('path', '.*')->name('spa');
 
 // Fallback to static index.html
 Route::fallback(function () {
-    return response()->file(public_path('build/index.html'));
+    return response()->file(public_path('index.html'));
 });
 
 // // 1) Любой GET-запрос на /chat или /chat/... возвращает ваш Blade-шаблон
