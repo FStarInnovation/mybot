@@ -15,7 +15,7 @@ Route::get('/healthz', fn () => response()->json(['status' => 'ok']));
 
 // Маршрут для корневого пути
 Route::get('/', function () {
-    return view('app');
+    return response()->file(public_path('index.html'));
 });
 
 // Add a new route for admin dashboard
@@ -116,10 +116,10 @@ Route::get('build/_app/immutable/assets/{file}.css', function ($file) {
 // SPA маршрут для SvelteKit приложения
 // Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
 Route::get('/{path?}', function () {
-    return view('app');
+    return response()->file(public_path('index.html'));
 })->where('path', '.*')->name('spa');
 
 // Catch-all SPA route for SvelteKit app
 Route::fallback(function () {
-    return view('app');
+    return response()->file(public_path('index.html'));
 });
