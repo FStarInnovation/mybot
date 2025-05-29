@@ -15,7 +15,7 @@ Route::get('/healthz', fn () => response()->json(['status' => 'ok']));
 
 // Static SPA entry point
 Route::get('/', function () {
-    return response()->file(public_path('index.html'));
+    return response()->file(public_path('build/index.html'));
 });
 
 // Add a new route for admin dashboard
@@ -115,12 +115,12 @@ Route::get('build/_app/immutable/assets/{file}.css', function ($file) {
 
 // SPA fallback for client-side routing
 Route::get('/{path?}', function () {
-    return response()->file(public_path('index.html'));
+    return response()->file(public_path('build/index.html'));
 })->where('path', '.*')->name('spa');
 
 // Fallback to static index.html
 Route::fallback(function () {
-    return response()->file(public_path('index.html'));
+    return response()->file(public_path('build/index.html'));
 });
 
 // // 1) Любой GET-запрос на /chat или /chat/... возвращает ваш Blade-шаблон
