@@ -123,14 +123,13 @@ Route::get('/chat-test', function() {
     return 'Chat route is working through Laravel - ' . date('Y-m-d H:i:s');
 });
 
-// Вернулись к работающей конфигурации без явного маршрута для /chat
-
-// SPA fallback for client-side routing включая /chat
+// SPA маршрут для SvelteKit приложения
+// Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
 Route::get('/{path?}', function () {
     return response()->file(public_path('index.html'));
 })->where('path', '.*')->name('spa');
 
-// Fallback to static index.html
+// Catch-all SPA route for SvelteKit app
 Route::fallback(function () {
     return response()->file(public_path('index.html'));
 });
