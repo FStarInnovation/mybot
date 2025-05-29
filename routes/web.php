@@ -123,15 +123,13 @@ Route::get('/chat-test', function() {
     return 'Chat route is working through Laravel - ' . date('Y-m-d H:i:s');
 });
 
-// Максимально прямой маршрут для /chat - возвращает явно содержимое index.html
+// Маршрут /chat с использованием Blade-шаблона вместо SPA
 Route::get('/chat', function() {
-    $html = file_get_contents(public_path('build/index.html'));
-    return response($html, 200)->header('Content-Type', 'text/html');
+    return view('chat');
 });
 
 Route::get('/chat/{any}', function() {
-    $html = file_get_contents(public_path('build/index.html'));
-    return response($html, 200)->header('Content-Type', 'text/html');
+    return view('chat');
 })->where('any', '.*');
 
 // SPA fallback for client-side routing
