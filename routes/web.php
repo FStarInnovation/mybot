@@ -94,6 +94,39 @@ Route::get('build/sw.js', function () {
     ]);
 });
 
+// Serve _app immutable assets root path by mapping to build/_app with correct MIME types
+Route::get('_app/{path}', function ($path) {
+    $filePath = public_path("build/_app/{$path}");
+
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+
+    $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+    $mimeTypes = [
+        'js'   => 'text/javascript',
+        'css'  => 'text/css',
+        'json' => 'application/json',
+        'png'  => 'image/png',
+        'jpg'  => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'svg'  => 'image/svg+xml',
+        'woff' => 'font/woff',
+        'woff2'=> 'font/woff2',
+        'ttf'  => 'font/ttf',
+    ];
+
+    $headers = [];
+    if (isset($mimeTypes[$extension])) {
+        $headers['Content-Type'] = $mimeTypes[$extension];
+    }
+
+    // Cache busting filenames already include a hash, so we can cache for a month
+    $headers['Cache-Control'] = 'public, max-age=2592000';
+
+    return response()->file($filePath, $headers);
+})->where('path', '.*');
+
 // Общие маршруты для JavaScript и CSS файлов
 Route::get('build/_app/immutable/entry/{file}.js', function ($file) {
     return response()->file(public_path("build/_app/immutable/entry/{$file}.js"), [
@@ -126,12 +159,12 @@ Route::get('/chat-test', function() {
 // SPA маршрут для SvelteKit приложения
 // Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
 Route::get('/{path?}', function () {
-    return response()->file(public_path('index.html'));
+    return response()->file(public_path('build/index.html'));
 })->where('path', '.*')->name('spa');
 
 // Catch-all SPA route for SvelteKit app
 Route::fallback(function () {
-    return response()->file(public_path('index.html'));
+    return response()->file(public_path('build/index.html'));
 });
 
 // // 1) Любой GET-запрос на /chat или /chat/... возвращает ваш Blade-шаблон
