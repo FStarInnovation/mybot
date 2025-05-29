@@ -1,0 +1,20 @@
+# Правильные MIME-типы для SvelteKit ассетов
+AddType application/javascript .js
+AddType text/css .css
+AddType application/manifest+json .webmanifest
+
+# Fallback для SPA маршрутов
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # Если запрос не к существующему файлу/директории
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # Для /chat и его подпутей
+  RewriteRule ^chat(/.*)?$ /build/index.html [L]
+  
+  # Для всех остальных маршрутов, пропускаем в Laravel
+  RewriteRule . /index.php [L]
+</IfModule>
