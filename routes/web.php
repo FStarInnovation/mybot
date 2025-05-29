@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\SupabaseController;
 use App\Http\Controllers\TestLlmUIController;
 use App\Http\Controllers\LlmBridgeController;
+use Illuminate\Support\Facades\Redis;
+use App\Models\SearchQuery;
 
 // Health‑check endpoint for load balancer / platform probes
 Route::get('/healthz', fn () => response()->json(['status' => 'ok']));
@@ -154,6 +156,25 @@ Route::get('build/_app/immutable/assets/{file}.css', function ($file) {
 // Диагностический маршрут для проверки доступности /chat
 Route::get('/chat-test', function() {
     return 'Chat route is working through Laravel - ' . date('Y-m-d H:i:s');
+});
+
+// Diagnostic route to verify Redis (short-term) and PostgreSQL (long-term) operations
+Route::get('/memory-test', function () {
+    // Short-term memory (Upstash Redis)
+    $timestamp = now()->toDateTimeString();
+    Redis::set('memory_test', $timestamp);
+    $redisValue = Redis::get('memory_test');
+
+    // Long-term memory (Neon PostgreSQL)
+    $query = SearchQuery::create([
+        'query' => 'memory_test ' . $timestamp,
+        'results_count' => random_int(0, 10),
+    ]);
+
+    return response()->json([
+        'redis_value' => $redisValue,
+        'search_query_saved' => $query->only(['id', 'query', 'created_at']),
+    ]);
 });
 
 // SPA маршрут для SvelteKit приложения
