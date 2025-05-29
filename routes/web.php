@@ -113,10 +113,14 @@ Route::get('build/_app/immutable/assets/{file}.css', function ($file) {
 
 // Остальные ассеты обслуживаются напрямую или через StaticFilesMiddleware
 
+// Явные маршруты для /chat, обрабатываемые контроллером
+Route::get('/chat', [App\Http\Controllers\SpaController::class, 'serve']);
+Route::get('/chat/{any}', [App\Http\Controllers\SpaController::class, 'serve'])->where('any', '.*');
+
 // SPA fallback for client-side routing
 Route::get('/{path?}', function () {
     return response()->file(public_path('build/index.html'));
-})->where('path', '.*')->name('spa');
+})->where('path', '(?!chat).*')->name('spa');
 
 // Fallback to static index.html
 Route::fallback(function () {
