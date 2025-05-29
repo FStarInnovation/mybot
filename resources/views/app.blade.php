@@ -14,9 +14,9 @@
     <link rel="apple-touch-icon" href="{{ asset('pwa-192x192.png') }}">
 </head>
 <body>
-    <div id="app"></div>
+    <div id="svelte"></div>
 
-    <script src="{{ svelte_asset('build/_app/immutable/entry/app.*.js') }}" type="module"></script>
+    <!-- SvelteKit client start script -->
     <script src="{{ svelte_asset('build/_app/immutable/entry/start.*.js') }}" type="module"></script>
     <script src="{{ asset('registerSW.js') }}" type="module"></script>
 </body>
