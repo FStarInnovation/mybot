@@ -137,7 +137,6 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\TelescopeServiceProvider::class,
         App\Providers\MiddlewareServiceProvider::class,
 
         // если есть другие ваши провайдеры, тоже укажите их здесь
