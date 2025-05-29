@@ -8,7 +8,7 @@ export default {
     port: 3002
   },
   build: {
-    outDir: '../public',
+    outDir: '../public/build',
     emptyOutDir: true
   },
   resolve: {
