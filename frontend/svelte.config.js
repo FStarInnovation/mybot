@@ -1,12 +1,12 @@
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+// frontend/svelte.config.js
 import adapter from '@sveltejs/adapter-static';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  preprocess: [vitePreprocess()],
+  preprocess: vitePreprocess(),
   kit: {
     adapter: adapter({
-      // Output SPA to Laravel public folder
       pages: '../public',
       assets: '../public',
       fallback: 'index.html'
