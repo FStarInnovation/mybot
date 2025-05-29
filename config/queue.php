@@ -67,20 +67,15 @@ return [
         ],
 
         'upstash' => [
-            'driver' => 'redis',
-            'connection' => 'upstash',
-            'queue' => env('REDIS_QUEUE', 'default'),
+            'driver'      => 'redis',
+            'connection'  => 'upstash',
+            'queue'       => env('REDIS_QUEUE', 'default'),
             'retry_after' => 90,
-            'block_for' => null,
-            'after_commit' => false,
-            'expire' => 60 * 60 * 24, // 1 день
-            'tries' => 3,
-            'backoff' => [5, 10, 20],
-            'options' => [
-                'queue' => [
-                    'prefix' => env('REDIS_PREFIX', 'mybot_'),
-                ],
-            ],
+            'block_for'   => null,
+            'after_commit'=> false,
+            'expire'      => 60 * 60 * 24, // 1 день
+            'tries'       => 3,
+            'backoff'     => [5, 10, 20],
         ],
 
     ],  // ← здесь обязательно закрываем массив connections запятой и скобкой

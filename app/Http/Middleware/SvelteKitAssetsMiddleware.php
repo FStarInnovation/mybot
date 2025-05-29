@@ -35,7 +35,20 @@ class SvelteKitAssetsMiddleware
             }
         }
         
-        return $next($request);
+        // Продолжаем обработку запроса и получаем ответ Laravel
+        $response = $next($request);
+
+        // Для HTML‑ответов добавляем CSP‑заголовок,
+        // разрешая 'unsafe-eval' (нужен Workbox/SvelteKit) и 'unsafe-inline' для стилей.
+        if (Str::startsWith($response->headers->get('Content-Type'), 'text/html')) {
+            $csp = "default-src 'self'; "
+                 . "script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval'; "
+                 . "style-src 'self' 'unsafe-inline'; "
+                 . "img-src 'self' data: https:;";
+            $response->headers->set('Content-Security-Policy', $csp);
+        }
+
+        return $response;
     }
     
     /**

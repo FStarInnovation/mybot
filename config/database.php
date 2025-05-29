@@ -41,10 +41,12 @@ return [
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', 6379),
             'database' => env('REDIS_DB', '0'),
-            'scheme' => 'tls',
-            'read_timeout' => env('REDIS_READ_TIMEOUT', 10),
-            'timeout' => env('REDIS_TIMEOUT', 5),
+            'scheme' => env('REDIS_SCHEME', 'tls'),
+            'read_timeout' => env('REDIS_READ_TIMEOUT', 10), // seconds
+            'timeout' => env('REDIS_TIMEOUT', 5), // seconds for connection
             'persistent' => false,
+            'keepalive' => env('REDIS_KEEPALIVE', 30), // seconds for TCP keepalive
+            // 'ssl' => [ ... ], // Intentionally removed
         ],
 
         'cache' => [
@@ -53,7 +55,12 @@ return [
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', 6379),
             'database' => env('REDIS_CACHE_DB', '1'),
-            'scheme' => 'tls',
+            'scheme' => env('REDIS_SCHEME', 'tls'),
+            'read_timeout' => env('REDIS_READ_TIMEOUT', 10), // seconds
+            'timeout' => env('REDIS_TIMEOUT', 5), // seconds for connection
+            'persistent' => false, // Assuming cache connections don't need to be persistent
+            'keepalive' => env('REDIS_KEEPALIVE', 30), // seconds for TCP keepalive
+            // 'ssl' => [ ... ], // Intentionally removed
         ],
 
     ],

@@ -1,4 +1,3 @@
-@php
     /**
      * Возвращает URL первого файла, подходящего под шаблон.
      */
@@ -27,11 +26,11 @@
     
     <!-- Ссылки на собранные SvelteKit ассеты -->
     <link rel="stylesheet" href="{{ svelte_asset('build/_app/immutable/assets/*.css') }}">
-    <link rel="manifest" href="{{ asset('build/manifest.webmanifest') }}">
+    <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
     
     <!-- PWA мета-теги -->
     <meta name="theme-color" content="#3b82f6">
-    <link rel="apple-touch-icon" href="{{ asset('build/pwa-192x192.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('pwa-192x192.png') }}">
 </head>
 <body>
     <div id="app"></div>
@@ -41,6 +40,6 @@
     <script src="{{ svelte_asset('build/_app/immutable/entry/start.*.js') }}" type="module"></script>
     
     <!-- Регистрация Service Worker для PWA -->
-    <script src="{{ asset('build/registerSW.js') }}" type="module"></script>
+    <script src="{{ asset('registerSW.js') }}" type="module"></script>
 </body>
 </html>

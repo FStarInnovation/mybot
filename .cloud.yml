@@ -4,7 +4,18 @@ runtime:
 build:
   commands:
     - composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-    - php artisan vendor:publish --provider="Laravel\Telescope\TelescopeServiceProvider" --tag="telescope-assets" --force
+    - npm ci --prefix frontend
+    - npm run build --prefix frontend
+    - mkdir -p public/build && cp -R frontend/build/* public/build/
+    - sed -i 's/"\/build\/pwa-/"\/pwa-/g' public/build/manifest.webmanifest
+    - cp public/build/manifest.webmanifest public/manifest.webmanifest
+    - cp public/build/pwa-192x192.png public/
+    - cp public/build/pwa-512x512.png public/
+    - cp public/build/registerSW.js public/
+    - cp public/build/sw.js public/
+    - cp public/build/workbox-*.js public/
+    # Remove manifest from SW precache to avoid stale manifest caching
+    - sed -i '/url\": \"manifest.webmanifest\"/{N;N;d;}' public/sw.js
     - php artisan config:clear
     - php artisan route:clear
     - php artisan view:clear

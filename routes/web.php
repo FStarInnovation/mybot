@@ -13,10 +13,9 @@ use App\Http\Controllers\LlmBridgeController;
 // Health‑check endpoint for load balancer / platform probes
 Route::get('/healthz', fn () => response()->json(['status' => 'ok']));
 
-
 // Маршрут для корневого пути
 Route::get('/', function () {
-    return 'MyBot is running! <a href="/llm/form">Go to LLM Interface</a>';
+    return view('app');
 });
 
 // Add a new route for admin dashboard
@@ -36,8 +35,6 @@ Route::get('/clear-cache', function () {
     Artisan::call('optimize:clear');
     return '✅ Laravel cache cleared!';
 });
-
-
 
 Route::get('/test-vector-match', function () {
     $embedding = include base_path('vector.php');
@@ -121,3 +118,8 @@ Route::get('build/_app/immutable/assets/{file}.css', function ($file) {
 Route::get('/{path?}', function () {
     return view('app');
 })->where('path', '.*')->name('spa');
+
+// Catch-all SPA route for SvelteKit app
+Route::fallback(function () {
+    return view('app');
+});
