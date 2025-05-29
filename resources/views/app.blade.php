@@ -17,7 +17,8 @@
     <div id="svelte"></div>
 
     <!-- SvelteKit client start script -->
-    <script src="{{ svelte_asset('build/_app/immutable/entry/start.*.js') }}" type="module"></script>
-    <script src="{{ asset('registerSW.js') }}" type="module"></script>
+    <script type="module" src="{{ svelte_asset('build/_app/immutable/entry/start.*.js') }}"></script>
+    <script type="module" src="{{ svelte_asset('build/_app/immutable/entry/app.*.js') }}"></script>
+    <script type="module" src="{{ svelte_asset('build/registerSW.js') }}"></script>
 </body>
 </html>
