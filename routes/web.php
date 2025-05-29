@@ -123,6 +123,6 @@ Route::fallback(function () {
     return response()->file(public_path('index.html'));
 });
 
-// 1) Любой GET-запрос на /chat или /chat/... возвращает ваш Blade-шаблон
-Route::view('/chat/{any?}', 'app')
-     ->where('any', '.*');
+// // 1) Любой GET-запрос на /chat или /chat/... возвращает ваш Blade-шаблон
+// Route::view('/chat/{any?}', 'app')
+//      ->where('any', '.*'); // Закомментировано, т.к. /chat должен обслуживаться SPA (index.html)
