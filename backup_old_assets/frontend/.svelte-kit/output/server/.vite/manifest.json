@@ -1,0 +1,257 @@
+{
+  ".svelte-kit/generated/server/internal.js": {
+    "file": "internal.js",
+    "name": "internal",
+    "src": ".svelte-kit/generated/server/internal.js",
+    "isEntry": true,
+    "imports": [
+      "_internal.js",
+      "_shared-server.js"
+    ]
+  },
+  "_ChatMessage.js": {
+    "file": "chunks/ChatMessage.js",
+    "name": "ChatMessage",
+    "imports": [
+      "_ssr.js",
+      "_ProductCard.js"
+    ],
+    "css": [
+      "_app/immutable/assets/ChatMessage.FiBhqMH9.css"
+    ]
+  },
+  "_ProductCard.js": {
+    "file": "chunks/ProductCard.js",
+    "name": "ProductCard",
+    "imports": [
+      "_ssr.js",
+      "_product-queries.js"
+    ],
+    "css": [
+      "_app/immutable/assets/ProductCard.Bo-Z5wnb.css"
+    ]
+  },
+  "_context.js": {
+    "file": "chunks/context.js",
+    "name": "context",
+    "imports": [
+      "_ssr.js",
+      "_index2.js"
+    ]
+  },
+  "_exports.js": {
+    "file": "chunks/exports.js",
+    "name": "exports"
+  },
+  "_false.js": {
+    "file": "chunks/false.js",
+    "name": "false"
+  },
+  "_index.js": {
+    "file": "chunks/index.js",
+    "name": "index"
+  },
+  "_index2.js": {
+    "file": "chunks/index2.js",
+    "name": "index",
+    "imports": [
+      "_ssr.js"
+    ]
+  },
+  "_internal.js": {
+    "file": "chunks/internal.js",
+    "name": "internal",
+    "imports": [
+      "_ssr.js",
+      "_ssr2.js",
+      "_shared-server.js"
+    ]
+  },
+  "_product-queries.js": {
+    "file": "chunks/product-queries.js",
+    "name": "product-queries",
+    "imports": [
+      "_index2.js",
+      "_context.js",
+      "_ssr.js"
+    ]
+  },
+  "_shared-server.js": {
+    "file": "chunks/shared-server.js",
+    "name": "shared-server"
+  },
+  "_ssr.js": {
+    "file": "chunks/ssr.js",
+    "name": "ssr"
+  },
+  "_ssr2.js": {
+    "file": "chunks/ssr2.js",
+    "name": "ssr"
+  },
+  "_stores.js": {
+    "file": "chunks/stores.js",
+    "name": "stores",
+    "imports": [
+      "_ssr.js",
+      "_exports.js",
+      "_ssr2.js"
+    ]
+  },
+  "node_modules/@sveltejs/kit/src/runtime/components/svelte-4/error.svelte": {
+    "file": "entries/fallbacks/error.svelte.js",
+    "name": "entries/fallbacks/error.svelte",
+    "src": "node_modules/@sveltejs/kit/src/runtime/components/svelte-4/error.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_stores.js"
+    ]
+  },
+  "node_modules/@sveltejs/kit/src/runtime/server/index.js": {
+    "file": "index.js",
+    "name": "index",
+    "src": "node_modules/@sveltejs/kit/src/runtime/server/index.js",
+    "isEntry": true,
+    "imports": [
+      "_false.js",
+      "_internal.js",
+      "_index.js",
+      "_exports.js",
+      "_index2.js",
+      "_shared-server.js"
+    ]
+  },
+  "src/routes/+layout.svelte": {
+    "file": "entries/pages/_layout.svelte.js",
+    "name": "entries/pages/_layout.svelte",
+    "src": "src/routes/+layout.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_index2.js",
+      "_false.js",
+      "_context.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_layout.DdC7Ipbr.css"
+    ]
+  },
+  "src/routes/+page.svelte": {
+    "file": "entries/pages/_page.svelte.js",
+    "name": "entries/pages/_page.svelte",
+    "src": "src/routes/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.C-IzXNFj.css"
+    ]
+  },
+  "src/routes/ag-ui-demo/+page.svelte": {
+    "file": "entries/pages/ag-ui-demo/_page.svelte.js",
+    "name": "entries/pages/ag-ui-demo/_page.svelte",
+    "src": "src/routes/ag-ui-demo/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_ChatMessage.js",
+      "_index2.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.Da-0dl0j.css"
+    ]
+  },
+  "src/routes/api/products/+server.js": {
+    "file": "entries/endpoints/api/products/_server.js",
+    "name": "entries/endpoints/api/products/_server",
+    "src": "src/routes/api/products/+server.js",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_shared-server.js"
+    ]
+  },
+  "src/routes/api/products/[id]/+server.js": {
+    "file": "entries/endpoints/api/products/_id_/_server.js",
+    "name": "entries/endpoints/api/products/_id_/_server",
+    "src": "src/routes/api/products/[id]/+server.js",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_shared-server.js"
+    ]
+  },
+  "src/routes/api/setup-test-products/+server.js": {
+    "file": "entries/endpoints/api/setup-test-products/_server.js",
+    "name": "entries/endpoints/api/setup-test-products/_server",
+    "src": "src/routes/api/setup-test-products/+server.js",
+    "isEntry": true,
+    "imports": [
+      "_index.js",
+      "_shared-server.js"
+    ]
+  },
+  "src/routes/chat/+page.svelte": {
+    "file": "entries/pages/chat/_page.svelte.js",
+    "name": "entries/pages/chat/_page.svelte",
+    "src": "src/routes/chat/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_ChatMessage.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.BLCfz8HU.css"
+    ]
+  },
+  "src/routes/dashboard/+layout.svelte": {
+    "file": "entries/pages/dashboard/_layout.svelte.js",
+    "name": "entries/pages/dashboard/_layout.svelte",
+    "src": "src/routes/dashboard/+layout.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_stores.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_layout.TIzTRg2W.css"
+    ]
+  },
+  "src/routes/dashboard/+page.svelte": {
+    "file": "entries/pages/dashboard/_page.svelte.js",
+    "name": "entries/pages/dashboard/_page.svelte",
+    "src": "src/routes/dashboard/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.DWRTBfN0.css"
+    ]
+  },
+  "src/routes/products/+page.svelte": {
+    "file": "entries/pages/products/_page.svelte.js",
+    "name": "entries/pages/products/_page.svelte",
+    "src": "src/routes/products/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_product-queries.js",
+      "_ProductCard.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.CdLl7wPD.css"
+    ]
+  },
+  "src/routes/tanstack-test/+page.svelte": {
+    "file": "entries/pages/tanstack-test/_page.svelte.js",
+    "name": "entries/pages/tanstack-test/_page.svelte",
+    "src": "src/routes/tanstack-test/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_product-queries.js"
+    ]
+  }
+}

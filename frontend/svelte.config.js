@@ -6,8 +6,9 @@ const config = {
   preprocess: [vitePreprocess()],
   kit: {
     adapter: adapter({
-      pages: 'public',
-      assets: 'public',
+      // Output SPA to Laravel public folder
+      pages: '../public',
+      assets: '../public',
       fallback: 'index.html'
     }),
     alias: {
