@@ -13,7 +13,7 @@ use App\Http\Controllers\LlmBridgeController;
 // Health‑check endpoint for load balancer / platform probes
 Route::get('/healthz', fn () => response()->json(['status' => 'ok']));
 
-// Маршрут для корневого пути
+// Static SPA entry point
 Route::get('/', function () {
     return response()->file(public_path('index.html'));
 });
@@ -113,13 +113,12 @@ Route::get('build/_app/immutable/assets/{file}.css', function ($file) {
 
 // Остальные ассеты обслуживаются напрямую или через StaticFilesMiddleware
 
-// SPA маршрут для SvelteKit приложения
-// Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
+// SPA fallback for client-side routing
 Route::get('/{path?}', function () {
     return response()->file(public_path('index.html'));
 })->where('path', '.*')->name('spa');
 
-// Catch-all SPA route for SvelteKit app
+// Fallback to static index.html
 Route::fallback(function () {
     return response()->file(public_path('index.html'));
 });
