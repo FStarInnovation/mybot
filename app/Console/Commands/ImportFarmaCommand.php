@@ -6,6 +6,8 @@ use App\Models\RawProduct;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Facades\Log;
+use Laravel\Telescope\Telescope;
 
 class ImportFarmaCommand extends Command
 {
@@ -16,6 +18,12 @@ class ImportFarmaCommand extends Command
     public function handle(): int
     {
         $chunk = (int) $this->option('chunk');
+
+        // Disable Telescope & query log to reduce memory usage during bulk import
+        if (class_exists(Telescope::class)) {
+            Telescope::stopRecording();
+        }
+        DB::disableQueryLog();
 
         $this->info("Importing in chunks of {$chunk}...");
 
