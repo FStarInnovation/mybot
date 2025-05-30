@@ -21,7 +21,7 @@ class ImportFarmaCommand extends Command
 
         // Use source connection to farma (default)
         LazyCollection::make(function () {
-            yield from DB::table('farma')->orderBy('id')->cursor();
+            yield from DB::connection('farma')->table('farma')->orderBy('id')->cursor();
         })->chunk($chunk)->each(function ($rows) {
             $insert = [];
             foreach ($rows as $row) {
