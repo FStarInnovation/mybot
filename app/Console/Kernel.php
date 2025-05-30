@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\ProcessSiteScans::class,
         \App\Console\Commands\CheckDatabaseConnection::class,
+        \App\Console\Commands\ImportFarmaCommand::class,
     ];
 
     /**
