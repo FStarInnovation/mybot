@@ -20,21 +20,6 @@ return [
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'require'),
         ],
-
-        // Connection to Neon branch with test table `farma`
-        'farma' => [
-            'driver' => 'pgsql',
-            'host' => env('FARMA_PG_HOST', env('DB_HOST', '127.0.0.1')),
-            'port' => env('FARMA_PG_PORT', 5432),
-            'database' => env('FARMA_PG_DATABASE', 'neondb'),
-            'username' => env('FARMA_PG_USERNAME', env('DB_USERNAME', 'forge')),
-            'password' => env('FARMA_PG_PASSWORD', env('DB_PASSWORD', '')),
-            'charset' => 'utf8',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'search_path' => 'public',
-            'sslmode' => 'require',
-        ],
     ],
 
     'migrations' => [
