@@ -37,13 +37,18 @@ class NormalizeProductJob implements ShouldQueue
 
             // 1. Category (simple by hashtag or metadata)
             $categoryName = $raw->hashtag ?? $data['category'] ?? 'uncategorized';
-            $category = Category::firstOrCreate(['name' => $categoryName]);
+            $categorySlug = Str::slug($categoryName);
+            $category = Category::firstOrCreate(
+                ['slug' => $categorySlug],
+                ['name' => $categoryName]
+            );
 
             // 2. Product basic fields
             $product = Product::updateOrCreate([
                 'source_id' => $raw->id,
             ], [
                 'title' => $raw->title,
+                'slug' => Str::slug(($raw->title ?: 'product').'-'.$raw->id),
                 'price' => $raw->price_num ?? 0,
                 'url' => $raw->url,
                 'category_id' => $category->id,
