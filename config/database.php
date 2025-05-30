@@ -20,6 +20,20 @@ return [
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'require'),
         ],
+        // Connection to branch with table `farma` for one-time import
+        'farma' => [
+            'driver'   => 'pgsql',
+            'host'     => env('FARMA_PG_HOST', env('DB_HOST')),
+            'port'     => env('FARMA_PG_PORT', 5432),
+            'database' => env('FARMA_PG_DATABASE', env('DB_DATABASE')),
+            'username' => env('FARMA_PG_USERNAME', env('DB_USERNAME')),
+            'password' => env('FARMA_PG_PASSWORD', env('DB_PASSWORD')),
+            'charset'  => 'utf8',
+            'prefix'   => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'require',
+        ],
     ],
 
     'migrations' => [
