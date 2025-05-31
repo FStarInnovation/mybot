@@ -139,7 +139,7 @@
     <div class="custom-component-container">
       {#if customComponentData.componentName === 'ProductCard' && customComponentData.props && typeof customComponentData.props.productId === 'number'}
         <div class="product-card-wrapper">
-          <ProductCard productId={customComponentData.props.productId} />
+          <ProductCard productId={customComponentData.props.productId} clickable={false} />
           {#if formattedTimestamp}
             <div class="message-timestamp">{formattedTimestamp}</div>
           {/if}
