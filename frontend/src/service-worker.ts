@@ -36,6 +36,10 @@ self.addEventListener('activate', (event) => {
 
 // Обработка запросов
 self.addEventListener('fetch', (event) => {
+  // Игнорируем запросы, которые не относятся к http/https (например chrome-extension://)
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
   // Пропускаем запросы к API
   if (event.request.url.includes('/api/') || event.request.url.includes('/llm/')) {
     return;

@@ -6,10 +6,12 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [
     sveltekit(),
-        VitePWA({
+    VitePWA({
       // Используем автоматический режим вместо injectManifest для совместимости с SvelteKit
       base: '/',
-      strategies: 'generateSW',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'service-worker.ts',
       registerType: 'autoUpdate',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],

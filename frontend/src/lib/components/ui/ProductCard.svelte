@@ -1,5 +1,6 @@
 <script lang="ts">
   import { useProduct } from '$lib/tanstack/product-queries';
+  import { goto } from '$app/navigation';
   
   export let productId: string | number;
   export let compact: boolean = false; // Компактный режим отображения
@@ -21,7 +22,7 @@
   function handleClick() {
     if (clickable && $productQuery.data) {
       // Навигация на страницу товара
-      window.location.href = `/products/${$productQuery.data.id}`;
+      goto(`/products/${$productQuery.data.id}`);
     }
   }
   

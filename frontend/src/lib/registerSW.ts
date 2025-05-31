@@ -54,7 +54,7 @@ export function registerSW(options: Partial<RegisterSWOptions> = {}) {
   // Register the service worker
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register('/sw.js', { type: 'module' })
+      .register('/service-worker.js', { type: 'module' })
       .then((registration) => {
         onRegistered?.(registration);
 

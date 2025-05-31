@@ -7,10 +7,11 @@ export default defineConfig({
   plugins: [
     sveltekit(),
     VitePWA({
-      disable: true, // временно отключаем SW, чтобы гарантировать обновление бандла
       // Используем автоматический режим вместо injectManifest для совместимости с SvelteKit
       base: '/',
-      strategies: 'generateSW',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'service-worker.ts',
       registerType: 'autoUpdate',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
@@ -41,7 +42,7 @@ export default defineConfig({
         ]
       },
       devOptions: {
-        enabled: false,
+        enabled: false, // было false, можно оставить или true для локальной разработки PWA
         type: 'module'
       }
     })
