@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [
     sveltekit(),
     VitePWA({
+      disable: true, // временно отключаем SW, чтобы гарантировать обновление бандла
       // Используем автоматический режим вместо injectManifest для совместимости с SvelteKit
       base: '/',
       strategies: 'generateSW',
