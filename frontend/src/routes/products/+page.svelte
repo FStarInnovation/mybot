@@ -101,9 +101,7 @@
       </div>
     </div>
     
-    <button class="setup-button" on:click={createTestProductsTable}>
-      Создать тестовые товары
-    </button>
+    <!-- кнопка создания тестовых товаров удалена -->
   </header>
   
   <div class="products-container">
@@ -121,7 +119,7 @@
     {:else if productsQuery.data && productsQuery.data.products.length === 0}
       <div class="empty-state">
         <h2>Товары не найдены</h2>
-        <p>Попробуйте изменить параметры поиска или создать тестовые товары</p>
+        <p>Попробуйте изменить параметры поиска.</p>
       </div>
     {:else if productsQuery.data}
       <div class="products-grid">
@@ -231,17 +229,6 @@
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-size: 0.9rem;
-  }
-  
-  .setup-button {
-    padding: 0.75rem 1.25rem;
-    background-color: var(--accent-secondary);
-    color: var(--button-text);
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    margin-top: 1rem;
   }
   
   .products-container {
