@@ -10,14 +10,13 @@
   let search = '';
   let sort = 'name_asc';
   
-  // Загружаем данные о товарах
-  const productsQuery = useProducts({ page, limit, category, search, sort });
+  // productsQuery will be recreated whenever params change
+  let productsQuery = useProducts({ page, limit, category, search, sort });
   
-  // Создаем реактивное выражение для переключения страниц
+  // Следим за изменением параметров и пересоздаём запрос
   $: {
-    // Обновляем данные при изменении параметров
-    page; limit; category; search; sort; // зависимости
-    productsQuery.refetch();
+    page; limit; category; search; sort;
+    productsQuery = useProducts({ page, limit, category, search, sort });
   }
   
   // Обработчик поиска
