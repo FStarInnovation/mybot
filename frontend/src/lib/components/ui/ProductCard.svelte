@@ -19,6 +19,7 @@
   
   // Обработчик клика по карточке
   function handleClick() {
+    console.log('ProductCard handleClick - V4_DEBUG_MARKER - Product ID:', $productQuery.data?.id, 'Target URL:', `/products/${$productQuery.data?.id}`);
     if (clickable && $productQuery.data) {
       // Навигация на страницу товара
       window.location.href = `/products/${$productQuery.data.id}`;
