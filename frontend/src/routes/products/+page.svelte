@@ -15,9 +15,9 @@
   
   // Создаем реактивное выражение для переключения страниц
   $: {
-    // Обновляем запрос при изменении параметров
-    $productsQuery.setQueryKey(['products', { page, limit, category, search, sort }]);
-    $productsQuery.refetch();
+    // Обновляем данные при изменении параметров
+    page; limit; category; search; sort; // зависимости
+    productsQuery.refetch();
   }
   
   // Обработчик поиска
@@ -42,7 +42,7 @@
   
   // Функция для перехода на следующую страницу
   function nextPage() {
-    if ($productsQuery.data && page < Math.ceil($productsQuery.data.total / limit)) {
+    if (productsQuery.data && page < Math.ceil(productsQuery.data.total / limit)) {
       page++;
     }
   }
@@ -58,7 +58,7 @@
         const result = await response.json();
         alert(`Таблица товаров создана: ${result.message}`);
         // Обновляем данные
-        $productsQuery.refetch();
+        productsQuery.refetch();
       } else {
         const error = await response.json();
         alert(`Ошибка: ${error.error}`);
@@ -108,25 +108,25 @@
   </header>
   
   <div class="products-container">
-    {#if $productsQuery.isLoading}
+    {#if productsQuery.isLoading}
       <div class="loading-state">
         <div class="spinner"></div>
         <p>Загрузка товаров...</p>
       </div>
-    {:else if $productsQuery.isError}
+    {:else if productsQuery.isError}
       <div class="error-state">
         <h2>Ошибка при загрузке товаров</h2>
         <p>Проверьте подключение к интернету или попробуйте позже</p>
-        <button on:click={() => $productsQuery.refetch()}>Повторить</button>
+        <button on:click={() => productsQuery.refetch()}>Повторить</button>
       </div>
-    {:else if $productsQuery.data && $productsQuery.data.products.length === 0}
+    {:else if productsQuery.data && productsQuery.data.products.length === 0}
       <div class="empty-state">
         <h2>Товары не найдены</h2>
         <p>Попробуйте изменить параметры поиска или создать тестовые товары</p>
       </div>
-    {:else if $productsQuery.data}
+    {:else if productsQuery.data}
       <div class="products-grid">
-        {#each $productsQuery.data.products as product (product.id)}
+        {#each productsQuery.data.products as product (product.id)}
           <div class="product-item">
             <ProductCard productId={product.id} />
           </div>
@@ -143,13 +143,13 @@
         </button>
         
         <span class="pagination-info">
-          Страница {page} из {Math.ceil($productsQuery.data.total / limit)}
-          (Всего товаров: {$productsQuery.data.total})
+          Страница {page} из {Math.ceil(productsQuery.data.total / limit)}
+          (Всего товаров: {productsQuery.data.total})
         </span>
         
         <button 
           on:click={nextPage} 
-          disabled={page >= Math.ceil($productsQuery.data.total / limit)}
+          disabled={page >= Math.ceil(productsQuery.data.total / limit)}
           class="pagination-button"
         >
           Следующая
