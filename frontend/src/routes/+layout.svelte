@@ -16,14 +16,15 @@
   onMount(() => {
     // Register service worker
     if (typeof window !== 'undefined') {
-      registerSW({
+      // Temporarily disabled SW registration from client-side
+      /* registerSW({
         onOfflineReady: () => {
           console.log('App ready to work offline');
         },
         onNeedRefresh: () => {
           console.log('New content available, please refresh');
         }
-      });
+      }); */
       
       // Check if the app is running in standalone mode (installed PWA)
       isPWA = window.matchMedia('(display-mode: standalone)').matches || 
