@@ -7,12 +7,14 @@ export default defineConfig({
   plugins: [
     sveltekit(),
     VitePWA({
+      disable: true, // временно отключаем SW, чтобы гарантировать обновление бандла
       // Используем автоматический режим вместо injectManifest для совместимости с SvelteKit
       base: '/',
       strategies: 'generateSW',
       registerType: 'autoUpdate',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globIgnores: ['**/*.env'],
         navigateFallback: '/'
       },
       includeAssets: ['favicon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
