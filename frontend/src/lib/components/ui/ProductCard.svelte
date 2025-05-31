@@ -21,7 +21,7 @@
   function handleClick() {
     if (clickable && $productQuery.data) {
       // Навигация на страницу товара
-      window.location.href = `/product/${$productQuery.data.id}`;
+      window.location.href = `/products/${$productQuery.data.id}`;
     }
   }
   
