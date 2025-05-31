@@ -37,7 +37,9 @@ class NormalizeProductJob implements ShouldQueue
 
             // 1. Category (simple by hashtag or metadata)
             $categoryName = $raw->hashtag ?? $data['category'] ?? 'uncategorized';
-            $categorySlug = Str::slug($categoryName);
+            // Str::slug() returns null without iconv; fall back to random slug
+            $categorySlug = Str::slug($categoryName) ?: Str::random(8);
+            Log::debug('Normalize job slug', ['raw_id'=>$this->rawProductId,'category_name'=>$categoryName,'category_slug'=>$categorySlug]);
             $category = Category::firstOrCreate(
                 ['slug' => $categorySlug],
                 ['name' => $categoryName]
@@ -48,7 +50,7 @@ class NormalizeProductJob implements ShouldQueue
                 'source_id' => $raw->id,
             ], [
                 'title' => $raw->title,
-                'slug' => Str::slug(($raw->title ?: 'product').'-'.$raw->id),
+                'slug' => Str::slug(($raw->title ?: 'product').'-'.$raw->id) ?: ('product-'.$raw->id),
                 'price' => $raw->price_num ?? 0,
                 'url' => $raw->url,
                 'category_id' => $category->id,

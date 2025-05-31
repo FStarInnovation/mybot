@@ -181,7 +181,7 @@ Route::get('/memory-test', function () {
 // Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
 Route::get('/{path?}', function () {
     return response()->file(public_path('build/index.html'));
-})->where('path', '.*')->name('spa');
+})->where('path', '^(?!api).*$')->name('spa');
 
 // Catch-all SPA route for SvelteKit app
 Route::fallback(function () {

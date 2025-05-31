@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('products', function (Blueprint $table) {
+            if (!Schema::hasColumn('products', 'source_id')) {
+                $table->unsignedBigInteger('source_id')->nullable()->after('id');
+                $table->index('source_id');
+            }
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('products', function (Blueprint $table) {
+            if (Schema::hasColumn('products', 'source_id')) {
+                $table->dropIndex(['source_id']);
+                $table->dropColumn('source_id');
+            }
+        });
+    }
+};
