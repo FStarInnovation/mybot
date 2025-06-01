@@ -34,6 +34,24 @@ return [
             'search_path' => 'public',
             'sslmode' => 'require',
         ],
+        // Neon Postgres (production)
+        'neon' => [
+            'driver'   => 'pgsql',
+            // Full connection string, Laravel parses components automatically
+            'url'      => env('NEON_DATABASE_URL'),
+            // Fallback pieces if url not provided
+            'host'     => env('NEON_DB_HOST', env('DB_HOST')),
+            'port'     => env('NEON_DB_PORT', env('DB_PORT', 5432)),
+            'database' => env('NEON_DB_DATABASE', env('DB_DATABASE', 'neondb')),
+            'username' => env('NEON_DB_USERNAME', env('DB_USERNAME')),
+            'password' => env('NEON_DB_PASSWORD', env('DB_PASSWORD')),
+            'charset'  => 'utf8',
+            'prefix'   => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            // Neon requires TLS
+            'sslmode' => 'require',
+        ],
     ],
 
     'migrations' => [
