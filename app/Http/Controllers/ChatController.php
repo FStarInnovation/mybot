@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\ChatHistoryCache;
+use App\Services\MemoryService;
 use Illuminate\Http\JsonResponse;
 
 class ChatController extends Controller
 {
-    protected ChatHistoryCache $history;
+    protected MemoryService $memory;
 
-    public function __construct()
+    public function __construct(MemoryService $memory)
     {
-        // Resolve with TTL from config (defaults to 86400)
-        $this->history = new ChatHistoryCache((int) config('chat.history_ttl'));
+        $this->memory = $memory;
     }
 
     /**
@@ -27,20 +26,37 @@ class ChatController extends Controller
         ]);
 
         $sessionId = $request->session()->getId();
+        $userMessage = $validated['message'];
 
-        // Push user message
-        $userMsg = [
-            'role'    => 'user',
-            'content' => $validated['message'],
-            'ts'      => now()->toISOString(),
-        ];
-        $this->history->push($sessionId, $userMsg);
-
-        // Process via ChatService (LLM placeholder)
-        $assistantMessages = app(\App\Services\ChatService::class)
-            ->process($sessionId, $validated['message']);
-
-        return response()->json(['messages' => $assistantMessages]);
+        try {
+            // Get context from both short and long-term memory
+            $context = $this->memory->getContext($sessionId, $userMessage);
+            
+            // Get LLM response
+            $llmService = app(\App\Services\LlmGatewayService::class);
+            $assistantResponse = $llmService->chat($context);
+            
+            // Remember the conversation
+            $this->memory->rememberConversation($sessionId, $userMessage, $assistantResponse);
+            
+            return response()->json([
+                'messages' => [
+                    ['role' => 'assistant', 'content' => $assistantResponse]
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Chat error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'error' => 'Произошла ошибка при обработке запроса',
+                'messages' => [
+                    ['role' => 'assistant', 'content' => 'Извините, произошла ошибка. Пожалуйста, попробуйте снова.']
+                ]
+            ], 500);
+        }
     }
 
     /**
@@ -50,6 +66,13 @@ class ChatController extends Controller
     public function history(Request $request): JsonResponse
     {
         $sessionId = $request->session()->getId();
-        return response()->json(['history' => $this->history->all($sessionId)]);
+        $history = $this->memory->getShortTermMemory($sessionId);
+
+        return response()->json([
+            'messages' => $history->map(fn($msg) => [
+                'role' => $msg['role'],
+                'content' => $msg['content']
+            ])->toArray()
+        ]);
     }
 }

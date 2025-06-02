@@ -11,7 +11,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(\App\Services\Memory\ShortTermMemoryService::class);
+        $this->app->singleton(\App\Services\Memory\LongTermMemoryService::class);
+        $this->app->singleton(\App\Services\MemoryService::class);
     }
 
     /**
