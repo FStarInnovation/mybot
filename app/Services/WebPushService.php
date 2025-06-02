@@ -45,7 +45,7 @@ class WebPushService
         ]);
 
         $pushSubscription = new WebPushSubscription(
-            $subscription->endpoint,
+            $this->normalizeEndpoint($subscription->endpoint),
             $subscription->public_key,
             $subscription->auth_token
         );
@@ -69,6 +69,7 @@ class WebPushService
         array $options = []
     ): array {
         $subscriptions = PushSubscriptionModel::all();
+        \Log::info("Sending broadcast to " . count($subscriptions) . " subscriptions");
         $results = [];
 
         foreach ($subscriptions as $subscription) {
@@ -83,14 +84,8 @@ class WebPushService
      */
     public function broadcastNotification(string $title, string $body): void
     {
-        $notification = [
-            'title' => $title,
-            'body' => $body,
-            'icon' => '/favicon.ico',
-            'vibrate' => [100, 50, 100],
-        ];
-
         $subscriptions = PushSubscriptionModel::all();
+        \Log::info("Sending broadcast to " . count($subscriptions) . " subscriptions");
         
         foreach ($subscriptions as $subscription) {
             $webPushSubscription = new WebPushSubscription(
@@ -99,13 +94,28 @@ class WebPushService
                 $subscription->auth_token
             );
             
-            $this->webPush->queueNotification(
-                $webPushSubscription,
-                json_encode($notification)
-            );
+            $this->queueNotification($webPushSubscription, [
+                'title' => $title,
+                'body' => $body,
+                'icon' => '/icons/icon-192x192.png',
+                'vibrate' => [200, 100, 200],
+            ]);
         }
 
-        $this->webPush->flush();
+        $results = $this->webPush->flush();
+        $resultsArray = iterator_to_array($results);
+        \Log::info('WebPush flush results: ', $resultsArray);
+
+        foreach ($resultsArray as $result) {
+            if (!$result->isSuccess()) {
+                \Log::error("Failed to send notification: " . $result->getReason());
+            }
+        }
+    }
+
+    private function queueNotification(WebPushSubscription $subscription, array $payload)
+    {
+        $this->webPush->queueNotification($subscription, json_encode($payload));
     }
 
     /**
@@ -141,5 +151,25 @@ class WebPushService
         }
         
         return $results;
+    }
+
+    /**
+     * Normalize endpoint: Chrome 125+ sometimes returns experimental `/wp/` prefix
+     * which Google does NOT yet accept for direct WebPush requests.
+     * Convert it back to standard `/fcm/send/`.
+     */
+    private function normalizeEndpoint(string $endpoint): string
+    {
+        // if endpoint already correct
+        if (str_contains($endpoint, '/fcm/send/')) {
+            return $endpoint;
+        }
+
+        // convert experimental /wp/ style
+        if (preg_match('#https://fcm.googleapis.com/wp/(.+)#', $endpoint, $m)) {
+            return 'https://fcm.googleapis.com/fcm/send/' . $m[1];
+        }
+
+        return $endpoint;
     }
 }

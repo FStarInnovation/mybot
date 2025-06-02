@@ -5,7 +5,7 @@ import { resolve } from 'path';
 export default {
   plugins: [sveltekit()],
   server: {
-    port: 3002
+    port: 5173
   },
   build: {
     outDir: '../public/build',

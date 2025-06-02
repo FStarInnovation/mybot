@@ -57,3 +57,49 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
+// Handle push events and display notifications
+self.addEventListener('push', (event: PushEvent) => {
+  let data: any = {};
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch {
+      // if payload is plain text, wrap it
+      data = { title: 'MyBot', body: event.data.text() };
+    }
+  }
+
+  const title = data.title ?? 'MyBot';
+  const options: NotificationOptions = {
+    body: data.body ?? '',
+    icon: data.icon ?? '/icon-192x192.png',
+    badge: data.badge ?? '/icon-72x72.png',
+    data: {
+      url: data.url ?? '/'
+    }
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+// Focus or open tab when user clicks notification
+self.addEventListener('notificationclick', (event: NotificationEvent) => {
+  const notification = event.notification;
+  const url = notification.data?.url || '/';
+  event.notification.close();
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        const win = client as WindowClient;
+        if (win.url === url && 'focus' in win) {
+          return win.focus();
+        }
+      }
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(url);
+      }
+    })
+  );
+});

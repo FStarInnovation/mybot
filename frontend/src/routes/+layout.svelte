@@ -4,14 +4,38 @@
   import PWA from '$lib/components/PWA.svelte';
   import PWASplash from '$lib/components/PWASplash.svelte';
   import ThemeToggle from '$lib/components/ThemeToggle.svelte';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   
   // TanStack Query
   import { QueryClientProvider } from '@tanstack/svelte-query';
   import { queryClient } from '$lib/tanstack/client';
   
+  // Push Notifications
+  import { subscribeToPush, requestNotificationPermission } from '$lib/push';
+  
   // Check if the app is running as a PWA
   let isPWA = false;
+  let notificationPermission: NotificationPermission = 'default';
+  
+  // Check notification permission
+  const checkNotificationPermission = () => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      notificationPermission = Notification.permission;
+    }
+  };
+  
+  // Request notification permission and subscribe to push
+  const enableNotifications = async () => {
+    const permission = await requestNotificationPermission();
+    notificationPermission = permission;
+    
+    if (permission === 'granted') {
+      console.log('Notification permission granted');
+      await subscribeToPush();
+    } else if (permission === 'denied') {
+      console.warn('Notification permission was denied');
+    }
+  };
   
   onMount(() => {
     // Register service worker
@@ -29,6 +53,9 @@
       isPWA = window.matchMedia('(display-mode: standalone)').matches || 
               (window.navigator as any).standalone === true ||
               document.referrer.includes('android-app://');
+      
+      // Immediately request permission and subscribe
+      enableNotifications().catch((err) => console.error('Push init error', err));
     }
   });
 </script>

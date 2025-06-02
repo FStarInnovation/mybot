@@ -96,6 +96,21 @@ Route::get('build/sw.js', function () {
     ]);
 });
 
+// Explicit routes for Service Worker and Web Manifest when served from Laravel dev server
+Route::get('/service-worker.js', function () {
+    return response()->file(public_path('service-worker.js'), [
+        'Content-Type' => 'text/javascript',
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+});
+
+Route::get('/manifest.json', function () {
+    return response()->file(public_path('manifest.json'), [
+        'Content-Type' => 'application/manifest+json',
+        'Cache-Control' => 'public, max-age=2592000',
+    ]);
+});
+
 // Serve _app immutable assets root path by mapping to build/_app with correct MIME types
 Route::get('_app/{path}', function ($path) {
     $filePath = public_path("build/_app/{$path}");

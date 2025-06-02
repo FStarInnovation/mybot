@@ -1,6 +1,10 @@
 import { browser } from '$app/environment';
 import { PUBLIC_VAPID_KEY } from '$env/static/public';
 
+// Backend base URL, should include trailing /api if you want absolute path
+// e.g. http://127.0.0.1:8001/api  OR leave empty string to use same-origin /api
+const API_BASE: string = (import.meta.env.VITE_API_BASE_URL as string) ?? (import.meta.env.DEV ? 'http://127.0.0.1:8000/api' : '/api');
+
 // Convert VAPID public key from base64 to Uint8Array
 const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -27,7 +31,16 @@ export const subscribeToPush = async (): Promise<PushSubscription | null> => {
     // Check if already subscribed
     let subscription = await registration.pushManager.getSubscription();
     if (subscription) {
-      console.log('Already subscribed to push notifications');
+      console.log('Already subscribed to push notifications – syncing with backend');
+      try {
+        await fetch(`${API_BASE}/push/subscribe`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(subscription.toJSON())
+        });
+      } catch (e) {
+        console.warn('Failed to resync existing subscription:', e);
+      }
       return subscription;
     }
 
@@ -38,7 +51,7 @@ export const subscribeToPush = async (): Promise<PushSubscription | null> => {
     });
 
     // Send subscription to server
-    await fetch('/api/push/subscribe', {
+    await fetch(`${API_BASE}/push/subscribe`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(subscription.toJSON())
@@ -71,7 +84,7 @@ export const unsubscribeFromPush = async (): Promise<boolean> => {
     
     if (success) {
       // Notify server to remove subscription
-      await fetch('/api/push/unsubscribe', {
+      await fetch(`${API_BASE}/push/unsubscribe`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ endpoint: subscription.endpoint })

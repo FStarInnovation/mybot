@@ -1,1 +1,1 @@
-export const env={}
+export const env={"PUBLIC_VAPID_KEY":"BEm1M2h0bnIDLcuL59t_im9GXV_x5ztGuM2l8bpfcHS3RD0fKRrwF7Py_gbQeia5mCbGnoKrDMpn_TMarz8DSiI"}
