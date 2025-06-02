@@ -22,9 +22,12 @@ Route::get('/supabase-test', [SupabaseController::class, 'testQuery']);
 Route::post('/query', [LlmBridgeController::class, 'query'])->name('api.query');
 Route::get('/ping', fn() => response()->json(['pong' => true]));
 
-// Chat endpoints (session-based)
-Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'send']);
-Route::get('/chat/history', [\App\Http\Controllers\ChatController::class, 'history']);
+// Chat endpoints (session-based) – need session middleware even under API
+Route::middleware(\Illuminate\Session\Middleware\StartSession::class)
+    ->group(function () {
+        Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'send']);
+        Route::get('/chat/history', [\App\Http\Controllers\ChatController::class, 'history']);
+    });
 
 // Web-push subscriptions
 Route::post('/push/subscribe', [\App\Http\Controllers\Api\PushSubscriptionController::class, 'store']);
