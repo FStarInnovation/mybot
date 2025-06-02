@@ -28,32 +28,9 @@
     // Ensure all fields passed to ChatMessage are covered
   }; */
 
-  let messages: Message[] = [
-    {
-      id: '1',
-      sender: 'bot',
-      type: AgUIEventTypesEnum.TEXT, // Use 'type' instead of 'messageType' if Message is AgUIEvent
-      text: 'Hello! How can I help you today?',
-      timestamp: new Date(Date.now() - 60000 * 5).toISOString(),
-    },
-    {
-      id: '2',
-      sender: 'user',
-      type: AgUIEventTypesEnum.TEXT,
-      text: 'I have a question about my account.',
-      timestamp: new Date(Date.now() - 60000 * 3).toISOString(), 
-    },
-    // Example of a custom component message for ProductCard (for future testing)
-    /* {
-      id: '3',
-      sender: 'bot',
-      type: AgUIEventTypesEnum.CUSTOM,
-      componentName: 'ProductCard',
-      props: { productId: 1 }, // Example product ID
-      timestamp: new Date().toISOString(),
-      text: '' // Provide a default text or ensure ChatMessage handles its absence for non-text types
-    } */
-  ];
+  let messages: Message[] = [];
+
+  const API_BASE = import.meta.env.PUBLIC_API_BASE ?? '';
 
   let chatContainer: HTMLElement;
   let isTyping = false;
@@ -65,67 +42,63 @@
     }
   }
 
-  onMount(() => {
-    scrollToBottom();
+  onMount(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/chat/history`);
+      if (res.ok) {
+        const data = await res.json();
+        messages = data.history?.map((m: any, idx: number) => ({
+          id: idx.toString(),
+          sender: m.role === 'assistant' ? 'bot' : 'user',
+          type: AgUIEventTypesEnum.TEXT,
+          text: m.content,
+          timestamp: m.ts ?? new Date().toISOString()
+        })) ?? [];
+        await scrollToBottom();
+      }
+    } catch (e) {
+      console.error('Failed to load history', e);
+    }
   });
 
-  function handleSendMessage(event: CustomEvent<{ text: string }>) {
-    const newMessage: Message = {
+  async function handleSendMessage(event: CustomEvent<{ text: string }>) {
+    const userMsg: Message = {
       id: Date.now().toString(),
       sender: 'user',
       type: AgUIEventTypesEnum.TEXT,
       text: event.detail.text,
       timestamp: new Date().toISOString(),
     };
-    messages = [...messages, newMessage];
-    scrollToBottom();
+    messages = [...messages, userMsg];
+    await scrollToBottom();
 
-    // Проверяем, запрашивает ли пользователь товар
-    if (event.detail.text.toLowerCase().includes('покажи товар') || 
-        event.detail.text.toLowerCase().includes('show product')) {
-      isTyping = true;
-      setTimeout(() => {
-        // Текстовый ответ
-        const botResponse: Message = {
-          id: (Date.now() + 1).toString(),
+    isTyping = true;
+    try {
+      const res = await fetch(`${API_BASE}/api/chat/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: event.detail.text })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const replies = data.messages ?? [];
+        messages = [...messages, ...replies.map((r: any, idx: number) => ({
+          id: (Date.now() + idx + 1).toString(),
           sender: 'bot',
           type: AgUIEventTypesEnum.TEXT,
-          text: 'Вот товар, который может вас заинтересовать:',
-          timestamp: new Date().toISOString(),
-        };
-        
-        // Сообщение с карточкой товара
-        const productCardMessage: Message = {
-          id: (Date.now() + 2).toString(),
-          sender: 'bot',
-          type: AgUIEventTypesEnum.CUSTOM,
-          timestamp: new Date().toISOString(),
-          text: '', // Пустой текст, так как основной контент - это карточка
-          // Add customComponentData object that ChatMessage.svelte expects
-          customComponentData: {
-            componentName: 'ProductCard',
-            props: { productId: 2 } // ID товара
-          }
-        };
-        
-        messages = [...messages, botResponse, productCardMessage];
-        isTyping = false;
-        scrollToBottom();
-      }, 1500);
-    } else {
-      isTyping = true;
-      setTimeout(() => {
-        const botResponse: Message = {
-          id: (Date.now() + 1).toString(),
-          sender: 'bot',
-          type: AgUIEventTypesEnum.TEXT,
-          text: `Я получил ваше сообщение: "${event.detail.text}". Напишите "покажи товар", чтобы увидеть карточку товара.`,
-          timestamp: new Date().toISOString(),
-        };
-        messages = [...messages, botResponse];
-        isTyping = false;
-        scrollToBottom();
-      }, 1500);
+          text: r.content ?? r,
+          timestamp: new Date().toISOString()
+        }))];
+      } else {
+        messages = [...messages, { id: Date.now().toString(), sender: 'bot', type: AgUIEventTypesEnum.TEXT, text: 'Ошибка сервера', timestamp: new Date().toISOString() }];
+      }
+    } catch (err) {
+      console.error(err);
+      messages = [...messages, { id: Date.now().toString(), sender: 'bot', type: AgUIEventTypesEnum.TEXT, text: 'Не удалось связаться с сервером', timestamp: new Date().toISOString() }];
+    } finally {
+      isTyping = false;
+      await scrollToBottom();
     }
   }
   
