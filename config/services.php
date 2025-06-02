@@ -28,4 +28,8 @@ return [
         'endpoint' => env('LLM_API_URL', 'http://localhost:11434/completion'),
     ],
 
+    'embeddings' => [
+        'endpoint' => env('EMBEDDINGS_API_URL', 'http://localhost:8000/embedding'),
+    ],
+
 ];

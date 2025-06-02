@@ -2,24 +2,26 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use App\Services\LlmGatewayService;
 
 class ChatService
 {
     protected ChatHistoryCache $history;
+    protected LlmGatewayService $llm;
 
-    public function __construct(ChatHistoryCache $history)
+    public function __construct(ChatHistoryCache $history, LlmGatewayService $llm)
     {
         $this->history = $history;
+        $this->llm     = $llm;
     }
 
     /**
-     * Basic synchronous processing without LLM (placeholder).
+     * Отправить полный контекст в LLM и вернуть ответ.
      */
     public function process(string $sessionId, string $message): array
     {
-        // Save user query to DB (SearchQuery model) asynchronously (fire and forget)
+        // Логируем запрос пользователя (fire-and-forget)
         try {
             \App\Models\SearchQuery::create([
                 'query' => $message,
@@ -30,16 +32,28 @@ class ChatService
             Log::warning('Failed to save search query', ['e' => $e->getMessage()]);
         }
 
-        // Placeholder assistant reply (echo)
-        $assistantMsg = 'Echo: ' . $message;
+        // Собираем историю для контекста
+        $history   = $this->history->all($sessionId);
+        $messages  = array_map(fn ($m) => [
+            'role'    => $m['role'] ?? 'user',
+            'content' => $m['content'] ?? '',
+        ], $history);
 
-        // Push to history
-        $this->history->push($sessionId, [
-            'role' => 'assistant',
-            'content' => $assistantMsg,
-            'ts' => now()->toISOString(),
-        ]);
+        // Добавляем текущий запрос
+        $messages[] = ['role' => 'user', 'content' => $message];
 
-        return [$assistantMsg];
+        // Запрашиваем LLM
+        $assistantContent = $this->llm->chat($messages);
+
+        // Формируем ответ и сохраняем в историю
+        $assistantArr = [
+            'role'    => 'assistant',
+            'content' => $assistantContent,
+            'ts'      => now()->toISOString(),
+        ];
+
+        $this->history->push($sessionId, $assistantArr);
+
+        return [$assistantArr];
     }
 }
