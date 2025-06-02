@@ -10,9 +10,9 @@ class ChatService
     protected ChatHistoryCache $history;
     protected LlmGatewayService $llm;
 
-    public function __construct(ChatHistoryCache $history, LlmGatewayService $llm)
+    public function __construct(LlmGatewayService $llm)
     {
-        $this->history = $history;
+        $this->history = new ChatHistoryCache((int) config('chat.history_ttl'));
         $this->llm     = $llm;
     }
 
