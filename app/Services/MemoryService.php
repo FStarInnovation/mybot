@@ -32,6 +32,11 @@ class MemoryService
         );
     }
     
+    public function getRecentMessages(string $sessionId, ?int $limit = null): Collection
+    {
+        return $this->shortTerm->getRecentMessages($sessionId, $limit);
+    }
+    
     public function rememberConversation(
         string $sessionId, 
         string $userMessage,

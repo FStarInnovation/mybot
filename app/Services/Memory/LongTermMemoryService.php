@@ -24,25 +24,22 @@ class LongTermMemoryService
     public function searchSimilar(string $query, ?string $sessionId = null): Collection
     {
         try {
-            // Получаем эмбеддинг для запроса
             $embedding = $this->embeddingService->getEmbedding($query);
+            $vectorString = '{' . implode(',', $embedding) . '}';
             
-            // Ищем похожие векторы в Neon
             $results = DB::select(
-                "SELECT content, metadata, 
-                       1 - (embedding <=> ?) as similarity
-                FROM memories
-                WHERE 1 - (embedding <=> ?) > ?
-                ORDER BY similarity DESC
+                "SELECT content, metadata, created_at 
+                FROM memories 
+                WHERE session_id = ? 
+                ORDER BY embedding <-> ?::vector 
                 LIMIT ?",
                 [
-                    $embedding,
-                    $embedding,
-                    $this->similarityThreshold,
-                    $this->maxResults,
+                    $sessionId,
+                    $vectorString,
+                    config('memory.long_term.max_results', 3)
                 ]
             );
-
+            
             return collect($results)
                 ->map(fn($row) => (array) $row);
                 
@@ -55,7 +52,7 @@ class LongTermMemoryService
         }
     }
 
-    public function saveMemory(
+        public function saveMemory(
         string $content, 
         array $metadata = [],
         ?string $sessionId = null
@@ -63,12 +60,15 @@ class LongTermMemoryService
         try {
             $embedding = $this->embeddingService->getEmbedding($content);
             
+            // Convert PHP array to PostgreSQL vector string format: '{1,2,3}'
+            $vectorString = '{' . implode(',', $embedding) . '}';
+            
             DB::insert(
                 "INSERT INTO memories (content, embedding, metadata, session_id, created_at)
-                VALUES (?, ?, ?::jsonb, ?, NOW())",
+                VALUES (?, ?::vector, ?::jsonb, ?, NOW())",
                 [
                     $content,
-                    $embedding,
+                    $vectorString,
                     json_encode($metadata),
                     $sessionId,
                 ]
