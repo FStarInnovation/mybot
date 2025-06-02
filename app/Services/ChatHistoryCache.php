@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Lightweight wrapper around Redis list operations for storing
@@ -30,10 +31,14 @@ class ChatHistoryCache
      */
     public function push(string $sessionId, array $message): void
     {
-        $key = $this->key($sessionId);
-        Redis::rpush($key, json_encode($message));
-        // Set / refresh TTL so idle sessions expire automatically
-        Redis::expire($key, $this->ttl);
+        try {
+            $key = $this->key($sessionId);
+            Redis::rpush($key, json_encode($message));
+            // refresh TTL
+            Redis::expire($key, $this->ttl);
+        } catch (\Throwable $e) {
+            Log::warning('Redis push failed', ['msg' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -42,15 +47,24 @@ class ChatHistoryCache
      */
     public function all(string $sessionId): array
     {
-        $key   = $this->key($sessionId);
-        $items = Redis::lrange($key, 0, -1);
-        return array_map(fn ($raw) => json_decode($raw, true), $items);
+        try {
+            $key   = $this->key($sessionId);
+            $items = Redis::lrange($key, 0, -1);
+            return array_map(fn ($raw) => json_decode($raw, true), $items);
+        } catch (\Throwable $e) {
+            Log::warning('Redis read failed', ['msg' => $e->getMessage()]);
+            return [];
+        }
     }
 
     /** Remove chat history completely. */
     public function clear(string $sessionId): void
     {
-        Redis::del($this->key($sessionId));
+        try {
+            Redis::del($this->key($sessionId));
+        } catch (\Throwable $e) {
+            Log::warning('Redis clear failed', ['msg' => $e->getMessage()]);
+        }
     }
 
     private function key(string $sessionId): string
