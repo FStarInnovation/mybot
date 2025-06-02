@@ -14,12 +14,17 @@ class LlmGatewayService
     public function chat(array $messages): string
     {
         $payload = [
-            'model'    => 'llama3',
-            'messages' => $messages,
-            'stream'   => false,
+            'model'            => 'llama3',
+            'messages'         => $messages,
+            'stream'           => false,
+            'temperature'      => 0.5,
+            'top_p'            => 0.9,
+            'max_tokens'       => 512,
+            'presence_penalty' => 0.0,
+            'frequency_penalty'=> 0.0,
         ];
 
-        $resp = Http::timeout(60)->post(config('services.llm.endpoint'), $payload);
+        $resp = Http::timeout(120)->post(config('services.llm.endpoint'), $payload);
 
         if (!$resp->ok() || !isset($resp['choices'][0]['message']['content'])) {
             Log::error('LLM API error', [
