@@ -20,7 +20,7 @@ class ShortTermMemoryService
         $this->maxMessages = $config['max_messages'];
     }
 
-    public function getRecentMessages(string $sessionId, int $limit = null): Collection
+    public function getRecentMessages(string $sessionId, ?int $limit = 5): Collection
     {
         try {
             $key = $this->getKey($sessionId);

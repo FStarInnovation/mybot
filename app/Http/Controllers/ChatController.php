@@ -66,7 +66,7 @@ class ChatController extends Controller
     public function history(Request $request): JsonResponse
     {
         $sessionId = $request->session()->getId();
-        $history = $this->memory->getShortTermMemory($sessionId);
+        $history = $this->memory->getRecentMessages($sessionId);
 
         return response()->json([
             'messages' => $history->map(fn($msg) => [

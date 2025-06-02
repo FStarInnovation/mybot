@@ -18,6 +18,23 @@ class EmbeddingGatewayService
      * @param  string|array<int,string>  $input
      * @return array<int,float>  Вектор размерности 768
      */
+    /**
+     * Alias for embed() for backward compatibility
+     * 
+     * @param string $content
+     * @return array
+     */
+    public function getEmbedding(string $content): array
+    {
+        return $this->embed($content);
+    }
+
+    /**
+     * Get embedding for a string or list of strings.
+     *
+     * @param  string|array<int,string>  $input
+     * @return array<int,float>  Vector of dimension 768
+     */
     public function embed(array|string $input): array
     {
         $payload = [
