@@ -25,7 +25,7 @@ return [
 
     // ✅ вставляем LLM сюда, внутри return-массива:
     'llm' => [
-        'endpoint' => env('LLM_API_URL', 'http://localhost:11434/completion'),
+        'endpoint' => env('LLM_API_URL', 'http://localhost:1434/completion'),
     ],
 
     'embeddings' => [
