@@ -14,7 +14,9 @@
   export let url: string | undefined;
 
   // Создаём источник данных:
-  const productQuery = (title !== undefined && price !== undefined)
+  const hasDirectData = title !== undefined || price !== undefined || image !== undefined || url !== undefined;
+
+  const productQuery = hasDirectData
     ? readable({
         isLoading: false,
         isError: false,
