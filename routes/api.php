@@ -50,7 +50,7 @@ Route::get('/search_products', function (\Illuminate\Http\Request $request) {
 
     try {
         $response = \Illuminate\Support\Facades\Http::timeout(10)
-            ->get($nlwebUrl, [
+            ->post($nlwebUrl, [
                 'query' => $query,
                 'limit' => $limit,
                 'sort'  => $sort,
