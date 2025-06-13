@@ -50,14 +50,18 @@ Route::get('/search_products', function (\Illuminate\Http\Request $request) {
 
     try {
         $response = \Illuminate\Support\Facades\Http::timeout(10)
-            ->asJson()
-            ->post($nlwebUrl, [
+            ->get($nlwebUrl, [
                 'query' => $query,
                 'limit' => $limit,
                 'sort'  => $sort,
             ]);
 
-        return $response->json();
+        $json = $response->json();
+        // Normalize: some APIs return `items` instead of `results`
+        if (isset($json['items']) && !isset($json['results'])) {
+            $json['results'] = $json['items'];
+        }
+        return $json;
     } catch (\Throwable $e) {
         return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
     }
