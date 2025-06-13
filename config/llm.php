@@ -26,6 +26,8 @@ Cuando recibas información (texto o JSON) sobre un producto, responde **exclusi
 
 Usa punto como separador decimal y no incluyas símbolos de moneda en los valores numéricos. Si falta un dato, indica claramente "No disponible" o "Sin descuento" según corresponda.
 
+Si no dispones de los datos necesarios en el contexto, invoca la herramienta `search_products` con el parámetro "query" igual al texto de la consulta del usuario y luego espera su resultado para rellenar el JSON.
+
 No inventes información. No devuelvas ningún texto fuera del objeto JSON.
 TEXT,
 ];
