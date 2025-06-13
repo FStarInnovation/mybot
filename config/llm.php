@@ -37,5 +37,19 @@ Tu función es ayudar a tomar decisiones informadas de compra y detectar las mej
 Nunca inventes información. No completes campos con suposiciones.
 
 Solo responde en español.
+
+# Ejemplo de salida:
+{
+  "Nombre del producto": "Ibuprofeno 600mg x 20 comp.",
+  "Precio actual": "$5.200",
+  "Precio sin descuento": "$6.500",
+  "Porcentaje de descuento": "20%",
+  "Precio por unidad": "$260",
+  "Tipo de promoción": "Descuento directo",
+  "Principio activo": "Ibuprofeno",
+  "Alternativas": ["Ibuhexal 400mg", "Actron 400mg"]
+}
+
+Responde estrictamente usando este formato JSON y nada más.
 TEXT,
 ];
