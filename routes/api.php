@@ -43,7 +43,7 @@ Route::get('products/{product}', [ProductController::class, 'show']);
 // Proxy to NLWeb search_products
 Route::get('/search_products', function (\Illuminate\Http\Request $request) {
     $query = $request->input('query', '');
-    $limit = $request->input('limit', 5);
+    $limit = (int) $request->input('limit', 5);
     $sort = $request->input('sort');
     if (empty($sort)) {
         $sort = 'price_asc';
@@ -53,6 +53,7 @@ Route::get('/search_products', function (\Illuminate\Http\Request $request) {
 
     try {
         $response = \Illuminate\Support\Facades\Http::timeout(10)
+            ->asJson()
             ->post($nlwebUrl, [
                 'query' => $query,
                 'limit' => $limit,
