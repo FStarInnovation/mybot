@@ -38,4 +38,9 @@ return [
         'auth_password' => env('MCP_PASSWORD'),
     ],
 
+    // Base URL для поиска товаров (NLWeb или другой сервис)
+    'product_api' => [
+        'url' => env('PRODUCT_API_URL', env('SEARCH_PRODUCTS_URL', '')),
+    ],
+
 ];
