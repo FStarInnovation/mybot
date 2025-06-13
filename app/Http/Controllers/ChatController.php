@@ -55,7 +55,7 @@ class ChatController extends Controller
                 'messages' => [
                     ['role' => 'assistant', 'content' => 'Извините, произошла ошибка. Пожалуйста, попробуйте снова.']
                 ]
-            ], 500);
+            ]);
         }
     }
 
