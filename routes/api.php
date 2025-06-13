@@ -40,6 +40,27 @@ Route::delete('/push/unsubscribe', [\App\Http\Controllers\Api\PushSubscriptionCo
 Route::get('products', [ProductController::class, 'index']);
 Route::get('products/{product}', [ProductController::class, 'show']);
 
+// Proxy to NLWeb search_products
+Route::get('/search_products', function (\Illuminate\Http\Request $request) {
+    $query = $request->input('query', '');
+    $limit = $request->input('limit', 5);
+    $sort = $request->input('sort');
+
+    $nlwebUrl = rtrim(config('services.nlweb.url', env('SEARCH_PRODUCTS_URL', 'http://localhost:8000/api/search_products')), '/');
+
+    try {
+        $response = \Illuminate\Support\Facades\Http::timeout(10)->get($nlwebUrl, [
+            'query' => $query,
+            'limit' => $limit,
+            'sort'  => $sort,
+        ]);
+
+        return $response->json();
+    } catch (\Throwable $e) {
+        return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+    }
+});
+
 // Новый тестовый маршрут для проверки function calling
 Route::post('/test-function-call', function (Request $request, LlmGatewayService $llm) {
     $userMessage = $request->input('message', 'Ibuprofeno цена в базе');

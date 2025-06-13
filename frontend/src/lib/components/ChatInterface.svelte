@@ -108,7 +108,7 @@
       const res = await fetch('/api/search_products?query=ibuprofeno&limit=1&sort=price_asc');
       if (!res.ok) throw new Error('API error');
       const data = await res.json();
-      const product = data?.items?.[0] ?? {};
+      const product = (data?.results ?? data?.items ?? [])[0] ?? {};
       const productCardMessage: Message = {
         id: Date.now().toString(),
         sender: 'bot',
