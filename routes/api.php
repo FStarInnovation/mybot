@@ -44,7 +44,7 @@ Route::get('products/{product}', [ProductController::class, 'show']);
 Route::get('/search_products', function (\Illuminate\Http\Request $request) {
     $query = $request->input('query', '');
     $limit = $request->input('limit', 5);
-    $sort = $request->input('sort');
+    $sort = $request->input('sort', 'price_asc');
 
     $nlwebUrl = rtrim(config('services.product_api.url', 'http://localhost:8000/api/search_products'), '/');
 
