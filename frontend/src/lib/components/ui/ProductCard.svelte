@@ -1,13 +1,33 @@
 <script lang="ts">
   import { useProduct } from '$lib/tanstack/product-queries';
   import { goto } from '$app/navigation';
+  import { readable } from 'svelte/store';
   
   export let productId: string | number;
   export let compact: boolean = false; // Компактный режим отображения
   export let clickable: boolean = true; // Можно ли кликнуть по карточке
-  
-  // Загружаем данные о товаре с помощью TanStack Query
-  const productQuery = useProduct(productId);
+
+  // Опциональные поля, если товар передан напрямую
+  export let title: string | undefined;
+  export let price: number | string | undefined;
+  export let image: string | undefined;
+  export let url: string | undefined;
+
+  // Создаём источник данных:
+  const productQuery = (title !== undefined && price !== undefined)
+    ? readable({
+        isLoading: false,
+        isError: false,
+        data: {
+          id: productId,
+          name: title,
+          price: typeof price === 'string' ? parseFloat(price as string) : (price as number),
+          image,
+          url,
+          availability: true
+        }
+      })
+    : useProduct(productId);
   
   // Форматирование цены
   function formatPrice(price: number): string {
@@ -21,8 +41,11 @@
   // Обработчик клика по карточке
   function handleClick() {
     if (clickable && $productQuery.data) {
-      // Навигация на страницу товара
-      goto(`/products/${$productQuery.data.id}`);
+      if ($productQuery.data.url) {
+        window.open($productQuery.data.url, '_blank');
+      } else {
+        goto(`/products/${$productQuery.data.id}`);
+      }
     }
   }
   

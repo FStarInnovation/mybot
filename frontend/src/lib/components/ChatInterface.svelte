@@ -119,7 +119,9 @@
           props: {
             title: product.name ?? 'Ibuprofeno',
             price: product.price ?? 'N/A',
-            productId: product.id ?? null
+            productId: product.id ?? null,
+            image: product.image ?? null,
+            url: product.url ?? null
           }
         }
       };
