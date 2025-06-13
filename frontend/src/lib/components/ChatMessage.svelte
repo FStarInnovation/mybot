@@ -137,9 +137,16 @@
     </div>
   {:else if messageType === AgUIEventType.CUSTOM && customComponentData}
     <div class="custom-component-container">
-      {#if customComponentData.componentName === 'ProductCard' && customComponentData.props && typeof customComponentData.props.productId === 'number'}
+      {#if customComponentData.componentName === 'ProductCard' && customComponentData.props && (typeof customComponentData.props.productId === 'number' || (customComponentData.props.title && customComponentData.props.price))}
         <div class="product-card-wrapper">
-          <ProductCard productId={customComponentData.props.productId} clickable={false} />
+          <ProductCard 
+              productId={customComponentData.props.productId}
+              title={customComponentData.props.title}
+              price={customComponentData.props.price}
+              image={customComponentData.props.image}
+              url={customComponentData.props.url}
+              clickable={false}
+            />
           {#if formattedTimestamp}
             <div class="message-timestamp">{formattedTimestamp}</div>
           {/if}
