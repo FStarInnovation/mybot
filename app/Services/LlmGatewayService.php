@@ -43,6 +43,21 @@ class LlmGatewayService
      */
     public function chat(array $messages, array $tools = []): string
     {
+        // Ensure system prompt is the first message
+        $hasSystem = false;
+        foreach ($messages as $m) {
+            if (($m['role'] ?? '') === 'system') {
+                $hasSystem = true;
+                break;
+            }
+        }
+        if (!$hasSystem) {
+            array_unshift($messages, [
+                'role'    => 'system',
+                'content' => Config::get('llm.system_prompt'),
+            ]);
+        }
+
         $payload = [
             'model'       => Config::get('llm.default_model'),
             'messages'   => $messages,
