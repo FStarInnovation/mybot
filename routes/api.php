@@ -49,11 +49,13 @@ Route::get('/search_products', function (\Illuminate\Http\Request $request) {
     $nlwebUrl = rtrim(config('services.product_api.url', 'http://localhost:8000/api/search_products'), '/');
 
     try {
-        $response = \Illuminate\Support\Facades\Http::timeout(10)->get($nlwebUrl, [
-            'query' => $query,
-            'limit' => $limit,
-            'sort'  => $sort,
-        ]);
+        $response = \Illuminate\Support\Facades\Http::timeout(10)
+            ->asJson()
+            ->post($nlwebUrl, [
+                'query' => $query,
+                'limit' => $limit,
+                'sort'  => $sort,
+            ]);
 
         return $response->json();
     } catch (\Throwable $e) {
