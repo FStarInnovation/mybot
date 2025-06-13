@@ -102,22 +102,32 @@
     }
   }
   
-  // Функция для тестирования отображения карточки товара
-  function testProductCard() {
-    const productCardMessage: Message = {
-      id: Date.now().toString(),
-      sender: 'bot',
-      type: AgUIEventTypesEnum.CUSTOM,
-      timestamp: new Date().toISOString(),
-      // Add customComponentData object that ChatMessage.svelte expects
-      customComponentData: {
-        componentName: 'ProductCard',
-        props: { productId: 2 } // ID товара для тестирования
-      }
-    };
-    
-    messages = [...messages, productCardMessage];
-    scrollToBottom();
+  // Показать «ibuprofeno al mejor precio» – берём самый дешёвый товар из API
+  async function showIbuprofenoBestPrice() {
+    try {
+      const res = await fetch('/api/search_products?query=ibuprofeno&limit=1&sort=price_asc');
+      if (!res.ok) throw new Error('API error');
+      const data = await res.json();
+      const product = data?.items?.[0] ?? {};
+      const productCardMessage: Message = {
+        id: Date.now().toString(),
+        sender: 'bot',
+        type: AgUIEventTypesEnum.CUSTOM,
+        timestamp: new Date().toISOString(),
+        customComponentData: {
+          componentName: 'ProductCard',
+          props: {
+            title: product.name ?? 'Ibuprofeno',
+            price: product.price ?? 'N/A',
+            productId: product.id ?? null
+          }
+        }
+      };
+      messages = [...messages, productCardMessage];
+      scrollToBottom();
+    } catch (e) {
+      console.error(e);
+    }
   }
 </script>
 
@@ -164,7 +174,7 @@
   </div>
   <div class="chat-input-area">
     <div class="test-buttons">
-      <button class="test-button" on:click={testProductCard}>Тест карточки товара</button>
+      <button class="test-button" on:click={showIbuprofenoBestPrice}>ibuprofeno al mejor precio</button>
     </div>
     <ChatInput on:sendMessage={handleSendMessage} />
   </div>
