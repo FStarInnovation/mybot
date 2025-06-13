@@ -34,7 +34,8 @@ class ChatController extends Controller
             
             // Get LLM response
             $llmService = app(\App\Services\LlmGatewayService::class);
-            $assistantResponse = $llmService->chat($context);
+            $tools = app(\App\Services\ToolManifestService::class)->getToolsManifest();
+            $assistantResponse = $llmService->chat($context, $tools);
             
             // Remember the conversation
             $this->memory->rememberConversation($sessionId, $userMessage, $assistantResponse);
