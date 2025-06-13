@@ -23,13 +23,19 @@ return [
         ],
     ],
 
-    // ✅ вставляем LLM сюда, внутри return-массива:
     'llm' => [
-        'endpoint' => env('LLM_API_URL', 'http://localhost:1434/completion'),
+        // Unified gateway chat endpoint
+        'endpoint' => env('LLM_GATEWAY_URL', 'http://localhost:10051') . '/chat',
     ],
 
     'embeddings' => [
         'endpoint' => env('EMBEDDINGS_API_URL', 'http://localhost:8000/embedding'),
+    ],
+
+    'mcp' => [
+        'endpoint'      => env('MCP_BASE_URL', 'http://localhost:10051'),
+        'auth_username' => env('MCP_USERNAME'),
+        'auth_password' => env('MCP_PASSWORD'),
     ],
 
 ];

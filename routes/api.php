@@ -10,6 +10,9 @@ use App\Http\Controllers\LlmBridgeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PushController;
+use Illuminate\Http\Request;
+use App\Services\ChatService;
+use App\Services\LlmGatewayService;
 
 Route::post('/scan-sites', [SiteScanController::class, 'scan']);
 Route::get('/results', [ResultsController::class, 'index']);
@@ -36,3 +39,27 @@ Route::delete('/push/unsubscribe', [\App\Http\Controllers\Api\PushSubscriptionCo
 // Product endpoints (api prefix is already applied)
 Route::get('products', [ProductController::class, 'index']);
 Route::get('products/{product}', [ProductController::class, 'show']);
+
+// Новый тестовый маршрут для проверки function calling
+Route::post('/test-function-call', function (Request $request, LlmGatewayService $llm) {
+    $userMessage = $request->input('message', 'Ibuprofeno цена в базе');
+    $sessionId = $request->input('session_id', 'test-session-' . uniqid());
+
+    try {
+        $toolManifest = (new \App\Services\ToolManifestService())->getToolsManifest();
+        $response = $llm->chat([
+            ['role' => 'user', 'content' => $userMessage]
+        ], $toolManifest);
+
+        return response()->json([
+            'session_id' => $sessionId,
+            'user_message' => $userMessage,
+            'assistant_response' => $response,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ], 500);
+    }
+});

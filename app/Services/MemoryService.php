@@ -4,13 +4,15 @@ namespace App\Services;
 
 use App\Services\Memory\ShortTermMemoryService;
 use App\Services\Memory\LongTermMemoryService;
+use App\Services\PromptBuilderService;
 use Illuminate\Support\Collection;
 
 class MemoryService
 {
     public function __construct(
         protected ShortTermMemoryService $shortTerm,
-        protected LongTermMemoryService $longTerm
+        protected LongTermMemoryService $longTerm,
+        protected PromptBuilderService $promptBuilder
     ) {}
 
     public function getContext(string $sessionId, string $userMessage): array
@@ -22,7 +24,7 @@ class MemoryService
         $longTermContext = $this->getRelevantLongTermMemory($userMessage, $sessionId);
         
         // 3. Format system message with context
-        $systemMessage = $this->formatSystemMessage($longTermContext);
+        $systemMessage = $this->promptBuilder->buildSystemContent($longTermContext);
         
         // 4. Combine all messages
         return array_merge(
@@ -64,21 +66,6 @@ class MemoryService
         }
         
         return $this->longTerm->searchSimilar($query, $sessionId);
-    }
-    
-    protected function formatSystemMessage(Collection $longTermContext): string
-    {
-        $basePrompt = "Ты дружелюбный русскоязычный ассистент. Отвечай кратко и по существу.";
-        
-        if ($longTermContext->isEmpty()) {
-            return $basePrompt;
-        }
-        
-        $context = $longTermContext->map(
-            fn($item) => "- {$item['content']}"
-        )->implode("\n");
-        
-        return "$basePrompt\n\nКонтекст из предыдущих обсуждений:\n$context";
     }
     
     protected function isWorthRemembering(string $question, string $answer): bool

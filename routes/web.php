@@ -11,6 +11,8 @@ use App\Http\Controllers\TestLlmUIController;
 use App\Http\Controllers\LlmBridgeController;
 use Illuminate\Support\Facades\Redis;
 use App\Models\SearchQuery;
+use Illuminate\Http\Request;
+use App\Services\ChatService;
 
 // Health‑check endpoint for load balancer / platform probes
 Route::get('/healthz', fn () => response()->json(['status' => 'ok']));
@@ -191,6 +193,7 @@ Route::get('/memory-test', function () {
         'search_query_saved' => $query->only(['id', 'query', 'created_at']),
     ]);
 });
+
 
 // SPA маршрут для SvelteKit приложения
 // Должен быть в самом конце файла, чтобы не перехватывать другие маршруты

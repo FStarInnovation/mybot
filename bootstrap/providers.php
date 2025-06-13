@@ -2,6 +2,7 @@
 
 return [
     App\Providers\AppServiceProvider::class,
-    App\Providers\HorizonServiceProvider::class,
+    // Horizon disabled for local development to avoid Redis requirement
+    // App\Providers\HorizonServiceProvider::class,
     App\Providers\TelescopeServiceProvider::class,
 ];

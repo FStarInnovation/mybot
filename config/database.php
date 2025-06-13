@@ -59,7 +59,7 @@ return [
     ],
 
     'redis' => [
-        'client' => env('REDIS_CLIENT', 'phpredis'),
+        'client' => env('REDIS_CLIENT', 'predis'),
 
         'options' => [
             'prefix' => env('REDIS_PREFIX', 'mybot_database_'),
@@ -77,8 +77,11 @@ return [
             'read_timeout' => env('REDIS_READ_TIMEOUT', 10), // seconds
             'timeout' => env('REDIS_TIMEOUT', 5), // seconds for connection
             'persistent' => false,
-            'keepalive' => env('REDIS_KEEPALIVE', 30), // seconds for TCP keepalive
-            // 'ssl' => [ ... ], // Intentionally removed
+            'keepalive' => env('REDIS_KEEPALIVE', 15), // seconds for TCP keepalive
+            'ssl' => [
+                'verify_peer' => env('REDIS_VERIFY_PEER', true),
+                'verify_peer_name' => env('REDIS_VERIFY_PEER_NAME', true),
+            ],
         ],
 
         'cache' => [
@@ -91,8 +94,11 @@ return [
             'read_timeout' => env('REDIS_READ_TIMEOUT', 10), // seconds
             'timeout' => env('REDIS_TIMEOUT', 5), // seconds for connection
             'persistent' => false, // Assuming cache connections don't need to be persistent
-            'keepalive' => env('REDIS_KEEPALIVE', 30), // seconds for TCP keepalive
-            // 'ssl' => [ ... ], // Intentionally removed
+            'keepalive' => env('REDIS_KEEPALIVE', 15), // seconds for TCP keepalive
+            'ssl' => [
+                'verify_peer' => env('REDIS_VERIFY_PEER', true),
+                'verify_peer_name' => env('REDIS_VERIFY_PEER_NAME', true),
+            ],
         ],
 
     ],

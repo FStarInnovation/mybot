@@ -54,7 +54,8 @@ class ChatController extends Controller
                 'error' => 'Произошла ошибка при обработке запроса',
                 'messages' => [
                     ['role' => 'assistant', 'content' => 'Извините, произошла ошибка. Пожалуйста, попробуйте снова.']
-                ]
+                ],
+                'details' => $e->getMessage(),
             ]);
         }
     }
