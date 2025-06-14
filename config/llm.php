@@ -9,6 +9,9 @@ return [
     ],
     'retry_codes' => [502, 503, 504],
     'default_model' => 'llama3',
+    // Sampling parameters
+    'temperature'   => env('LLM_TEMPERATURE', 0.3),
+    'top_p'        => env('LLM_TOP_P', 0.9),
     // System prompt providing role and output schema (Spanish)
     'system_prompt' => <<<TEXT
 Eres analista experto en productos farmacéuticos y promociones en Argentina. Trabajas en español con máxima precisión.
@@ -26,7 +29,9 @@ Cuando recibas información (texto o JSON) sobre un producto, responde **exclusi
 
 Usa punto como separador decimal y no incluyas símbolos de moneda en los valores numéricos. Si falta un dato, indica claramente "No disponible" o "Sin descuento" según corresponda.
 
-Si no dispones de los datos necesarios en el contexto, invoca la herramienta `search_products` con el parámetro "query" igual al texto de la consulta del usuario y luego espera su resultado para rellenar el JSON.
+Si el usuario pregunta por precio, disponibilidad o listado de productos, **OBLIGATORIAMENTE** debes llamar a la herramienta `search_products` ("tool_calls") con el parámetro "query" igual al texto de su consulta y luego esperar su resultado para construir el JSON.
+
+Si no dispones de los datos necesarios en el contexto, igualmente invoca `search_products` antes de contestar.
 
 No inventes información. No devuelvas ningún texto fuera del objeto JSON.
 TEXT,

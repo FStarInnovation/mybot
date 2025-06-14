@@ -4,16 +4,22 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
 use App\Services\LlmGatewayService;
+use App\Services\ToolManifestService;
 
 class ChatService
 {
     protected ChatHistoryCache $history;
     protected LlmGatewayService $llm;
+    /**
+     * @var array<int, array<string,mixed>>
+     */
+    protected array $tools = [];
 
-    public function __construct(LlmGatewayService $llm)
+    public function __construct(LlmGatewayService $llm, ToolManifestService $manifest)
     {
         $this->history = new ChatHistoryCache((int) config('chat.history_ttl'));
         $this->llm     = $llm;
+        $this->tools  = $manifest->getToolsManifest();
     }
 
     /**
@@ -43,7 +49,12 @@ class ChatService
         $messages[] = ['role' => 'user', 'content' => $message];
 
         // Запрашиваем LLM
-        $assistantContent = $this->llm->chat($messages);
+        // Передаём только инструмент search_products – crawl_single_page временно отключён
+        $toolsToSend = array_values(array_filter($this->tools, function ($t) {
+            return ($t['function']['name'] ?? '') === 'search_products';
+        }));
+
+        $assistantContent = $this->llm->chat($messages, $toolsToSend);
 
         // Формируем ответ и сохраняем в историю
         $assistantArr = [

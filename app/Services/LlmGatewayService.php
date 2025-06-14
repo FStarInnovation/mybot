@@ -58,14 +58,19 @@ class LlmGatewayService
             ]);
         }
 
+
         $payload = [
             'model'       => Config::get('llm.default_model'),
             'messages'   => $messages,
             'tools'      => $tools,
+            'temperature'=> Config::get('llm.temperature'),
+            'top_p'      => Config::get('llm.top_p'),
+            
             'tool_choice'=> 'auto',
             'stream'     => false,
         ];
 
+        Log::debug('LLM payload', ['payload' => $payload]);
         try {
             $httpResponse = $this->http->post(
                 Config::get('llm.gateway.url') . '/chat',
@@ -79,6 +84,7 @@ class LlmGatewayService
             }
 
             $response = $httpResponse->json();
+            Log::debug('LLM raw response', ['response' => $response]);
 
             if (!is_array($response) || !isset($response['choices'][0])) {
                 throw new \RuntimeException('Invalid response format from LLM gateway: ' . json_encode($response));

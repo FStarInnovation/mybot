@@ -1,0 +1,28 @@
+{
+  "model": "llama3",
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "search_products",
+        "description": "Buscar productos",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": { "type": "string" },
+            "limit": { "type": "integer" }
+          },
+          "required": ["query"]
+        }
+      }
+    }
+  ],
+  "messages": [
+    {
+      "role": "system",
+      "content": "Si el usuario pregunta por precio o productos, usa search_products."
+    },
+    { "role": "user", "content": "precio ibuprofeno" }
+  ]
+}
