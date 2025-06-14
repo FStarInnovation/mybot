@@ -40,9 +40,9 @@ Route::delete('/push/unsubscribe', [\App\Http\Controllers\Api\PushSubscriptionCo
 Route::get('products', [ProductController::class, 'index']);
 Route::get('products/{product}', [ProductController::class, 'show']);
 
-// Proxy to NLWeb search_products
-Route::get('/search_products', function (\Illuminate\Http\Request $request) {
-    $query = $request->input('query', '');
+// Proxy to NLWeb search_products (accepts both GET and POST)
+Route::match(['get','post'], '/search_products', function (\Illuminate\Http\Request $request) {
+    $query = mb_strtolower($request->input('query', ''));
     $limit = (int) $request->input('limit', 5);
     $sort = $request->input('sort');
     if (empty($sort)) {
