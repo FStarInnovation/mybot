@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { useProduct } from '$lib/tanstack/product-queries';
-  import { goto } from '$app/navigation';
+  
+  
   import { readable } from 'svelte/store';
   
   export let productId: string | number;
@@ -13,23 +13,22 @@
   export let image: string | undefined;
   export let url: string | undefined;
 
-  // Создаём источник данных:
-  const hasDirectData = title !== undefined || price !== undefined || image !== undefined || url !== undefined;
+    // Создаём источник данных без внешнего запроса – используем то, что пришло в props
+  import type { Readable } from 'svelte/store';
 
-  const productQuery = hasDirectData
-    ? readable({
-        isLoading: false,
-        isError: false,
-        data: {
-          id: productId,
-          name: title,
-          price: typeof price === 'string' ? parseFloat(price as string) : (price as number),
-          image,
-          url,
-          availability: true
-        }
-      })
-    : useProduct(productId);
+  // Используем универсальный тип, чтобы не ломать TS на необязательных полях
+  const productQuery: Readable<any> = readable({
+    isLoading: false,
+    isError: false,
+    data: {
+      id: productId,
+      name: title ?? String(productId),
+      price: typeof price === 'string' ? parseFloat(price as string) : (price as number | undefined),
+      image,
+      url,
+      availability: true
+    }
+  });
   
   // Форматирование цены
   function formatPrice(price: number): string {
@@ -42,12 +41,18 @@
   
   // Обработчик клика по карточке
   function handleClick() {
-    if (clickable && $productQuery.data) {
-      if ($productQuery.data.url) {
-        window.open($productQuery.data.url, '_blank');
-      } else {
-        goto(`/products/${$productQuery.data.id}`);
-      }
+    if (!clickable || !$productQuery.data) return;
+
+    if ($productQuery.data.url) {
+      window.open($productQuery.data.url, '_blank');
+    } else {
+      window.location.href = `/products/${$productQuery.data.id}`;
+    }
+  }
+
+  function handleKey(event: KeyboardEvent) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      handleClick();
     }
   }
   
@@ -77,7 +82,7 @@
   }
 </script>
 
-<div class="product-card" class:compact class:clickable on:click={handleClick}>
+<div class="product-card" class:compact class:clickable role="button" tabindex={clickable ? 0 : undefined} on:click={handleClick} on:keydown={handleKey}>
   {#if $productQuery.isLoading}
     <div class="loading-state">
       <div class="loading-spinner"></div>
