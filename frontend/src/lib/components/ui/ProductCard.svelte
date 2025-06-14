@@ -12,6 +12,8 @@
   export let price: number | string | undefined;
   export let image: string | undefined;
   export let url: string | undefined;
+  // Валюта (по умолчанию аргентинский песо)
+  export let currency: string = 'ARS';
 
     // Создаём источник данных без внешнего запроса – используем то, что пришло в props
   import type { Readable } from 'svelte/store';
@@ -32,9 +34,11 @@
   
   // Форматирование цены
   function formatPrice(price: number): string {
-    return new Intl.NumberFormat('ru-RU', {
+    // используем локаль, подходящую под валюту (по умолчанию es-AR)
+    const locale = currency === 'ARS' ? 'es-AR' : undefined;
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: 'RUB',
+      currency,
       minimumFractionDigits: 0
     }).format(price);
   }
