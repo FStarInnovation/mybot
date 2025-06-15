@@ -62,14 +62,12 @@ class LlmGatewayService
         $payload = [
             'service'  => 'search',
             'messages' => $messages,
-            'stream'   => true,
+            'stream'   => false,
         ];
 
         Log::debug('LLM payload', ['payload' => $payload]);
         try {
-            $httpResponse = $this->http->withHeaders([
-                    'Accept' => 'text/event-stream',
-                ])->post(
+            $httpResponse = $this->http->post(
                 rtrim(Config::get('llm.gateway.url'), '/') . '/api/v1/ask',
                 $payload
             );
@@ -80,7 +78,7 @@ class LlmGatewayService
                 );
             }
 
-            // SSE body may contain multiple lines starting with "data: " or plain JSON if stream=false
+            // Gateway now returns plain JSON (stream=false); keep SSE fallback but first try JSON
             $body  = (string) $httpResponse->body();
             Log::debug('LLM raw body', ['body_preview' => mb_substr($body, 0, 1000)]);
             $lines = preg_split('/\r?\n/', $body);
