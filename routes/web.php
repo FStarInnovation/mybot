@@ -9,12 +9,16 @@ Route::prefix('api/v1')->group(function () {
     // остальные API-маршруты...
 });
 
+// Health check для Laravel Cloud - должен быть ПЕРЕД catch-all
+Route::get('/health', function () {
+    return response()->json([
+        'status'     => 'ok',
+        'timestamp'  => now()->toIso8601String(),
+        'framework'  => app()->version(),
+    ], 200);
+});
+
 // SPA fallback - важно! Должен быть ПОСЛЕ всех других маршрутов
 Route::get('/{path?}', function () {
     return file_get_contents(public_path('index.html'));
 })->where('path', '.*');
-
-// Health check для Laravel Cloud
-Route::get('/health', function () {
-    return response()->json(['status' => 'ok']);
-});
