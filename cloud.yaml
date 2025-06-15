@@ -18,8 +18,8 @@ services:
             try_files $uri $uri/ /index.html;
         }
         
-        # Приоритетная обработка для API маршрутов
-        location /api {
+        # Приоритетная обработка для API маршрутов - всегда направляем на Laravel
+        location ^~ /api/ {
             try_files $uri $uri/ /index.php?$query_string;
         }
         
