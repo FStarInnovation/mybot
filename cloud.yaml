@@ -15,7 +15,8 @@ services:
         
         location / {
            # First try static files, then Laravel routes, then fall back to SPA index.html
-           try_files $uri $uri/ /index.php?$query_string /index.html;
+           # SPA-first fallback: static -> /index.html -> Laravel
+           try_files $uri $uri/ /index.html /index.php?$query_string;
         }
     
     build:
