@@ -9,8 +9,8 @@ const config = {
     adapter: adapter({
       // Generate root-level index.html into /public
       pages: '../public',
-      // Place all JS/CSS assets under /public/_app for caching
-      assets: '../public/_app',
+      // Place assets directly under /public; adapter will create _app automatically
+      assets: '../public',
       fallback: 'index.html'
     }),
     alias: {
