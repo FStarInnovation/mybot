@@ -67,8 +67,7 @@ class LlmGatewayService
 
 
         $payload = [
-            // Если инструменты не передаются, используем обычный режим чата
-            'service'  => empty($tools) ? 'chat' : 'search',
+            'service'  => 'search',
             'messages' => $messages,
             'stream'   => false,
         ];
