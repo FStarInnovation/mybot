@@ -67,10 +67,7 @@ class ChatService
         // Добавляем историю
         $messages = array_merge($messages, $historyMessages);
 
-        // Добавляем текущий запрос
-        $messages[] = ['role' => 'user', 'content' => $message];
-
-        // Добавляем текущий запрос
+        // Добавляем текущий запрос один раз
         $messages[] = ['role' => 'user', 'content' => $message];
 
         // Запрашиваем LLM
