@@ -57,6 +57,9 @@ services:
       DB_DATABASE: neondb
       DB_USERNAME: neondb_owner
       DB_PASSWORD: npg_d4my6EWUeDvM
+      PGSQL_SSL_MODE: require
+      DB_CONNECT_TIMEOUT: 30
+      DB_SSLMODE: require
       
       # Redis и очереди
       QUEUE_CONNECTION: database
