@@ -6,13 +6,30 @@
     <link rel="icon" href="/favicon.png" />
     <link rel="manifest" href="/manifest.json" />
     <title>St. Anna</title>
-    <!-- Основные CSS и JS модули для SvelteKit -->
+    <!-- CSS файлы -->
+    <link rel="stylesheet" href="/_app/immutable/assets/0.CNC58I01.css">
+    <link rel="stylesheet" href="/_app/immutable/assets/2.TIzTRg2W.css">
+    <!-- JS модули -->
     <link rel="modulepreload" href="/_app/immutable/entry/start.YjqSXS2k.js">
     <link rel="modulepreload" href="/_app/immutable/chunks/tOEcuTx3.js">
     <link rel="modulepreload" href="/_app/immutable/chunks/CixJFmhU.js">
     <link rel="modulepreload" href="/_app/immutable/chunks/D8xs8ckS.js">
     <link rel="modulepreload" href="/_app/immutable/entry/app.BuZMmnhF.js">
     <link rel="modulepreload" href="/_app/immutable/chunks/B1CXnPxY.js">
+    <link rel="modulepreload" href="/_app/immutable/nodes/0.pvSPRnK5.js">
+    <script type="module">
+        import { start } from '/_app/immutable/entry/start.YjqSXS2k.js';
+        start({
+            paths: {"base":"","assets":""},
+            target: document.querySelector('[id="svelte"]'),
+            version: "1.0.0",
+            hydrate: {
+                node_ids: [0],
+                data: [{}],
+                form: null
+            }
+        });
+    </script>
 </head>
 <body>
     <div id="svelte">Loading application...</div>
