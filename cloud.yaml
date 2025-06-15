@@ -1,14 +1,10 @@
 name: mybot
 services:
   app:
-    # Важно! Nginx должен быть перед build
     webserver:
       nginx_inline: |
-        root /var/www/html/public;
-        index index.php index.html;
-        
         location / {
-            try_files $uri $uri/ /index.php?$query_string;
+          try_files $uri $uri/ /index.php?$query_string;
         }
     
     build:
@@ -20,7 +16,7 @@ services:
       - mybot.laravel.app
     env:
       APP_ENV: production
-      APP_KEY: base64:xxx # заменим позже
+      APP_KEY: base64:xxx
       LOG_CHANNEL: stderr
       DB_CONNECTION: pgsql
       DB_HOST: ${NEON_DB_HOST}
@@ -28,7 +24,6 @@ services:
       DB_DATABASE: neondb
       DB_USERNAME: ${NEON_DB_USERNAME}
       DB_PASSWORD: ${NEON_DB_PASSWORD}
-      
       QUEUE_CONNECTION: redis
       REDIS_CLIENT: predis
       REDIS_URL: ${UPSTASH_REDIS_URL}
