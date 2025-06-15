@@ -25,9 +25,16 @@ class LlmGatewayService
                         return true;
                     }
 
-                    if (property_exists($exception, 'response') && $exception->response) {
-                        $status = $exception->response->status();
-                        return in_array($status, $retryCodes, true);
+                    $response = null;
+                    if (method_exists($exception, 'getResponse')) {
+                        $response = $exception->getResponse();
+                    } elseif (property_exists($exception, 'response')) {
+                        // Illuminate RequestException имеет public $response
+                        $response = $exception->response;
+                    }
+                    if ($response) {
+                        $status = method_exists($response, 'status') ? $response->status() : ($response->getStatusCode() ?? null);
+                        return $status && in_array($status, $retryCodes, true);
                     }
 
                     return false;
