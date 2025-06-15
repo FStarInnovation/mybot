@@ -8,6 +8,14 @@ services:
       memory: 512
     domains:
       - mybot.laravel.app
+    webserver:
+      nginx:
+        inline_config: |
+          root /var/www/html/public;
+
+          location / {
+              try_files $uri $uri/ /index.php?$query_string;
+          }
     env:
       APP_ENV: production
       APP_KEY: base64:xxx # заменим позже
