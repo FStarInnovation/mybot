@@ -27,6 +27,15 @@ Route::get('/health.php', function () {
     ], 200);
 });
 
+// Явные маршруты для SPA-подмаршрутов
+Route::get('/chat', function () {
+    return file_get_contents(public_path('index.html'));
+});
+
+Route::get('/chat/{path?}', function () {
+    return file_get_contents(public_path('index.html'));
+})->where('path', '.*');
+
 // SPA fallback - важно! Должен быть ПОСЛЕ всех других маршрутов
 Route::get('/{path?}', function () {
     return file_get_contents(public_path('index.html'));
