@@ -9,12 +9,11 @@ services:
     domains:
       - mybot.laravel.app
     webserver:
-      nginx:
-        inline_config: |
+      nginx_inline: |
           root /var/www/html/public;
 
           location / {
-              try_files $uri $uri/ /index.php?$query_string;
+            try_files $uri $uri/ /index.php?$query_string;
           }
     env:
       APP_ENV: production
