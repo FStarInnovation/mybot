@@ -41,6 +41,9 @@ Route::get('products', [ProductController::class, 'index']);
 Route::get('products/{product}', [ProductController::class, 'show']);
 
 // Proxy to NLWeb search_products (accepts both GET and POST)
+// Unified ask endpoint (POST, SSE stream supported via ChatService)
+Route::post('/v1/ask', [\App\Http\Controllers\AskController::class, 'ask']);
+
 Route::match(['get','post'], '/search_products', function (\Illuminate\Http\Request $request) {
     $query = mb_strtolower($request->input('query', ''));
     $limit = (int) $request->input('limit', 5);

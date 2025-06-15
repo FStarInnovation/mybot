@@ -60,20 +60,17 @@ class LlmGatewayService
 
 
         $payload = [
-            'model'       => Config::get('llm.default_model'),
-            'messages'   => $messages,
-            'tools'      => $tools,
-            'temperature'=> Config::get('llm.temperature'),
-            'top_p'      => Config::get('llm.top_p'),
-            
-            'tool_choice'=> 'auto',
-            'stream'     => false,
+            'service'  => 'search',
+            'messages' => $messages,
+            'stream'   => true,
         ];
 
         Log::debug('LLM payload', ['payload' => $payload]);
         try {
-            $httpResponse = $this->http->post(
-                Config::get('llm.gateway.url') . '/chat',
+            $httpResponse = $this->http->withHeaders([
+                    'Accept' => 'text/event-stream',
+                ])->post(
+                rtrim(Config::get('llm.gateway.url'), '/') . '/api/v1/ask',
                 $payload
             );
 
@@ -83,7 +80,26 @@ class LlmGatewayService
                 );
             }
 
-            $response = $httpResponse->json();
+            // SSE body may contain multiple lines starting with "data: "
+            $body  = (string) $httpResponse->body();
+            $lines = preg_split('/\r?\n/', $body);
+            $jsonStr = null;
+            foreach ($lines as $line) {
+                if (!str_starts_with($line, 'data:')) {
+                    continue;
+                }
+                $candidate = trim(substr($line, 5));
+                // Игнорируем маркер завершения
+                if ($candidate === '[DONE]' || $candidate === '') {
+                    continue;
+                }
+                $jsonStr = $candidate;
+                break; // берём первый валидный JSON chunk
+            }
+            if (!$jsonStr) {
+                throw new \RuntimeException('SSE response missing JSON chunk');
+            }
+            $response = json_decode($jsonStr, true);
             Log::debug('LLM raw response', ['response' => $response]);
 
             if (!is_array($response) || !isset($response['choices'][0])) {
