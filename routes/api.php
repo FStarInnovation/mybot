@@ -25,10 +25,13 @@ Route::get('/supabase-test', [SupabaseController::class, 'testQuery']);
 Route::post('/query', [LlmBridgeController::class, 'query'])->name('api.query');
 Route::get('/ping', fn() => response()->json(['pong' => true]));
 
-// Chat endpoints (session-based) – need session middleware even under API
+// Chat endpoints
+// Маршрут /chat/send использует middleware api для совместимости с фронтендом
+Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'send']);
+
+// Эти маршруты требуют сессии
 Route::middleware(\Illuminate\Session\Middleware\StartSession::class)
     ->group(function () {
-        Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'send']);
         Route::post('/chat/debug', function (\Illuminate\Http\Request $request) {
             $message = $request->input('message', '');
             \Log::debug('Debug chat stub', ['message' => $message]);
