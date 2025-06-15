@@ -71,16 +71,7 @@ class ChatService
         $messages[] = ['role' => 'user', 'content' => $message];
 
         // Запрашиваем LLM
-        // Отправляем инструмент поиска только если запрос явно о цене/compra
-        $lower = mb_strtolower($message, 'UTF-8');
-        $priceKeywords = ['precio', 'cuánto', 'cuanto', 'costo', 'vale', 'comprar', '$'];
-        $needsSearch = false;
-        foreach ($priceKeywords as $kw) {
-            if (str_contains($lower, $kw)) {
-                $needsSearch = true;
-                break;
-            }
-        }
+        // Инструмент поиска отправляем только если запрос явно о цене / покупке (вычислено ранее)
         $toolsToSend = [];
         if ($needsSearch) {
             $toolsToSend = array_values(array_filter($this->tools, function ($t) {
