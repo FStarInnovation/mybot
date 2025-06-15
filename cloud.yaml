@@ -23,6 +23,15 @@ services:
             try_files $uri $uri/ /index.php?$query_string;
         }
         
+        # Reverse-proxy для RunPod Gateway маршрутов
+        location /tool/ {
+            proxy_pass https://lepweaehjlas8o-10051.proxy.runpod.net/tool/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+        
         location / {
            # First try static files, then Laravel routes, then fall back to SPA index.html
            # SPA-first fallback: static -> /index.html -> Laravel
