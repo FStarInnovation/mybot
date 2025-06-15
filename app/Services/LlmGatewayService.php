@@ -80,21 +80,24 @@ class LlmGatewayService
                 );
             }
 
-            // SSE body may contain multiple lines starting with "data: "
+            // SSE body may contain multiple lines starting with "data: " or plain JSON if stream=false
             $body  = (string) $httpResponse->body();
+            Log::debug('LLM raw body', ['body_preview' => mb_substr($body, 0, 1000)]);
             $lines = preg_split('/\r?\n/', $body);
             $jsonStr = null;
             foreach ($lines as $line) {
-                if (!str_starts_with($line, 'data:')) {
-                    continue;
+                if (preg_match('/^data:\\s*(.*)$/', trim($line), $m)) {
+                    $candidate = trim($m[1]);
+                    if ($candidate === '' || $candidate === '[DONE]') {
+                        continue;
+                    }
+                    $jsonStr = $candidate;
+                    break;
                 }
-                $candidate = trim(substr($line, 5));
-                // Игнорируем маркер завершения
-                if ($candidate === '[DONE]' || $candidate === '') {
-                    continue;
-                }
-                $jsonStr = $candidate;
-                break; // берём первый валидный JSON chunk
+            }
+            // Если не нашли chunk, возможно gateway вернул обычный JSON (stream=false)
+            if ($jsonStr === null && str_starts_with(trim($body), '{')) {
+                $jsonStr = trim($body);
             }
             if (!$jsonStr) {
                 throw new \RuntimeException('SSE response missing JSON chunk');
