@@ -2,11 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 
-// API-маршруты
+// API-маршруты v1
 Route::prefix('api/v1')->group(function () {
     Route::post('/ask', [\App\Http\Controllers\AskController::class, 'ask']);
     Route::post('/search_products', [\App\Http\Controllers\AskController::class, 'searchProducts']);
     // остальные API-маршруты...
+});
+
+// Совместимые маршруты для фронтенда (legacy)
+Route::prefix('api')->group(function () {
+    // Перенаправляем старые маршруты на новые
+    Route::post('/search_products', [\App\Http\Controllers\AskController::class, 'searchProducts']);
+    Route::post('/chat/send', [\App\Http\Controllers\AskController::class, 'ask']);
 });
 
 // Health check для Laravel Cloud - должен быть ПЕРЕД catch-all
