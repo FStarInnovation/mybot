@@ -52,12 +52,23 @@ class ChatService
         // Выбираем подходящий системный промпт
         $systemPrompt = $needsSearch ? config('llm.system_prompt') : config('llm.generic_prompt');
 
-        // Собираем историю для контекста
+        // Формируем массив сообщений, начиная с системного промпта
+        $messages = [
+            ['role' => 'system', 'content' => $systemPrompt],
+        ];
+
+        // История без старых системных сообщений
         $history   = $this->history->all($sessionId);
-        $messages  = array_map(fn ($m) => [
+        $historyMessages  = array_map(fn ($m) => [
             'role'    => $m['role'] ?? 'user',
             'content' => $m['content'] ?? '',
         ], $history);
+
+        // Добавляем историю
+        $messages = array_merge($messages, $historyMessages);
+
+        // Добавляем текущий запрос
+        $messages[] = ['role' => 'user', 'content' => $message];
 
         // Добавляем текущий запрос
         $messages[] = ['role' => 'user', 'content' => $message];
