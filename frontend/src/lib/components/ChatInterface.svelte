@@ -31,6 +31,8 @@
   let messages: Message[] = [];
 
   const API_BASE = import.meta.env.PUBLIC_API_BASE ?? '';
+const DEBUG = import.meta.env.PUBLIC_DEBUG_CHAT === 'true';
+const CHAT_SEND_ENDPOINT = `${API_BASE}/api/chat/${DEBUG ? 'debug' : 'send'}`;
 
   let chatContainer: HTMLElement;
   let isTyping = false;
@@ -74,7 +76,7 @@
 
     isTyping = true;
     try {
-      const res = await fetch(`${API_BASE}/api/chat/send`, {
+      const res = await fetch(CHAT_SEND_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: event.detail.text })

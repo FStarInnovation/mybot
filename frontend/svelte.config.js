@@ -7,8 +7,10 @@ const config = {
   preprocess: vitePreprocess(),
   kit: {
     adapter: adapter({
-      pages: '../public/build',
-      assets: '../public/build',
+      // Generate root-level index.html into /public
+      pages: '../public',
+      // Place all JS/CSS assets under /public/_app for caching
+      assets: '../public/_app',
       fallback: 'index.html'
     }),
     alias: {

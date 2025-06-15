@@ -29,6 +29,15 @@ Route::get('/ping', fn() => response()->json(['pong' => true]));
 Route::middleware(\Illuminate\Session\Middleware\StartSession::class)
     ->group(function () {
         Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'send']);
+        Route::post('/chat/debug', function (\Illuminate\Http\Request $request) {
+            $message = $request->input('message', '');
+            \Log::debug('Debug chat stub', ['message' => $message]);
+            return response()->json([
+                'messages' => [
+                    ['role' => 'assistant', 'content' => '[debug] Вы сказали: ' . $message]
+                ]
+            ]);
+        });
         Route::get('/chat/history', [\App\Http\Controllers\ChatController::class, 'history']);
     });
 

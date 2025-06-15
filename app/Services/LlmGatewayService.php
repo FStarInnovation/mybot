@@ -69,6 +69,7 @@ class LlmGatewayService
         $payload = [
             'service'  => 'search',
             'messages' => $messages,
+            'tools'    => $tools,
             'stream'   => false,
         ];
 
