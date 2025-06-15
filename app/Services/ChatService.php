@@ -38,6 +38,20 @@ class ChatService
             Log::warning('Failed to save search query', ['e' => $e->getMessage()]);
         }
 
+        // Определяем, нужен ли поиск цен
+        $lower = mb_strtolower($message, 'UTF-8');
+        $priceKeywords = ['precio', 'cuánto', 'cuanto', 'costo', 'vale', 'comprar', '$'];
+        $needsSearch = false;
+        foreach ($priceKeywords as $kw) {
+            if (str_contains($lower, $kw)) {
+                $needsSearch = true;
+                break;
+            }
+        }
+
+        // Выбираем подходящий системный промпт
+        $systemPrompt = $needsSearch ? config('llm.system_prompt') : config('llm.generic_prompt');
+
         // Собираем историю для контекста
         $history   = $this->history->all($sessionId);
         $messages  = array_map(fn ($m) => [
@@ -49,10 +63,22 @@ class ChatService
         $messages[] = ['role' => 'user', 'content' => $message];
 
         // Запрашиваем LLM
-        // Передаём только инструмент search_products – crawl_single_page временно отключён
-        $toolsToSend = array_values(array_filter($this->tools, function ($t) {
-            return ($t['function']['name'] ?? '') === 'search_products';
-        }));
+        // Отправляем инструмент поиска только если запрос явно о цене/compra
+        $lower = mb_strtolower($message, 'UTF-8');
+        $priceKeywords = ['precio', 'cuánto', 'cuanto', 'costo', 'vale', 'comprar', '$'];
+        $needsSearch = false;
+        foreach ($priceKeywords as $kw) {
+            if (str_contains($lower, $kw)) {
+                $needsSearch = true;
+                break;
+            }
+        }
+        $toolsToSend = [];
+        if ($needsSearch) {
+            $toolsToSend = array_values(array_filter($this->tools, function ($t) {
+                return ($t['function']['name'] ?? '') === 'search_products';
+            }));
+        }
 
         $assistantContent = $this->llm->chat($messages, $toolsToSend);
 
