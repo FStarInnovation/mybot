@@ -38,3 +38,5 @@ services:
       REDIS_CLIENT: predis
       REDIS_URL: ${UPSTASH_REDIS_URL}
       REDIS_TOKEN: ${UPSTASH_REDIS_TOKEN}
+    health_check:
+      url: /health.php
