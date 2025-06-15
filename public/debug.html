@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>St. Anna - Debug</title>
+    <style>
+        body { font-family: system-ui; margin: 20px; }
+        h1 { color: #333; }
+        .log { background: #f1f1f1; border-left: 4px solid #666; padding: 10px; margin: 10px 0; white-space: pre-wrap; }
+        .error { border-color: #f44336; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>St. Anna Chat - Diagnostics</h1>
+    
+    <div>
+        <button id="testApi">Тест API</button>
+        <button id="testSession">Тест сессии</button>
+        <button id="checkNetworkIssues">Проверка сети</button>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script>
+        // Перехват необработанных ошибок
+        window.addEventListener('unhandledrejection', e => {
+            logMessage(`Необработанное отклонение promise: ${e.reason}`, true);
+            console.error(e.reason);
+        });
+        
+        window.addEventListener('error', e => {
+            logMessage(`Ошибка JavaScript: ${e.message} в ${e.filename}:${e.lineno}`, true);
+        });
+        
+        function logMessage(msg, isError = false) {
+            const results = document.getElementById('results');
+            const logDiv = document.createElement('div');
+            logDiv.className = `log ${isError ? 'error' : ''}`;
+            logDiv.textContent = `[${new Date().toISOString()}] ${msg}`;
+            results.prepend(logDiv);
+        }
+        
+        document.getElementById('testApi').addEventListener('click', async () => {
+            try {
+                logMessage('Тестирование API endpoint /api/v1/ask...');
+                const response = await fetch('/api/v1/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: 'test' })
+                });
+                
+                const data = await response.json();
+                logMessage(`API ответ: ${JSON.stringify(data)}`);
+            } catch (error) {
+                logMessage(`Ошибка API: ${error.message}`, true);
+            }
+        });
+        
+        document.getElementById('testSession').addEventListener('click', async () => {
+            try {
+                const endpoints = ['/api/session', '/api/user', '/auth/me'];
+                
+                for (const endpoint of endpoints) {
+                    try {
+                        logMessage(`Тестирование ${endpoint}...`);
+                        const response = await fetch(endpoint);
+                        const text = await response.text();
+                        logMessage(`${endpoint} статус: ${response.status}, ответ: ${text.substring(0, 100)}${text.length > 100 ? '...' : ''}`);
+                    } catch (error) {
+                        logMessage(`Ошибка ${endpoint}: ${error.message}`, true);
+                    }
+                }
+            } catch (error) {
+                logMessage(`Общая ошибка: ${error.message}`, true);
+            }
+        });
+        
+        document.getElementById('checkNetworkIssues').addEventListener('click', () => {
+            logMessage('Checking network connections...');
+            
+            // Вывести все активные fetch запросы
+            const resources = performance.getEntriesByType('resource');
+            for (const resource of resources) {
+                if (resource.initiatorType === 'fetch' || resource.initiatorType === 'xmlhttprequest') {
+                    logMessage(`Fetch: ${resource.name}, Duration: ${resource.duration}ms`);
+                }
+            }
+            
+            // Проверка CORS
+            logMessage('Testing CORS with simple request to current domain...');
+            fetch(window.location.origin + '/health')
+                .then(r => r.text())
+                .then(t => logMessage(`CORS test passed: ${t.substring(0, 50)}`))
+                .catch(e => logMessage(`CORS issue: ${e.message}`, true));
+        });
+        
+        // Вывести информацию о браузере
+        logMessage(`User Agent: ${navigator.userAgent}`);
+        logMessage(`URL: ${window.location.href}`);
+    </script>
+</body>
+</html>
