@@ -1,3 +1,8 @@
 webserver:
   nginx:
-    config: ./nginx.conf
+    inline_config: |
+      root /var/www/html/public;
+
+      location / {
+          try_files $uri $uri/ /index.php?$query_string;
+      }
