@@ -18,6 +18,15 @@ Route::get('/health', function () {
     ], 200);
 });
 
+// Дополнительный health check для Laravel Cloud (который ищет health.php)
+Route::get('/health.php', function () {
+    return response()->json([
+        'status'     => 'ok',
+        'timestamp'  => now()->toIso8601String(),
+        'framework'  => app()->version(),
+    ], 200);
+});
+
 // SPA fallback - важно! Должен быть ПОСЛЕ всех других маршрутов
 Route::get('/{path?}', function () {
     return file_get_contents(public_path('index.html'));
