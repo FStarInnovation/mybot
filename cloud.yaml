@@ -13,6 +13,11 @@ services:
             try_files $uri =404;
         }
         
+        # Специальная обработка для /chat и других SPA маршрутов
+        location /chat {
+            try_files $uri $uri/ /index.html;
+        }
+        
         location / {
            # First try static files, then Laravel routes, then fall back to SPA index.html
            # SPA-first fallback: static -> /index.html -> Laravel
