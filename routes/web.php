@@ -13,3 +13,8 @@ Route::prefix('api/v1')->group(function () {
 Route::get('/{path?}', function () {
     return file_get_contents(public_path('index.html'));
 })->where('path', '.*');
+
+// Health check для Laravel Cloud
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok']);
+});
