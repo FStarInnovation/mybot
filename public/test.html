@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline';">
+    <title>Тест</title>
+</head>
+<body>
+    <h1>Тест загрузки приложения</h1>
+    <script>
+        // Простой тест, работает ли eval
+        try {
+            const testFn = new Function('return "работает";');
+            document.write("<p>Eval " + testFn() + "</p>");
+        } catch (e) {
+            document.write("<p>Ошибка: " + e.message + "</p>");
+        }
+    </script>
+</body>
+</html>
