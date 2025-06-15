@@ -18,6 +18,11 @@ services:
             try_files $uri $uri/ /index.html;
         }
         
+        # Приоритетная обработка для API маршрутов
+        location /api {
+            try_files $uri $uri/ /index.php?$query_string;
+        }
+        
         location / {
            # First try static files, then Laravel routes, then fall back to SPA index.html
            # SPA-first fallback: static -> /index.html -> Laravel
