@@ -33,17 +33,30 @@ services:
       - mybot.laravel.app
     env:
       APP_ENV: production
-      APP_KEY: base64:xxx
+      APP_KEY: base64:5Nfcv1c6LN1ipS7c4/3iH1G9DYDHdnk/m/Xw++jgH0Q=
       LOG_CHANNEL: stderr
+      
+      # База данных PostgreSQL (Neon)
       DB_CONNECTION: pgsql
-      DB_HOST: ${NEON_DB_HOST}
+      DB_HOST: ep-small-thunder-a4xssxb3-pooler.us-east-1.aws.neon.tech
       DB_PORT: 5432
       DB_DATABASE: neondb
-      DB_USERNAME: ${NEON_DB_USERNAME}
-      DB_PASSWORD: ${NEON_DB_PASSWORD}
-      QUEUE_CONNECTION: redis
+      DB_USERNAME: neondb_owner
+      DB_PASSWORD: npg_d4my6EWUeDvM
+      
+      # Redis и очереди
+      QUEUE_CONNECTION: database
       REDIS_CLIENT: predis
-      REDIS_URL: ${UPSTASH_REDIS_URL}
-      REDIS_TOKEN: ${UPSTASH_REDIS_TOKEN}
+      REDIS_URL: rediss://default:ATiUAAIjcDFkMjMxZDA5ZWQ2NTU0ZjlhYWM5MTM0OWVjNDY3YmUwZnAxMA@fitting-elk-14484.upstash.io:6379
+      REDIS_TIMEOUT: 10
+      REDIS_READ_TIMEOUT: 10
+      
+      # LLM и API
+      LLM_GATEWAY_URL: https://lepweaehjlas8o-10051.proxy.runpod.net
+      LLM_TIMEOUT: 150
+      EMBEDDINGS_API_URL: https://lepweaehjlas8o-10051.proxy.runpod.net/embedding
+      MCP_BASE_URL: https://lepweaehjlas8o-10051.proxy.runpod.net
+      PRODUCT_API_URL: https://lepweaehjlas8o-10051.proxy.runpod.net/tool/search_products
+      LLM_STREAM: false
     health_check:
       url: /health
