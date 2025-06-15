@@ -136,7 +136,7 @@
 <div class="chat-interface">
   <div class="chat-header">
     <div class="header-content">
-      <h2>MyBot Chat</h2>
+      <h2>St. Anna</h2>
       <div class="status-indicator" title="Online">
         <span class="status-dot"></span>
         <span class="status-text">Online</span>
