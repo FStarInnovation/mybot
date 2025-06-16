@@ -86,13 +86,61 @@ const CHAT_SEND_ENDPOINT = `${API_BASE}/chat_api_stub.php`;
       if (res.ok) {
         const data = await res.json();
         const replies = data.messages ?? [];
-        messages = [...messages, ...replies.map((r: any, idx: number) => ({
-          id: (Date.now() + idx + 1).toString(),
-          sender: 'bot',
-          type: AgUIEventTypesEnum.TEXT,
-          text: r.content ?? r,
-          timestamp: new Date().toISOString()
-        }))];
+        
+        // Обрабатываем каждое сообщение в ответе
+        const processedReplies = replies.map((r: any, idx: number) => {
+          // Базовая структура сообщения
+          const baseMsg = {
+            id: (Date.now() + idx + 1).toString(),
+            sender: r.role === 'tool' ? 'tool' : 'bot',
+            timestamp: new Date().toISOString()
+          };
+          
+          // Если это сообщение с tool_calls (запрос на поиск продуктов)
+          if (r.tool_calls && r.tool_calls.length > 0) {
+            const toolCall = r.tool_calls[0];
+            if (toolCall.function && toolCall.function.name === 'search_products') {
+              console.log('Found tool_call for search_products', toolCall);
+              return {
+                ...baseMsg,
+                type: AgUIEventTypesEnum.TEXT,
+                text: r.content || 'Поиск продуктов...',
+                tool_calls: r.tool_calls
+              };
+            }
+          }
+          
+          // Если это ответ от инструмента с продуктами
+          if (r.role === 'tool' && r.content) {
+            try {
+              const toolData = JSON.parse(r.content);
+              if (toolData.products && toolData.products.length > 0) {
+                console.log('Found product data in tool response', toolData.products);
+                return {
+                  ...baseMsg,
+                  type: AgUIEventTypesEnum.CUSTOM,
+                  customComponentData: {
+                    componentName: 'ProductCard',
+                    props: {
+                      products: toolData.products
+                    }
+                  }
+                };
+              }
+            } catch (e) {
+              console.error('Failed to parse tool response', e);
+            }
+          }
+          
+          // Обычное текстовое сообщение
+          return {
+            ...baseMsg,
+            type: AgUIEventTypesEnum.TEXT,
+            text: r.content ?? r
+          };
+        });
+        
+        messages = [...messages, ...processedReplies];
       } else {
         messages = [...messages, { id: Date.now().toString(), sender: 'bot', type: AgUIEventTypesEnum.TEXT, text: 'Ошибка сервера', timestamp: new Date().toISOString() }];
       }
