@@ -25,12 +25,14 @@ class ChatController extends Controller
             'message' => 'required|string|max:1000',
         ]);
 
-        // Получаем ID сессии, если сессия доступна, иначе используем временный ID
-        if ($request->hasSession()) {
+        // Получаем ID сессии или генерируем уникальный ID на основе IP и User-Agent
+        try {
             $sessionId = $request->session()->getId();
-        } else {
-            // Для API-запросов без сессии используем IP + User-Agent как идентификатор
-            $sessionId = md5($request->ip() . '_' . $request->userAgent());
+        } catch (\Exception $e) {
+            // Если сессия недоступна (например, в API-запросах), создаем псевдо-ID
+            $ip = $request->ip() ?? '127.0.0.1';
+            $userAgent = $request->header('User-Agent') ?? 'Unknown';
+            $sessionId = md5($ip . $userAgent);
         }
         
         $userMessage = $validated['message'];
