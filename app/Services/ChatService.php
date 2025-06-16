@@ -4,22 +4,16 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
 use App\Services\LlmGatewayService;
-use App\Services\ToolManifestService;
 
 class ChatService
 {
     protected ChatHistoryCache $history;
     protected LlmGatewayService $llm;
-    /**
-     * @var array<int, array<string,mixed>>
-     */
-    protected array $tools = [];
 
-    public function __construct(LlmGatewayService $llm, ToolManifestService $manifest)
+    public function __construct(LlmGatewayService $llm)
     {
         $this->history = new ChatHistoryCache((int) config('chat.history_ttl'));
         $this->llm     = $llm;
-        $this->tools  = $manifest->getToolsManifest();
     }
 
     /**
@@ -38,48 +32,18 @@ class ChatService
             Log::warning('Failed to save search query', ['e' => $e->getMessage()]);
         }
 
-        // Определяем, нужен ли поиск цен
-        $lower = mb_strtolower($message, 'UTF-8');
-        $priceKeywords = ['precio', 'cuánto', 'cuanto', 'costo', 'vale', 'comprar', '$'];
-        $needsSearch = false;
-        foreach ($priceKeywords as $kw) {
-            if (str_contains($lower, $kw)) {
-                $needsSearch = true;
-                break;
-            }
-        }
-
-        // Выбираем подходящий системный промпт
-        $systemPrompt = $needsSearch ? config('llm.system_prompt') : config('llm.generic_prompt');
-
-        // Формируем массив сообщений, начиная с системного промпта
-        $messages = [
-            ['role' => 'system', 'content' => $systemPrompt],
-        ];
-
-        // История без старых системных сообщений
+        // Собираем историю для контекста
         $history   = $this->history->all($sessionId);
-        $historyMessages  = array_map(fn ($m) => [
+        $messages  = array_map(fn ($m) => [
             'role'    => $m['role'] ?? 'user',
             'content' => $m['content'] ?? '',
         ], $history);
 
-        // Добавляем историю
-        $messages = array_merge($messages, $historyMessages);
-
-        // Добавляем текущий запрос один раз
+        // Добавляем текущий запрос
         $messages[] = ['role' => 'user', 'content' => $message];
 
         // Запрашиваем LLM
-        // Инструмент поиска отправляем только если запрос явно о цене / покупке (вычислено ранее)
-        $toolsToSend = [];
-        if ($needsSearch) {
-            $toolsToSend = array_values(array_filter($this->tools, function ($t) {
-                return ($t['function']['name'] ?? '') === 'search_products';
-            }));
-        }
-
-        $assistantContent = $this->llm->chat($messages, $toolsToSend);
+        $assistantContent = $this->llm->chat($messages);
 
         // Формируем ответ и сохраняем в историю
         $assistantArr = [

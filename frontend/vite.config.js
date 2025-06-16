@@ -1,12 +1,21 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
-export default defineConfig({
-	plugins: [sveltekit()],
-	server: {
-		fs: {
-			allow: ['..'],
-		}
-	},
-	base: '/' // ВАЖНО: базовый путь должен быть '/', а не '/build/'
-});
+/** @type {import('vite').UserConfig} */
+export default {
+  plugins: [sveltekit()],
+  server: {
+    port: 5173
+  },
+  build: {
+    outDir: '../public/build',
+    emptyOutDir: true
+  },
+  resolve: {
+    alias: {
+      '$lib': resolve('./src/lib'),
+      '$components': resolve('./src/lib/components'),
+      '$styles': resolve('./src/styles')
+    }
+  }
+};

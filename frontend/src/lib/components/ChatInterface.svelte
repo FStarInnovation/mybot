@@ -31,9 +31,6 @@
   let messages: Message[] = [];
 
   const API_BASE = import.meta.env.PUBLIC_API_BASE ?? '';
-const DEBUG = import.meta.env.PUBLIC_DEBUG_CHAT === 'true';
-// Временно используем chat_api_stub.php вместо Laravel API для обхода проблем с маршрутизацией
-const CHAT_SEND_ENDPOINT = `${API_BASE}/chat_api_stub.php`;
 
   let chatContainer: HTMLElement;
   let isTyping = false;
@@ -77,7 +74,7 @@ const CHAT_SEND_ENDPOINT = `${API_BASE}/chat_api_stub.php`;
 
     isTyping = true;
     try {
-      const res = await fetch(CHAT_SEND_ENDPOINT, {
+      const res = await fetch(`${API_BASE}/api/chat/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: event.detail.text })
@@ -86,61 +83,13 @@ const CHAT_SEND_ENDPOINT = `${API_BASE}/chat_api_stub.php`;
       if (res.ok) {
         const data = await res.json();
         const replies = data.messages ?? [];
-        
-        // Обрабатываем каждое сообщение в ответе
-        const processedReplies = replies.map((r: any, idx: number) => {
-          // Базовая структура сообщения
-          const baseMsg = {
-            id: (Date.now() + idx + 1).toString(),
-            sender: r.role === 'tool' ? 'tool' : 'bot',
-            timestamp: new Date().toISOString()
-          };
-          
-          // Если это сообщение с tool_calls (запрос на поиск продуктов)
-          if (r.tool_calls && r.tool_calls.length > 0) {
-            const toolCall = r.tool_calls[0];
-            if (toolCall.function && toolCall.function.name === 'search_products') {
-              console.log('Found tool_call for search_products', toolCall);
-              return {
-                ...baseMsg,
-                type: AgUIEventTypesEnum.TEXT,
-                text: r.content || 'Поиск продуктов...',
-                tool_calls: r.tool_calls
-              };
-            }
-          }
-          
-          // Если это ответ от инструмента с продуктами
-          if (r.role === 'tool' && r.content) {
-            try {
-              const toolData = JSON.parse(r.content);
-              if (toolData.products && toolData.products.length > 0) {
-                console.log('Found product data in tool response', toolData.products);
-                return {
-                  ...baseMsg,
-                  type: AgUIEventTypesEnum.CUSTOM,
-                  customComponentData: {
-                    componentName: 'ProductCard',
-                    props: {
-                      products: toolData.products
-                    }
-                  }
-                };
-              }
-            } catch (e) {
-              console.error('Failed to parse tool response', e);
-            }
-          }
-          
-          // Обычное текстовое сообщение
-          return {
-            ...baseMsg,
-            type: AgUIEventTypesEnum.TEXT,
-            text: r.content ?? r
-          };
-        });
-        
-        messages = [...messages, ...processedReplies];
+        messages = [...messages, ...replies.map((r: any, idx: number) => ({
+          id: (Date.now() + idx + 1).toString(),
+          sender: 'bot',
+          type: AgUIEventTypesEnum.TEXT,
+          text: r.content ?? r,
+          timestamp: new Date().toISOString()
+        }))];
       } else {
         messages = [...messages, { id: Date.now().toString(), sender: 'bot', type: AgUIEventTypesEnum.TEXT, text: 'Ошибка сервера', timestamp: new Date().toISOString() }];
       }
@@ -153,41 +102,29 @@ const CHAT_SEND_ENDPOINT = `${API_BASE}/chat_api_stub.php`;
     }
   }
   
-  // Показать «ibuprofeno al mejor precio» – берём самый дешёвый товар из API
-  async function showIbuprofenoBestPrice() {
-    try {
-      const res = await fetch('/api/search_products?query=ibuprofeno&limit=1&sort=price_asc');
-      if (!res.ok) throw new Error('API error');
-      const data = await res.json();
-      const product = (data?.results ?? data?.items ?? [])[0] ?? {};
-      const productCardMessage: Message = {
-        id: Date.now().toString(),
-        sender: 'bot',
-        type: AgUIEventTypesEnum.CUSTOM,
-        timestamp: new Date().toISOString(),
-        customComponentData: {
-          componentName: 'ProductCard',
-          props: {
-            title: product.name ?? 'Ibuprofeno',
-            price: product.price ?? 'N/A',
-            productId: product.id ?? null,
-            image: product.image ?? null,
-            url: product.url ?? null
-          }
-        }
-      };
-      messages = [...messages, productCardMessage];
-      scrollToBottom();
-    } catch (e) {
-      console.error(e);
-    }
+  // Функция для тестирования отображения карточки товара
+  function testProductCard() {
+    const productCardMessage: Message = {
+      id: Date.now().toString(),
+      sender: 'bot',
+      type: AgUIEventTypesEnum.CUSTOM,
+      timestamp: new Date().toISOString(),
+      // Add customComponentData object that ChatMessage.svelte expects
+      customComponentData: {
+        componentName: 'ProductCard',
+        props: { productId: 2 } // ID товара для тестирования
+      }
+    };
+    
+    messages = [...messages, productCardMessage];
+    scrollToBottom();
   }
 </script>
 
 <div class="chat-interface">
   <div class="chat-header">
     <div class="header-content">
-      <h2>St. Anna</h2>
+      <h2>MyBot Chat</h2>
       <div class="status-indicator" title="Online">
         <span class="status-dot"></span>
         <span class="status-text">Online</span>
@@ -227,7 +164,7 @@ const CHAT_SEND_ENDPOINT = `${API_BASE}/chat_api_stub.php`;
   </div>
   <div class="chat-input-area">
     <div class="test-buttons">
-      <button class="test-button" on:click={showIbuprofenoBestPrice}>ibuprofeno al mejor precio</button>
+      <button class="test-button" on:click={testProductCard}>Тест карточки товара</button>
     </div>
     <ChatInput on:sendMessage={handleSendMessage} />
   </div>

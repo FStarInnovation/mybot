@@ -1,62 +1,28 @@
 <script lang="ts">
-  
-  
-  import { readable } from 'svelte/store';
+  import { useProduct } from '$lib/tanstack/product-queries';
+  import { goto } from '$app/navigation';
   
   export let productId: string | number;
   export let compact: boolean = false; // Компактный режим отображения
   export let clickable: boolean = true; // Можно ли кликнуть по карточке
-
-  // Опциональные поля, если товар передан напрямую
-  export let title: string | undefined;
-  export let price: number | string | undefined;
-  export let image: string | undefined;
-  export let url: string | undefined;
-  // Валюта (по умолчанию аргентинский песо)
-  export let currency: string = 'ARS';
-
-    // Создаём источник данных без внешнего запроса – используем то, что пришло в props
-  import type { Readable } from 'svelte/store';
-
-  // Используем универсальный тип, чтобы не ломать TS на необязательных полях
-  const productQuery: Readable<any> = readable({
-    isLoading: false,
-    isError: false,
-    data: {
-      id: productId,
-      name: title ?? String(productId),
-      price: typeof price === 'string' ? parseFloat(price as string) : (price as number | undefined),
-      image,
-      url,
-      availability: true
-    }
-  });
+  
+  // Загружаем данные о товаре с помощью TanStack Query
+  const productQuery = useProduct(productId);
   
   // Форматирование цены
   function formatPrice(price: number): string {
-    // используем локаль, подходящую под валюту (по умолчанию es-AR)
-    const locale = currency === 'ARS' ? 'es-AR' : undefined;
-    return new Intl.NumberFormat(locale, {
+    return new Intl.NumberFormat('ru-RU', {
       style: 'currency',
-      currency,
+      currency: 'RUB',
       minimumFractionDigits: 0
     }).format(price);
   }
   
   // Обработчик клика по карточке
   function handleClick() {
-    if (!clickable || !$productQuery.data) return;
-
-    if ($productQuery.data.url) {
-      window.open($productQuery.data.url, '_blank');
-    } else {
-      window.location.href = `/products/${$productQuery.data.id}`;
-    }
-  }
-
-  function handleKey(event: KeyboardEvent) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      handleClick();
+    if (clickable && $productQuery.data) {
+      // Навигация на страницу товара
+      goto(`/products/${$productQuery.data.id}`);
     }
   }
   
@@ -86,7 +52,7 @@
   }
 </script>
 
-<div class="product-card" class:compact class:clickable role="button" tabindex={clickable ? 0 : undefined} on:click={handleClick} on:keydown={handleKey}>
+<div class="product-card" class:compact class:clickable on:click={handleClick}>
   {#if $productQuery.isLoading}
     <div class="loading-state">
       <div class="loading-spinner"></div>
@@ -226,7 +192,6 @@
     color: var(--text-primary);
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -237,7 +202,6 @@
     margin: 0 0 0.75rem 0;
     display: -webkit-box;
     -webkit-line-clamp: 3;
-    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.4;

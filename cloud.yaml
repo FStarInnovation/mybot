@@ -1,43 +1,6 @@
 name: mybot
 services:
   app:
-    webserver:
-      nginx_inline: |
-        # Разрешаем eval в CSP
-        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;";
-        
-        # Открываем доступ к статическим ресурсам SvelteKit
-        location /_app/ {
-            expires 30d;
-            add_header Cache-Control "public, max-age=2592000";
-            try_files $uri =404;
-        }
-        
-        # Специальная обработка для /chat и других SPA маршрутов
-        location /chat {
-            try_files $uri $uri/ /index.html;
-        }
-        
-        # Приоритетная обработка для API маршрутов - всегда направляем на Laravel
-        location ^~ /api/ {
-            try_files $uri $uri/ /index.php?$query_string;
-        }
-        
-        # Reverse-proxy для RunPod Gateway маршрутов
-        location /tool/ {
-            proxy_pass https://lepweaehjlas8o-10051.proxy.runpod.net/tool/;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-        
-        location / {
-           # First try static files, then Laravel routes, then fall back to SPA index.html
-           # SPA-first fallback: static -> /index.html -> Laravel
-           try_files $uri $uri/ /index.html /index.php?$query_string;
-        }
-    
     build:
       dockerfile: Dockerfile
     resources:
@@ -47,33 +10,16 @@ services:
       - mybot.laravel.app
     env:
       APP_ENV: production
-      APP_KEY: base64:5Nfcv1c6LN1ipS7c4/3iH1G9DYDHdnk/m/Xw++jgH0Q=
+      APP_KEY: base64:xxx # заменим позже
       LOG_CHANNEL: stderr
-      
-      # База данных PostgreSQL (Neon)
       DB_CONNECTION: pgsql
-      DB_HOST: ep-small-thunder-a4xssxb3-pooler.us-east-1.aws.neon.tech
+      DB_HOST: ${NEON_DB_HOST}
       DB_PORT: 5432
       DB_DATABASE: neondb
-      DB_USERNAME: neondb_owner
-      DB_PASSWORD: npg_d4my6EWUeDvM
-      PGSQL_SSL_MODE: require
-      DB_CONNECT_TIMEOUT: 30
-      DB_SSLMODE: require
+      DB_USERNAME: ${NEON_DB_USERNAME}
+      DB_PASSWORD: ${NEON_DB_PASSWORD}
       
-      # Redis и очереди
-      QUEUE_CONNECTION: database
+      QUEUE_CONNECTION: redis
       REDIS_CLIENT: predis
-      REDIS_URL: rediss://default:ATiUAAIjcDFkMjMxZDA5ZWQ2NTU0ZjlhYWM5MTM0OWVjNDY3YmUwZnAxMA@fitting-elk-14484.upstash.io:6379
-      REDIS_TIMEOUT: 10
-      REDIS_READ_TIMEOUT: 10
-      
-      # LLM и API
-      LLM_GATEWAY_URL: https://lepweaehjlas8o-10051.proxy.runpod.net
-      LLM_TIMEOUT: 150
-      EMBEDDINGS_API_URL: https://lepweaehjlas8o-10051.proxy.runpod.net/embedding
-      MCP_BASE_URL: https://lepweaehjlas8o-10051.proxy.runpod.net
-      PRODUCT_API_URL: https://lepweaehjlas8o-10051.proxy.runpod.net/tool/search_products
-      LLM_STREAM: false
-    health_check:
-      url: /health
+      REDIS_URL: ${UPSTASH_REDIS_URL}
+      REDIS_TOKEN: ${UPSTASH_REDIS_TOKEN}

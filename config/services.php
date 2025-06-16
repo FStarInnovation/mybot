@@ -23,24 +23,13 @@ return [
         ],
     ],
 
+    // ✅ вставляем LLM сюда, внутри return-массива:
     'llm' => [
-        // Unified gateway chat endpoint
-        'endpoint' => env('LLM_GATEWAY_URL', 'http://localhost:10051') . '/chat',
+        'endpoint' => env('LLM_API_URL', 'http://localhost:1434/completion'),
     ],
 
     'embeddings' => [
         'endpoint' => env('EMBEDDINGS_API_URL', 'http://localhost:8000/embedding'),
-    ],
-
-    'mcp' => [
-        'endpoint'      => env('MCP_BASE_URL', 'http://localhost:10051'),
-        'auth_username' => env('MCP_USERNAME'),
-        'auth_password' => env('MCP_PASSWORD'),
-    ],
-
-    // Base URL для поиска товаров (NLWeb или другой сервис)
-    'product_api' => [
-        'url' => env('PRODUCT_API_URL', env('SEARCH_PRODUCTS_URL', '')),
     ],
 
 ];

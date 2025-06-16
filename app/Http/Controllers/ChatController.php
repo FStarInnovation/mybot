@@ -25,16 +25,7 @@ class ChatController extends Controller
             'message' => 'required|string|max:1000',
         ]);
 
-        // Получаем ID сессии или генерируем уникальный ID на основе IP и User-Agent
-        try {
-            $sessionId = $request->session()->getId();
-        } catch (\Exception $e) {
-            // Если сессия недоступна (например, в API-запросах), создаем псевдо-ID
-            $ip = $request->ip() ?? '127.0.0.1';
-            $userAgent = $request->header('User-Agent') ?? 'Unknown';
-            $sessionId = md5($ip . $userAgent);
-        }
-        
+        $sessionId = $request->session()->getId();
         $userMessage = $validated['message'];
 
         try {
@@ -43,8 +34,7 @@ class ChatController extends Controller
             
             // Get LLM response
             $llmService = app(\App\Services\LlmGatewayService::class);
-            $tools = app(\App\Services\ToolManifestService::class)->getToolsManifest();
-            $assistantResponse = $llmService->chat($context, $tools);
+            $assistantResponse = $llmService->chat($context);
             
             // Remember the conversation
             $this->memory->rememberConversation($sessionId, $userMessage, $assistantResponse);
@@ -64,9 +54,8 @@ class ChatController extends Controller
                 'error' => 'Произошла ошибка при обработке запроса',
                 'messages' => [
                     ['role' => 'assistant', 'content' => 'Извините, произошла ошибка. Пожалуйста, попробуйте снова.']
-                ],
-                'details' => $e->getMessage(),
-            ]);
+                ]
+            ], 500);
         }
     }
 

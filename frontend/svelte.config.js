@@ -7,10 +7,8 @@ const config = {
   preprocess: vitePreprocess(),
   kit: {
     adapter: adapter({
-      // Generate root-level index.html into /public
-      pages: '../public',
-      // Place assets directly under /public; adapter will create _app automatically
-      assets: '../public',
+      pages: '../public/build',
+      assets: '../public/build',
       fallback: 'index.html'
     }),
     alias: {

@@ -25,8 +25,7 @@ class LongTermMemoryService
     {
         try {
             $embedding = $this->embeddingService->getEmbedding($query);
-            // pgvector expects literals like "[1,2,3]" – use square brackets
-            $vectorString = '[' . implode(',', $embedding) . ']';
+            $vectorString = '{' . implode(',', $embedding) . '}';
             
             $results = DB::select(
                 "SELECT content, metadata, created_at 
@@ -62,8 +61,7 @@ class LongTermMemoryService
             $embedding = $this->embeddingService->getEmbedding($content);
             
             // Convert PHP array to PostgreSQL vector string format: '{1,2,3}'
-            // pgvector expects literals like "[1,2,3]" – use square brackets
-            $vectorString = '[' . implode(',', $embedding) . ']';
+            $vectorString = '{' . implode(',', $embedding) . '}';
             
             DB::insert(
                 "INSERT INTO memories (content, embedding, metadata, session_id, created_at)
