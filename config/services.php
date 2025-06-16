@@ -26,7 +26,7 @@ return [
     // вставляем LLM сюда, внутри return-массива:
     'llm' => [
         // Unified gateway according to integratio_runpod.md → POST {RUNPOD_API_URL}/ask – synchronous JSON LLM interface
-        'endpoint' => rtrim(env('RUNPOD_API_URL', 'http://localhost:10051'), '/') . '/ask',
+        'endpoint' => rtrim(env('RUNPOD_API_URL', 'http://localhost:10051'), '/') . '/chat',
     ],
 
     'embeddings' => [
