@@ -22,6 +22,27 @@
   export let statusData: { status: 'info' | 'success' | 'warning' | 'error', message: string } | null = null;
   export let customComponentData: { componentName: string, props: Record<string, any> } | null = null;
 
+  // Utility: convert simple markdown table to HTML
+  function markdownTableToHtml(md: string): string {
+    const lines = md.trim().split("\n").filter(l => l.trim().startsWith("|"));
+    if (lines.length < 2) return md; // not a table
+    const headerCells = lines[0].split("|").slice(1, -1).map(c => c.trim());
+    const rows = lines.slice(2).map(line => line.split("|").slice(1, -1).map(c => c.trim()));
+    let html = `<div class="table-responsive"><table><thead><tr>`;
+    html += headerCells.map(c => `<th>${c}</th>`).join("");
+    html += `</tr></thead><tbody>`;
+    rows.forEach(r => {
+      if (r.length === headerCells.length) {
+        html += `<tr>` + r.map(c => `<td>${c}</td>`).join("") + `</tr>`;
+      }
+    });
+    html += `</tbody></table></div>`;
+    return html;
+  }
+
+  $: renderedText = markdownTableToHtml(text);
+
+
   const dispatch = createEventDispatcher();
 
   const timeForm = new Intl.DateTimeFormat('default', {
@@ -60,7 +81,7 @@
 <div class="chat-message" class:user={sender === 'user'} class:bot={sender === 'bot'}>
   {#if messageType === AgUIEventType.TEXT}
     <div class="message-bubble">
-      <div class="message-text">{@html text}</div>
+      <div class="message-text">{@html renderedText}</div>
       {#if formattedTimestamp}
         <div class="message-timestamp">{formattedTimestamp}</div>
       {/if}
@@ -158,7 +179,7 @@
   {:else}
     <!-- Fallback for unsupported message types -->
     <div class="message-bubble">
-      <div class="message-text">{@html text}</div>
+      <div class="message-text">{@html renderedText}</div>
       {#if formattedTimestamp}
         <div class="message-timestamp">{formattedTimestamp}</div>
       {/if}
