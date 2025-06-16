@@ -22,6 +22,9 @@ Route::get('/supabase-test', [SupabaseController::class, 'testQuery']);
 Route::post('/query', [LlmBridgeController::class, 'query'])->name('api.query');
 Route::get('/ping', fn() => response()->json(['pong' => true]));
 
+// NLWEB streaming proxy
+Route::post('/ask', [\App\Http\Controllers\GatewayProxyController::class, 'ask'])->name('api.ask');
+
 // Chat endpoints (session-based) – need session middleware even under API
 Route::middleware(\Illuminate\Session\Middleware\StartSession::class)
     ->group(function () {

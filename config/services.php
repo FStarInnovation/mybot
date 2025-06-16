@@ -34,4 +34,9 @@ return [
         'endpoint' => rtrim(env('RUNPOD_API_URL', 'http://localhost:10051'), '/') . '/embedding',
     ],
 
+    'gateway' => [
+        // Base URL for proxying NLWEB endpoints (e.g., /ask)
+        'base' => env('GATEWAY_URL', rtrim(env('RUNPOD_API_URL', 'http://localhost:10051'), '/')),
+    ],
+
 ];
