@@ -14,7 +14,7 @@ class LlmGatewayService
     public function chat(array $messages): string
     {
         $payload = [
-            'model'            => 'llama3',
+            'model'            => env('LLM_MODEL', 'llama'),
             'messages'         => $messages,
             'stream'           => false,
             'temperature'      => 0.5,

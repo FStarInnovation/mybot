@@ -25,11 +25,13 @@ return [
 
     // ✅ вставляем LLM сюда, внутри return-массива:
     'llm' => [
-        'endpoint' => env('LLM_API_URL', 'http://localhost:1434/completion'),
+        // Unified gateway according to integratio_runpod.md → POST {RUNPOD_API_URL}/chat
+        'endpoint' => rtrim(env('RUNPOD_API_URL', 'http://localhost:10051'), '/') . '/chat',
     ],
 
     'embeddings' => [
-        'endpoint' => env('EMBEDDINGS_API_URL', 'http://localhost:8000/embedding'),
+        // Unified gateway → POST {RUNPOD_API_URL}/embedding
+        'endpoint' => rtrim(env('RUNPOD_API_URL', 'http://localhost:10051'), '/') . '/embedding',
     ],
 
 ];
