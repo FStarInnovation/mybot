@@ -27,7 +27,15 @@ Route::get('/ping', fn() => response()->json(['pong' => true]));
 
 // Chat endpoints
 // Маршрут /chat/send использует middleware api для совместимости с фронтендом
-Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'send']);
+// Добавляем группу middleware для обработки CORS и других API-запросов
+Route::middleware(['api', 'cors'])
+    ->group(function () {
+        // Старый маршрут для обратной совместимости
+        Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'send']);
+        
+        // Новый маршрут для статического API чата без сессии
+        Route::post('/v1/chat', [\App\Http\Controllers\Api\ChatApiController::class, 'send']);
+    });
 
 // Эти маршруты требуют сессии
 Route::middleware(\Illuminate\Session\Middleware\StartSession::class)
