@@ -24,7 +24,9 @@ class LlmGatewayService
             'frequency_penalty'=> 0.0,
         ];
 
-        $resp = Http::timeout(120)->post(config('services.llm.endpoint'), $payload);
+        $resp = Http::withHeaders([
+            'Accept' => 'application/json',
+        ])->timeout(120)->post(config('services.llm.endpoint'), $payload);
 
         if (!$resp->ok() || !isset($resp['choices'][0]['message']['content'])) {
             Log::error('LLM API error', [
