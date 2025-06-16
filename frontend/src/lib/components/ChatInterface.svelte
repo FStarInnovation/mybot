@@ -32,7 +32,8 @@
 
   const API_BASE = import.meta.env.PUBLIC_API_BASE ?? '';
 const DEBUG = import.meta.env.PUBLIC_DEBUG_CHAT === 'true';
-const CHAT_SEND_ENDPOINT = `${API_BASE}/api/chat/${DEBUG ? 'debug' : 'send'}`;
+// Временно используем chat_api_stub.php вместо Laravel API для обхода проблем с маршрутизацией
+const CHAT_SEND_ENDPOINT = `${API_BASE}/chat_api_stub.php`;
 
   let chatContainer: HTMLElement;
   let isTyping = false;
