@@ -19,22 +19,18 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class GatewayProxyController extends Controller
 {
     /**
-     * POST /ask  – SSE proxy to NLWEB Gateway.
+     * GET /ask  – SSE proxy to NLWEB Gateway.
      */
-    public function ask(Request $request)
+    public function stream(Request $request)
     {
         $gatewayBase = rtrim(config('services.gateway.base'), '/');
         $targetUrl   = $gatewayBase . '/ask';
 
-        // Forward JSON payload & headers
-        $payload = $request->all();
-
+        // Forward query params if any
         $resp = Http::withHeaders([
-            'Accept'       => 'text/event-stream',
-            'Content-Type' => 'application/json',
-        ])->timeout(120)->post($targetUrl, $payload);
+            'Accept' => 'text/event-stream',
+        ])->timeout(120)->get($targetUrl, $request->query());
 
-        // StreamedResponse keeps connection open for SSE
         return new StreamedResponse(function () use ($resp) {
             echo $resp->body();
         }, $resp->status(), [
@@ -42,5 +38,24 @@ class GatewayProxyController extends Controller
             'Cache-Control'     => 'no-cache',
             'X-Accel-Buffering' => 'no',
         ]);
+    }
+
+    /**
+     * POST /tool/ask – synchronous JSON request (non-stream).
+     */
+    public function askSync(Request $request)
+    {
+        $gatewayBase = rtrim(config('services.gateway.base'), '/');
+        $targetUrl   = $gatewayBase . '/ask';
+
+        $resp = Http::withHeaders([
+            'Accept'       => 'application/json',
+            'Content-Type' => 'application/json',
+        ])->timeout(120)->post($targetUrl, $request->all());
+
+        return response($resp->body(), $resp->status())
+            ->withHeaders(
+                collect($resp->headers())->only(['content-type'])->toArray()
+            );
     }
 }
