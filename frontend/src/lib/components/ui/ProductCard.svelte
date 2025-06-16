@@ -104,7 +104,7 @@
       {#if !compact}
         <div class="product-actions">
           <button class="buy-button" disabled={!$productQuery.data.availability}>
-            {$productQuery.data.availability ? 'Купить' : 'Нет в наличии'}
+            {$productQuery.data.availability ? 'Mejor precio de ibuprofeno' : 'Sin existencias'}
           </button>
           <button class="wishlist-button">
             <span class="heart-icon">♡</span>

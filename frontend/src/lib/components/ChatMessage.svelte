@@ -346,4 +346,28 @@
   .chat-message.bot .message-timestamp {
     color: var(--text-muted);
   }
+  /* Table styling inside messages */
+  .message-bubble table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+  }
+  .message-bubble th,
+  .message-bubble td {
+    border: 1px solid var(--border-color, #e0e0e0);
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-size: 0.9rem;
+  }
+  .message-bubble th {
+    background-color: var(--bg-tertiary, #f5f5f5);
+    font-weight: 600;
+  }
+  .message-bubble tr:nth-child(even) td {
+    background-color: rgba(0,0,0,0.02);
+  }
+  /* Allow horizontal scroll on small screens */
+  .message-bubble .table-responsive {
+    overflow-x: auto;
+  }
 </style>
