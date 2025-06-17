@@ -10,6 +10,10 @@ return [
     | provided by the Laravel Loop package.
     |
     */
+    'tools' => [
+        App\Loop\Tools\ImportCatalogTool::make(),
+    ],
+
     'streamable_http' => [
         /*
         |--------------------------------------------------------------------------
