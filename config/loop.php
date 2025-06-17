@@ -10,8 +10,10 @@ return [
     | provided by the Laravel Loop package.
     |
     */
+    // List of MCP tool classes to register. Only class strings are stored here so the config
+    // remains serializable when running `php artisan config:cache`.
     'tools' => [
-        App\Loop\Tools\ImportCatalogTool::make(),
+        App\Loop\Tools\ImportCatalogTool::class,
     ],
 
     'streamable_http' => [
