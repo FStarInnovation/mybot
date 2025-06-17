@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2df1b9a89a951c3a446d4c4153e9ded7",
+    "content-hash": "b78810ced55d14d03fff14fe6490bd73",
     "packages": [
         {
             "name": "brick/math",
@@ -1103,7 +1103,7 @@
         },
         {
             "name": "kirschbaum-development/laravel-loop",
-            "version": "0.1.7",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kirschbaum-development/laravel-loop.git",
@@ -1136,6 +1136,7 @@
                 "pestphp/pest-plugin-laravel": "^3.1",
                 "pestphp/pest-plugin-livewire": "^3.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -8835,7 +8836,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "kirschbaum-development/laravel-loop": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
