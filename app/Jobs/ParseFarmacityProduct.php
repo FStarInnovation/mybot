@@ -26,7 +26,40 @@ class ParseFarmacityProduct implements ShouldQueue
                 'url'   => $this->url,
                 'bytes' => strlen($resp->body()),
             ]);
-            // TODO: parse HTML, extract product data, dispatch normalization job
+            
+            // Отправка URL в RunPod API для дальнейшей обработки
+            try {
+                $runpodApiUrl = rtrim(config('services.gateway.base'), '/') . '/tool/crawl_single_page';
+                
+                $response = Http::timeout(30)
+                    ->withHeaders([
+                        'Accept' => 'application/json',
+                        'Content-Type' => 'application/json'
+                    ])
+                    ->post($runpodApiUrl, [
+                        'url' => $this->url,
+                        // Можно добавить дополнительные параметры по необходимости
+                    ]);
+                
+                if ($response->successful()) {
+                    Log::info('Successfully sent URL to RunPod API', [
+                        'url' => $this->url,
+                        'status' => $response->status(),
+                        'response' => $response->json(),
+                    ]);
+                } else {
+                    Log::error('Failed to send URL to RunPod API', [
+                        'url' => $this->url,
+                        'status' => $response->status(),
+                        'error' => $response->body(),
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Exception sending URL to RunPod API', [
+                    'url' => $this->url,
+                    'exception' => $e->getMessage(),
+                ]);
+            }
         } else {
             Log::warning('Failed to fetch product', [
                 'url'    => $this->url,
