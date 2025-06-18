@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Kirschbaum\Loop\Facades\Loop;
+use App\Loop\Tools\ImportCatalogTool;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,6 +16,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(\App\Services\Memory\ShortTermMemoryService::class);
         $this->app->singleton(\App\Services\Memory\LongTermMemoryService::class);
         $this->app->singleton(\App\Services\MemoryService::class);
+
+
     }
 
     /**
@@ -21,6 +25,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register MCP tools so they are available on every request
+        // Используем полное имя класса для доступа к сервису Loop
+        if (app()->bound('Kirschbaum\\Loop\\Loop')) {
+            app('Kirschbaum\\Loop\\Loop')->tool(\App\Loop\Tools\ImportCatalogTool::make());
+        }
         if (! function_exists('svelte_asset')) {
             /**
              * Return URL of the first file matching a glob pattern in public/build.
@@ -36,6 +45,5 @@ class AppServiceProvider extends ServiceProvider
                 return asset($relative);
             }
         }
-        //
     }
 }
