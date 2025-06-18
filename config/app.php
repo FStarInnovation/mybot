@@ -139,6 +139,9 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\MiddlewareServiceProvider::class,
 
+        // Laravel Loop Service Provider
+        Kirschbaum\Loop\LoopServiceProvider::class,
+
         // если есть другие ваши провайдеры, тоже укажите их здесь
     ],
 
