@@ -26,7 +26,7 @@ class ImportCatalogTool implements Tool
             ->withNumberParameter('limit', 'Max PDP URLs to import', required: false)
             ->using(function (?int $limit = null) {
                 \App\Jobs\ImportFarmacityCatalog::dispatch($limit);
-                return ['status' => 'queued'];
+                return 'Queued Farmacity catalog import job' . ($limit ? ' with limit: ' . $limit : '');
             });
     }
 
