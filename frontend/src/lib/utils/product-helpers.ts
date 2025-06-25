@@ -1,6 +1,7 @@
 /**
  * Утилиты для работы с данными о товарах
  */
+import type { Product } from '$lib/types/product';
 
 /**
  * Извлекает количество таблеток из названия продукта
@@ -62,4 +63,74 @@ export function formatPrice(price: number, currency: string = 'RUB', minimumFrac
     minimumFractionDigits: minimumFractionDigits,
     maximumFractionDigits: minimumFractionDigits === 0 ? 0 : 2
   }).format(price);
+}
+
+/**
+ * Получает количество таблеток для товара из атрибутов или названия
+ * @param product товар для анализа
+ * @returns количество таблеток или null, если не удалось определить
+ */
+export function getTabletsCount(product: Product): number | null {
+  // Сначала проверяем атрибуты - если есть явное указание количества таблеток
+  if (product.attributes && typeof product.attributes === 'object' && 'tablets_count' in product.attributes) {
+    const tabletCountValue = product.attributes.tablets_count;
+    if (typeof tabletCountValue === 'string') {
+      const tabletCount = parseInt(tabletCountValue, 10);
+      if (!isNaN(tabletCount) && tabletCount > 0) {
+        return tabletCount;
+      }
+    } else if (typeof tabletCountValue === 'number' && tabletCountValue > 0) {
+      return tabletCountValue;
+    }
+  }
+  
+  // Если в атрибутах нет информации, извлекаем из названия
+  return extractTabletsCount(product.name);
+}
+
+/**
+ * Рассчитывает цену за таблетку для указанного товара
+ * @param product товар для расчета
+ * @returns цена за таблетку или null, если не удалось рассчитать
+ */
+export function getPricePerTablet(product: Product): number | null {
+  const tabletCount = getTabletsCount(product);
+  return calculatePricePerTablet(product.price, tabletCount);
+}
+
+/**
+ * Форматирует цену за таблетку для отображения
+ * @param product товар для форматирования цены за таблетку
+ * @returns отформатированная цена за таблетку или 'Н/Д', если не удалось рассчитать
+ */
+export function formatPricePerTablet(product: Product): string {
+  const pricePerTablet = getPricePerTablet(product);
+  if (pricePerTablet === null) {
+    return 'Н/Д';
+  }
+  return formatPrice(pricePerTablet, 'RUB', 2);
+}
+
+/**
+ * Находит товар с самой низкой ценой за таблетку из списка товаров
+ * @param products список товаров для анализа
+ * @returns товар с самой низкой ценой за таблетку или null, если таких нет
+ */
+export function findCheapestPerTablet(products: Product[]): Product | null {
+  if (!products || products.length === 0) return null;
+  
+  // Фильтруем товары, для которых можно рассчитать цену за таблетку
+  const productsWithTabletPrice = products.filter(product => {
+    const tabletCount = getTabletsCount(product);
+    return tabletCount !== null && tabletCount > 0 && product.price > 0;
+  });
+  
+  if (productsWithTabletPrice.length === 0) return null;
+  
+  // Сортируем по цене за таблетку (от меньшей к большей)
+  return productsWithTabletPrice.sort((a, b) => {
+    const priceA = getPricePerTablet(a) || Infinity;
+    const priceB = getPricePerTablet(b) || Infinity;
+    return priceA - priceB;
+  })[0];
 }

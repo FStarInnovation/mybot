@@ -3,17 +3,15 @@
   import ChatInput from './ChatInput.svelte';
   import { onMount, tick } from 'svelte';
   import { fade, fly } from 'svelte/transition';
-  import type { AgUIEvent, AgUIEventType, AgUICard, AgUIFormField, AgUIListEvent, AgUICustomEvent } from '../ag-ui/types'; // Expanded imports
+  import type { AgUIEventType, AgUICard, AgUIFormField, AgUIListEvent } from '../ag-ui/types'; // Expanded imports
   import { AgUIEventType as AgUIEventTypesEnum } from '../ag-ui/types'; // For using enum values
 
-  // Use a more comprehensive Message type, aligning with AgUIEvent
-  type Message = AgUIEvent; // Simplest way to align, assuming AgUIEvent is suitable directly
-                           // Or define a local type that includes all necessary fields:
-  /* type Message = {
+  // Определяем свой тип Message, так как AgUIEvent не включает нужные нам поля
+  type Message = {
     id: string;
     sender: 'user' | 'bot';
     timestamp: string;
-    messageType: AgUIEventType;
+    type: AgUIEventTypesEnum;
     text?: string; 
     card?: AgUICard;
     formFields?: AgUIFormField[];
@@ -25,8 +23,7 @@
     toolResult?: { tool: string, result: any };
     statusData?: { status: 'info' | 'success' | 'warning' | 'error', message: string };
     customComponentData?: { componentName: string, props: Record<string, any> };
-    // Ensure all fields passed to ChatMessage are covered
-  }; */
+  };
 
   let messages: Message[] = [];
 
@@ -102,21 +99,64 @@
     }
   }
   
-  // Функция для тестирования отображения карточки товара
-  function testProductCard() {
-    const productCardMessage: Message = {
-      id: Date.now().toString(),
+  import { getProducts } from '$lib/api/products';
+  import { extractTabletsCount, calculatePricePerTablet, findCheapestPerTablet } from '$lib/utils/product-helpers';
+  
+  // Функция для отображения карточки с самым дешевым ибупрофеном по цене за таблетку
+  async function testProductCard() {
+    // Показываем индикатор загрузки пока ищем самый дешёвый вариант
+    const loadingMessage: Message = {
+      id: 'loading-' + Date.now().toString(),
       sender: 'bot',
-      type: AgUIEventTypesEnum.CUSTOM,
+      type: AgUIEventTypesEnum.TEXT,
       timestamp: new Date().toISOString(),
-      // Add customComponentData object that ChatMessage.svelte expects
-      customComponentData: {
-        componentName: 'ProductCard',
-        props: { productId: 2 } // ID товара для тестирования
-      }
+      text: 'Ищу самый выгодный ибупрофен по цене за таблетку...'
     };
+    messages = [...messages, loadingMessage];
+    scrollToBottom();
     
-    messages = [...messages, productCardMessage];
+    try {
+      // Получаем все товары с сервера
+      const response = await getProducts({ search: 'ибупрофен', limit: 50 });
+      const products = response.products;
+      
+      // Находим товар с наименьшей ценой за таблетку
+      const cheapestProduct = findCheapestPerTablet(products);
+      
+      // Создаем и отправляем карточку с найденным товаром
+      const productCardMessage: Message = {
+        id: Date.now().toString(),
+        sender: 'bot',
+        type: AgUIEventTypesEnum.CUSTOM,
+        timestamp: new Date().toISOString(),
+        customComponentData: {
+          componentName: 'ProductCard',
+          props: { 
+            productId: cheapestProduct?.id || 2, // Используем ID найденного товара или 2 как запасной вариант
+            showPricePerTablet: true
+          }
+        }
+      };
+      
+      // Заменяем сообщение о загрузке на карточку товара
+      messages = messages.filter(m => m.id !== loadingMessage.id);
+      messages = [...messages, productCardMessage];
+    } catch (error) {
+      console.error('Ошибка при поиске самого дешёвого ибупрофена:', error);
+      // Если произошла ошибка, сообщаем об этом пользователю
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        sender: 'bot',
+        type: AgUIEventTypesEnum.TEXT,
+        timestamp: new Date().toISOString(),
+        text: 'Произошла ошибка при поиске наиболее выгодного предложения ибупрофена.'
+      };
+      
+      // Заменяем сообщение о загрузке на сообщение об ошибке
+      messages = messages.filter(m => m.id !== loadingMessage.id);
+      messages = [...messages, errorMessage];
+    }
+    
     scrollToBottom();
   }
 </script>
