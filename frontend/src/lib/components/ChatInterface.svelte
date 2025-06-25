@@ -99,65 +99,27 @@
     }
   }
   
-  import { getProducts } from '$lib/api/products';
-  import { extractTabletsCount, calculatePricePerTablet, findCheapestPerTablet } from '$lib/utils/product-helpers';
-  
-  // Функция для отображения карточки с самым дешевым ибупрофеном по цене за таблетку
-  async function testProductCard() {
-    // Показываем индикатор загрузки пока ищем самый дешёвый вариант
-    const loadingMessage: Message = {
-      id: 'loading-' + Date.now().toString(),
+  // Функция для показа карточки ибупрофена
+  function testProductCard() {
+    // Карточка с фиксированным ID товара
+    // Здесь используем ID=23, который должен быть ибупрофеном
+    const productCardMessage: Message = {
+      id: Date.now().toString(),
       sender: 'bot',
-      type: AgUIEventTypesEnum.TEXT,
+      type: AgUIEventTypesEnum.CUSTOM,
       timestamp: new Date().toISOString(),
-      text: 'Ищу самый выгодный ибупрофен по цене за таблетку...'
-    };
-    messages = [...messages, loadingMessage];
-    scrollToBottom();
-    
-    try {
-      // Получаем все товары с сервера
-      const response = await getProducts({ search: 'ибупрофен', limit: 50 });
-      const products = response.products;
-      
-      // Находим товар с наименьшей ценой за таблетку
-      const cheapestProduct = findCheapestPerTablet(products);
-      
-      // Создаем и отправляем карточку с найденным товаром
-      const productCardMessage: Message = {
-        id: Date.now().toString(),
-        sender: 'bot',
-        type: AgUIEventTypesEnum.CUSTOM,
-        timestamp: new Date().toISOString(),
-        customComponentData: {
-          componentName: 'ProductCard',
-          props: { 
-            productId: cheapestProduct?.id || 2, // Используем ID найденного товара или 2 как запасной вариант
-            showPricePerTablet: true
-          }
+      customComponentData: {
+        componentName: 'ProductCard',
+        props: { 
+          productId: 23, // Используем фиксированный ID ибупрофена
+          showPricePerTablet: true  // Показывать цену за таблетку
         }
-      };
-      
-      // Заменяем сообщение о загрузке на карточку товара
-      messages = messages.filter(m => m.id !== loadingMessage.id);
-      messages = [...messages, productCardMessage];
-    } catch (error) {
-      console.error('Ошибка при поиске самого дешёвого ибупрофена:', error);
-      // Если произошла ошибка, сообщаем об этом пользователю
-      const errorMessage: Message = {
-        id: Date.now().toString(),
-        sender: 'bot',
-        type: AgUIEventTypesEnum.TEXT,
-        timestamp: new Date().toISOString(),
-        text: 'Произошла ошибка при поиске наиболее выгодного предложения ибупрофена.'
-      };
-      
-      // Заменяем сообщение о загрузке на сообщение об ошибке
-      messages = messages.filter(m => m.id !== loadingMessage.id);
-      messages = [...messages, errorMessage];
-    }
+      }
+    };
     
+    messages = [...messages, productCardMessage];
     scrollToBottom();
+    console.log('Показываю карточку товара с ID:', 23);
   }
 </script>
 
