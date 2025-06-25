@@ -2,6 +2,7 @@
   import { useProducts } from '$lib/tanstack/product-queries';
   import ProductCard from '$lib/components/ui/ProductCard.svelte';
   import { onMount } from 'svelte';
+  import { sortProductsByPricePerTabletAsc, sortProductsByPricePerTabletDesc } from '$lib/utils/product-sort';
   
   // Параметры запроса к API
   let page = 1;
@@ -25,11 +26,57 @@
     page = 1; // Сбрасываем страницу при новом поиске
   }
   
-  // Изменение сортировки
+  // При изменении сортировки
   function handleSortChange(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    sort = select.value;
-    page = 1; // Сбрасываем страницу при изменении сортировки
+    sort = (event.target as HTMLSelectElement).value;
+    // При изменении сортировки возвращаемся на первую страницу
+    page = 1;
+    // Перезапрашиваем данные с новой сортировкой
+    // Если это клиентская сортировка, будем применять её после загрузки данных
+    refreshProducts();
+  }
+  
+  // Функция для обновления списка товаров
+  function refreshProducts() {
+    // Если это клиентская сортировка (по цене за таблетку),
+    // то отправляем стандартный запрос без сортировки
+    let serverSort = sort;
+    if (sort === 'price_per_tablet_asc' || sort === 'price_per_tablet_desc') {
+      // Для клиентской сортировки используем сортировку по цене (базовый параметр)
+      serverSort = 'price_asc';
+    }
+    
+    // Обновляем параметры запроса
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.set('page', page.toString());
+    queryParams.set('sort', sort); // Сохраняем оригинальную сортировку в URL
+    if (search) queryParams.set('search', search);
+    if (category) queryParams.set('category', category);
+    
+    // Обновляем URL без перезагрузки страницы
+    const url = `${window.location.pathname}?${queryParams.toString()}`;
+    history.pushState(null, '', url);
+    
+    // Перезапрашиваем данные
+    productsQuery.refetch(); 
+  }
+  
+  // Функция для применения клиентской сортировки по цене за таблетку
+  function applyClientSideSorting(products: any[]) {
+    if (!products) return products;
+    
+    // Создаем копию массива для сортировки
+    let sortedProducts = [...products];
+    
+    // Применяем соответствующую сортировку
+    if (sort === 'price_per_tablet_asc') {
+      return sortProductsByPricePerTabletAsc(sortedProducts);
+    } else if (sort === 'price_per_tablet_desc') {
+      return sortProductsByPricePerTabletDesc(sortedProducts);
+    }
+    
+    // Для остальных типов сортировки используем серверную сортировку
+    return sortedProducts;
   }
   
   // Функция для перехода на предыдущую страницу
@@ -95,6 +142,8 @@
           <option value="name_desc">По названию (Я-А)</option>
           <option value="price_asc">Сначала дешевые</option>
           <option value="price_desc">Сначала дорогие</option>
+          <option value="price_per_tablet_asc">Дешевле за таблетку</option>
+          <option value="price_per_tablet_desc">Дороже за таблетку</option>
           <option value="rating">По рейтингу</option>
           <option value="newest">Сначала новые</option>
         </select>
@@ -123,7 +172,7 @@
       </div>
     {:else if productsQuery.data}
       <div class="products-grid">
-        {#each productsQuery.data.products as product (product.id)}
+        {#each applyClientSideSorting(productsQuery.data.products) as product (product.id)}
           <div class="product-item">
             <ProductCard productId={product.id} />
           </div>

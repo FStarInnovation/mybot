@@ -1,6 +1,7 @@
 <script lang="ts">
   import { useProduct } from '$lib/tanstack/product-queries';
   import { goto } from '$app/navigation';
+  import { extractTabletsCount, calculatePricePerTablet, formatPrice as formatPriceUtil } from '$lib/utils/product-helpers';
   
   export let productId: string | number;
   export let compact: boolean = false; // Компактный режим отображения
@@ -11,11 +12,27 @@
   
   // Форматирование цены
   function formatPrice(price: number): string {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-      minimumFractionDigits: 0
-    }).format(price);
+    return formatPriceUtil(price, 'RUB', 0);
+  }
+  
+  // Получение количества таблеток из названия продукта
+  function getTabletsCount(product: any): number | null {
+    if (product?.attributes?.tabletsCount) {
+      return product.attributes.tabletsCount;
+    }
+    return product?.name ? extractTabletsCount(product.name) : null;
+  }
+  
+  // Расчет цены за одну таблетку в блистере
+  function getPricePerTablet(product: any): number | null {
+    const tabletsCount = getTabletsCount(product);
+    return calculatePricePerTablet(product.price, tabletsCount);
+  }
+  
+  // Форматирование цены за таблетку
+  function formatPricePerTablet(product: any): string {
+    const pricePerTablet = getPricePerTablet(product);
+    return pricePerTablet !== null ? formatPriceUtil(pricePerTablet, 'RUB', 2) : 'Н/Д';
   }
   
   // Обработчик клика по карточке
@@ -52,7 +69,15 @@
   }
 </script>
 
-<div class="product-card" class:compact class:clickable on:click={handleClick}>
+<div 
+  class="product-card" 
+  class:compact 
+  class:clickable 
+  on:click={handleClick}
+  on:keydown={(e) => e.key === 'Enter' && handleClick()}
+  role="button"
+  tabindex="0"
+>
   {#if $productQuery.isLoading}
     <div class="loading-state">
       <div class="loading-spinner"></div>
@@ -83,6 +108,12 @@
       <div class="product-info">
         <span class="product-price">{formatPrice($productQuery.data.price)}</span>
         
+        {#if getTabletsCount($productQuery.data) && !compact}
+          <div class="tablets-count">
+            {getTabletsCount($productQuery.data)} таб. в упаковке
+          </div>
+        {/if}
+        
         {#if $productQuery.data.rating !== undefined}
           <div class="product-rating">
             <span class="stars" title="Рейтинг: {$productQuery.data.rating} из 5">
@@ -104,8 +135,13 @@
       {#if !compact}
         <div class="product-actions">
           <button class="buy-button" disabled={!$productQuery.data.availability}>
-            {$productQuery.data.availability ? 'Mejor precio de ibuprofeno' : 'Sin existencias'}
+            {$productQuery.data.availability ? 'Mejor precio ibuprofeno' : 'Sin existencias'}
           </button>
+          {#if getPricePerTablet($productQuery.data) !== null}
+            <div class="price-per-tablet">
+              {formatPricePerTablet($productQuery.data)}/таблетка
+            </div>
+          {/if}
           <button class="wishlist-button">
             <span class="heart-icon">♡</span>
           </button>
@@ -192,6 +228,7 @@
     color: var(--text-primary);
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -199,9 +236,10 @@
   .product-description {
     font-size: 0.9rem;
     color: var(--text-secondary);
-    margin: 0 0 0.75rem 0;
+    margin-bottom: 1rem;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.4;
@@ -248,21 +286,37 @@
   
   .product-actions {
     display: flex;
-    gap: 0.5rem;
+    flex-wrap: wrap;
     margin-top: auto;
-    padding-top: 0.5rem;
+    padding-top: 1rem;
+    gap: 0.5rem;
   }
   
   .buy-button {
-    flex-grow: 1;
-    padding: 0.6rem 1rem;
-    background-color: var(--accent-primary);
-    color: var(--button-text);
+    flex: 1;
+    background-color: var(--accent-color);
+    color: white;
     border: none;
     border-radius: 6px;
+    padding: 0.6rem;
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s ease;
+  }
+  
+  .price-per-tablet {
+    width: 100%;
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    text-align: center;
+    margin-top: 0.3rem;
+  }
+  
+  .tablets-count {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.2rem;
   }
   
   .buy-button:hover:not(:disabled) {
