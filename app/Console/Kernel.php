@@ -32,6 +32,11 @@ class Kernel extends ConsoleKernel
 
         // Проверка подключения к Supabase — каждые 5 минут
         $schedule->command('supabase:check')->everyFiveMinutes()->withoutOverlapping();
+
+        // Daily import of Farmacity catalog via MCP tool job
+        $schedule->job(new \App\Jobs\ImportFarmacityCatalog(null))
+                 ->dailyAt('02:00')
+                 ->onOneServer();
     }
 
     /**

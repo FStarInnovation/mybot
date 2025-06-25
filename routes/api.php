@@ -10,6 +10,7 @@ use App\Http\Controllers\LlmBridgeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PushController;
+use App\Http\Controllers\HealthController;
 
 Route::post('/scan-sites', [SiteScanController::class, 'scan']);
 Route::get('/results', [ResultsController::class, 'index']);
@@ -21,6 +22,9 @@ Route::get('/supabase-test', [SupabaseController::class, 'testQuery']);
 
 Route::post('/query', [LlmBridgeController::class, 'query'])->name('api.query');
 Route::get('/ping', fn() => response()->json(['pong' => true]));
+
+// MCP queue & worker health-check
+Route::get('/health/mcp', [HealthController::class, 'mcp'])->name('health.mcp');
 
 // NLWEB streaming proxy (SSE)
 Route::get('/ask', [\App\Http\Controllers\GatewayProxyController::class, 'stream'])->name('api.ask.stream');

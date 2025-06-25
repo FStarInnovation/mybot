@@ -69,15 +69,14 @@
   }
 </script>
 
-<div 
-  class="product-card" 
-  class:compact 
-  class:clickable 
-  on:click={handleClick}
-  on:keydown={(e) => e.key === 'Enter' && handleClick()}
-  role="button"
+<div class="product-card {$$props.class || ''}" class:compact class:clickable
+  role="button" 
   tabindex="0"
+  on:click={handleClick}
+  on:keydown={e => e.key === 'Enter' && handleClick()}
 >
+  <!-- Очевидное изменение для проверки деплоя -->
+  <div class="deploy-test-banner">ТЕСТ ДЕПЛОЯ v2 {new Date().toISOString().substr(0, 10)}</div>
   {#if $productQuery.isLoading}
     <div class="loading-state">
       <div class="loading-spinner"></div>
@@ -175,6 +174,16 @@
   .product-card.compact {
     flex-direction: row;
     align-items: center;
+  }
+  
+  .deploy-test-banner {
+    background-color: #ff5722;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-weight: bold;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
   }
   
   .product-image {

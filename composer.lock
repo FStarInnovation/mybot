@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b78810ced55d14d03fff14fe6490bd73",
+    "content-hash": "01efa3a5d8e854a3cfccb3375cc6368c",
     "packages": [
         {
             "name": "brick/math",
@@ -1107,12 +1107,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kirschbaum-development/laravel-loop.git",
-                "reference": "fc41f180ea631a27ee463929adc106c0d6d4059f"
+                "reference": "fc41f18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kirschbaum-development/laravel-loop/zipball/fc41f180ea631a27ee463929adc106c0d6d4059f",
-                "reference": "fc41f180ea631a27ee463929adc106c0d6d4059f",
+                "url": "https://api.github.com/repos/kirschbaum-development/laravel-loop/zipball/fc41f18",
+                "reference": "fc41f18",
                 "shasum": ""
             },
             "require": {
