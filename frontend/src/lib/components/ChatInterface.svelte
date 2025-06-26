@@ -166,7 +166,7 @@
   </div>
   <div class="chat-input-area">
     <div class="test-buttons">
-      <button class="test-button" on:click={testProductCard}>mejor precio ibuprofeno</button>
+      <button class="test-button" on:click={testProductCard}>mejor precio ibuprofeno {Date.now()}</button>
     </div>
     <ChatInput on:sendMessage={handleSendMessage} />
   </div>
