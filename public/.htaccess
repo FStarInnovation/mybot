@@ -1,32 +1,37 @@
-# Правильные MIME-типы для SvelteKit ассетов
-AddType application/javascript .js
-AddType text/css .css
-AddType application/manifest+json .webmanifest
-
-# Предотвращение кеширования для критических маршрутов
-<IfModule mod_headers.c>
-  <FilesMatch "index\.html$">
+# Кэширование и контроль версий
+<IfModule mod_expires.c>
+  ExpiresActive On
+  
+  # Устанавливаем значение по умолчанию для всех файлов
+  ExpiresDefault "access plus 1 month"
+  
+  # HTML не кэшируется
+  <FilesMatch "\.(html|htm)$">
+    ExpiresDefault "access plus 0 seconds"
     Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
     Header set Pragma "no-cache"
-    Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+  </FilesMatch>
+  
+  # JS и CSS файлы кэшируются, но с версионным параметром
+  <FilesMatch "\.(js|css)$">
+    ExpiresDefault "access plus 1 year"
+    Header append Cache-Control "public, immutable"
+  </FilesMatch>
+  
+  # Изображения и шрифты кэшируются надолго
+  <FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$">
+    ExpiresDefault "access plus 1 year"
+    Header append Cache-Control "public, immutable"
   </FilesMatch>
 </IfModule>
 
-# Fallback для SPA маршрутов
+# Перенаправление для SPA
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
   
-  # Прямой маршрут для /chat с обходом любых Service Worker
-  RewriteRule ^chat/?$ /index.html [L,NC]
-  
-  # Поддержка подпутей /chat/...
-  RewriteRule ^chat/(.*)$ /index.html [L,NC]
-  
-  # Если запрос не к существующему файлу/директории
+  # Если файл или директория не существуют, перенаправляем на index.html
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  
-  # Для всех остальных маршрутов
-  RewriteRule ^.*$ /index.html [L]
+  RewriteRule . /index.html [L]
 </IfModule>
