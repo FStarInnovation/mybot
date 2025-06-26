@@ -4,6 +4,7 @@
   import PWA from '$lib/components/PWA.svelte';
   import PWASplash from '$lib/components/PWASplash.svelte';
   import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+  import UpdateButton from '$lib/components/UpdateButton.svelte';
   import { onMount, onDestroy } from 'svelte';
   
   // TanStack Query
@@ -78,6 +79,11 @@
   <ThemeToggle />
 </div>
 
+<!-- Кнопка обновления приложения -->
+<div class="update-button-container">
+  <UpdateButton variant="icon" />
+</div>
+
 <style>
   :global(html, body) {
     margin: 0;
@@ -96,6 +102,13 @@
   .theme-toggle-container {
     position: fixed;
     top: 1rem;
+    right: 1rem;
+    z-index: 1000; /* Ensure it's above other content */
+  }
+  
+  .update-button-container {
+    position: fixed;
+    bottom: 1rem;
     right: 1rem;
     z-index: 1000; /* Ensure it's above other content */
   }
