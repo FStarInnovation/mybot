@@ -7,8 +7,8 @@ const config = {
   preprocess: vitePreprocess(),
   kit: {
     adapter: adapter({
-      pages: '../public/build',
-      assets: '../public/build',
+      pages: '../public',
+      assets: '../public',
       fallback: 'index.html'
     }),
     alias: {
