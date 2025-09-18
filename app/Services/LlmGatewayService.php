@@ -29,11 +29,19 @@ class LlmGatewayService
         ])->timeout(120)->post(config('services.llm.endpoint'), $payload);
 
         if (!$resp->ok() || !isset($resp['choices'][0]['message']['content'])) {
-            Log::error('LLM API error', [
+            $errorDetails = [
                 'status' => $resp->status(),
-                'body'   => $resp->body(),
-            ]);
-            return 'Извините, я сейчас недоступен.';
+                'body' => $resp->body(),
+                'endpoint' => config('services.llm.endpoint'),
+                'request_payload' => $payload
+            ];
+            
+            
+            // Log the error for debugging
+            Log::error('LLM API error', $errorDetails);
+            
+            // Return detailed error for debugging (temporary)
+            return 'LLM API Error: ' . json_encode($errorDetails, JSON_UNESCAPED_UNICODE);
         }
 
         // Clean up special template tokens that some models may return

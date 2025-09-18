@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\SiteScanController;
 use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\Controller; // LLM Bridge
@@ -41,6 +42,48 @@ Route::middleware(\Illuminate\Session\Middleware\StartSession::class)
 // Web-push subscriptions
 Route::post('/push/subscribe', [\App\Http\Controllers\Api\PushSubscriptionController::class, 'store']);
 Route::delete('/push/unsubscribe', [\App\Http\Controllers\Api\PushSubscriptionController::class, 'destroy']);
+
+// Diagnostic route for RunPod testing
+Route::get('/diag/runpod', function () {
+    $apiUrl = env('RUNPOD_API_URL');
+    
+    // Test chat endpoint
+    $chatResponse = Http::timeout(30)->post("{$apiUrl}/chat", [
+        'model' => 'llama',
+        'messages' => [
+            ['role' => 'user', 'content' => 'Hola, ¿qué es ibuprofeno?']
+        ],
+        'stream' => false,
+        'temperature' => 0.5,
+        'max_tokens' => 100
+    ]);
+    
+    // Test embedding endpoint
+    $embedResponse = Http::timeout(30)->post("{$apiUrl}/embedding", [
+        'input' => ['Ibuprofeno 400 mg'],
+        'model' => 'jina-embeddings-v2-base-es'
+    ]);
+    
+    return response()->json([
+        'api_url' => $apiUrl,
+        'chat' => [
+            'status' => $chatResponse->status(),
+            'success' => $chatResponse->successful(),
+            'body' => $chatResponse->successful()
+                ? $chatResponse->json()
+                : $chatResponse->body(),
+            'error' => $chatResponse->successful() ? null : $chatResponse->body()
+        ],
+        'embedding' => [
+            'status' => $embedResponse->status(),
+            'success' => $embedResponse->successful(),
+            'body' => $embedResponse->successful()
+                ? $embedResponse->json()
+                : $embedResponse->body(),
+            'error' => $embedResponse->successful() ? null : $embedResponse->body()
+        ]
+    ], 200, [], JSON_UNESCAPED_UNICODE);
+});
 
 // Product endpoints (api prefix is already applied)
 Route::get('products', [ProductController::class, 'index']);

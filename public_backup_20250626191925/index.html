@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.png" />
+    <link rel="manifest" href="/manifest.json?v=1751075233" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="description" content="MyBot Application" />
+    <!-- Cache-busting meta tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+		<link rel="modulepreload" href="/build/entry/start.Cb4e-lt3.js">
+		<link rel="modulepreload" href="/build/chunks/CBOYf4jc.js">
+		<link rel="modulepreload" href="/build/chunks/DzjKHtkU.js">
+		<link rel="modulepreload" href="/build/chunks/zifXhSmD.js">
+		<link rel="modulepreload" href="/build/entry/app.bT9Ick4T.js">
+		<link rel="modulepreload" href="/build/chunks/CukK43zF.js">
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">
+			<script>
+				{
+					__sveltekit_j7be4y = {
+						base: ""
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("/build/entry/start.Cb4e-lt3.js"),
+						import("/build/entry/app.bT9Ick4T.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+
+					if ('serviceWorker' in navigator) {
+						addEventListener('load', function () {
+							navigator.serviceWorker.register('/service-worker.js');
+						});
+					}
+				}
+			</script>
+		</div>
+  </body>
+</html>

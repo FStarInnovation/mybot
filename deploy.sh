@@ -24,13 +24,13 @@ log() {
 create_backup() {
   log "📦 Создаем бэкап текущих файлов..."
   
-  if [ -d "$PUBLIC_DIR/_app" ]; then
+  if [ -d "$PUBLIC_DIR/build" ]; then
     BACKUP_DIR="${PUBLIC_DIR}_backup_$TIMESTAMP"
     mkdir -p "$BACKUP_DIR"
     
     # Копируем только необходимые файлы
     cp "$PUBLIC_DIR/index.html" "$BACKUP_DIR/" 2>/dev/null || true
-    cp -r "$PUBLIC_DIR/_app" "$BACKUP_DIR/" 2>/dev/null || true
+    cp -r "$PUBLIC_DIR/build" "$BACKUP_DIR/" 2>/dev/null || true
     
     log "✅ Бэкап сохранен в $BACKUP_DIR"
   else
@@ -45,7 +45,7 @@ clean_old_files() {
   # Удаляем старые файлы сборки
   rm -rf "$FRONTEND_DIR/.svelte-kit" || true
   rm -rf "$FRONTEND_DIR/build" || true
-  rm -rf "$PUBLIC_DIR/_app" || true
+  rm -rf "$PUBLIC_DIR/build" || true
   
   # Очищаем кэш npm по желанию (раскомментируй, если нужно)
   # npm cache clean --force
@@ -82,15 +82,15 @@ verify_files() {
     exit 1
   fi
   
-  # Проверяем наличие директории _app с собранными файлами
-  if [ ! -d "$PUBLIC_DIR/_app" ]; then
-    log "❌ Ошибка: директория _app отсутствует!"
+  # Проверяем наличие директории build с собранными файлами
+  if [ ! -d "$PUBLIC_DIR/build" ]; then
+    log "❌ Ошибка: директория build отсутствует!"
     exit 1
   fi
   
   # Проверяем, что index.html ссылается на актуальные файлы
-  JS_FILES=$(find "$PUBLIC_DIR/_app" -name "*.js" | wc -l)
-  JS_REFS=$(grep -o '_app/immutable/[^"]*\.js' "$PUBLIC_DIR/index.html" | wc -l)
+  JS_FILES=$(find "$PUBLIC_DIR/build" -name "*.js" | wc -l)
+  JS_REFS=$(grep -o '/build/[^"]*\.js' "$PUBLIC_DIR/index.html" | wc -l)
   
   log "📊 Найдено JS файлов: $JS_FILES, ссылок в index.html: $JS_REFS"
   
@@ -100,7 +100,7 @@ verify_files() {
   
   # Проверяем ссылки в index.html на существующие файлы
   MISSING_FILES=0
-  for REF in $(grep -o '_app/immutable/[^"]*\.\(js\|css\)' "$PUBLIC_DIR/index.html"); do
+  for REF in $(grep -o 'build/[^"]*\.\(js\|css\)' "$PUBLIC_DIR/index.html"); do
     if [ ! -f "$PUBLIC_DIR/$REF" ]; then
       log "❌ Ошибка: файл $REF указан в index.html, но отсутствует на диске!"
       MISSING_FILES=$((MISSING_FILES + 1))
@@ -123,7 +123,7 @@ add_version_param() {
   TMP_FILE=$(mktemp)
   
   # Заменяем ссылки на JS и CSS файлы, добавляя версионный параметр
-  sed "s|\(\"/_app/immutable/[^\"]*\.\(js\|css\)\)\"|\"\\1?v=$TIMESTAMP\"|g" "$PUBLIC_DIR/index.html" > "$TMP_FILE"
+  sed "s|\(\"/build/[^\"]*\.\(js\|css\)\)\"|\"\\1?v=$TIMESTAMP\"|g" "$PUBLIC_DIR/index.html" > "$TMP_FILE"
   
   # Проверяем, что файл не пустой
   if [ -s "$TMP_FILE" ]; then
@@ -187,6 +187,20 @@ EOL
   log "✅ .htaccess обновлен"
 }
 
+# Обновление service-worker.js для поддержки новых путей
+update_service_worker() {
+  log "👷 Обновляем service-worker.js для поддержки новых путей..."
+
+  # Если есть service worker
+  if [ -f "$PUBLIC_DIR/sw.js" ]; then
+    # Добавляем timestamp для принудительного обновления
+    sed -i "s/const TIMESTAMP = .*\;/const TIMESTAMP = '$TIMESTAMP'\;/g" "$PUBLIC_DIR/sw.js" 2>/dev/null || true
+    log "✅ service-worker.js обновлен"
+  else
+    log "⚠️ service-worker.js не найден"
+  fi
+}
+
 # Основной процесс деплоя
 main() {
   create_backup
@@ -194,10 +208,12 @@ main() {
   build_frontend
   add_version_param
   update_htaccess
+  update_service_worker
   verify_files
   
   log "🎉 Деплой успешно завершен! - $(date)"
   log "======================================"
+  log "⚠️ ВАЖНО: Не забудьте проверить в браузере (в режиме инкогнито или после очистки кэша), что изменения появились в продакшене"
 }
 
 # Запуск основного процесса
