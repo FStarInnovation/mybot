@@ -11,7 +11,7 @@ class ProductResource extends JsonResource
         /** @var \App\Models\Product $this */
         return [
             'id'           => $this->id,
-            'name'         => $this->title,
+            'title'        => $this->title,
             'description'  => $this->description,
             'price'        => $this->price !== null ? (float) $this->price : null,
             'image'        => optional($this->images->first())->url,
