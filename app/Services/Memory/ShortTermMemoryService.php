@@ -26,7 +26,9 @@ class ShortTermMemoryService
             $key = $this->getKey($sessionId);
             $messages = Redis::lrange($key, 0, $limit ?? $this->maxMessages - 1);
             
-            return collect($messages)->map(fn($msg) => json_decode($msg, true));
+            return collect($messages)
+                ->map(fn($msg) => json_decode($msg, true))
+                ->filter(fn($msg) => $msg !== null && isset($msg['role']) && isset($msg['content']));
         } catch (\Exception $e) {
             Log::error('Failed to fetch recent messages', [
                 'session' => $sessionId,

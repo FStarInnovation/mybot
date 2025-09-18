@@ -24,12 +24,14 @@ class MemoryService
         // 3. Format system message with context
         $systemMessage = $this->formatSystemMessage($longTermContext);
         
-        // 4. Combine all messages
-        return array_merge(
+        // 4. Combine all messages and filter out null values
+        $messages = array_merge(
             [['role' => 'system', 'content' => $systemMessage]],
             $recentMessages->toArray(),
             [['role' => 'user', 'content' => $userMessage]]
         );
+        
+        return array_filter($messages, fn($msg) => $msg !== null && isset($msg['role']) && isset($msg['content']));
     }
     
     public function getRecentMessages(string $sessionId, ?int $limit = null): Collection
