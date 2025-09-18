@@ -14,15 +14,14 @@ class LlmGatewayService
     public function chat(array $messages): string
     {
         $payload = [
-            'model'            => env('LLM_MODEL', 'llama'),
+            'model'            => env('LLM_MODEL', 'llama3'),
             'messages'         => $messages,
-            'stream'           => false,
-            'temperature'      => 0.5,
-            'top_p'            => 0.9,
-            'max_tokens'       => 512,
-            'presence_penalty' => 0.0,
-            'frequency_penalty'=> 0.0,
+            'temperature'      => 0.7,
+            'max_tokens'       => 256,
         ];
+
+        // Log the payload for debugging
+        Log::info('Sending to LLM', ['payload' => $payload]);
 
         $resp = Http::withHeaders([
             'Accept' => 'application/json',
