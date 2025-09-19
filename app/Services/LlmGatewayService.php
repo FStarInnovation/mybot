@@ -14,33 +14,26 @@ class LlmGatewayService
     public function chat(array $messages): string
     {
         $payload = [
-            'model'            => env('LLM_MODEL', 'llama3'),
+            'model'            => env('LLM_MODEL', 'llama'),
             'messages'         => $messages,
-            'temperature'      => 0.7,
-            'max_tokens'       => 256,
+            'stream'           => false,
+            'temperature'      => 0.5,
+            'top_p'            => 0.9,
+            'max_tokens'       => 512,
+            'presence_penalty' => 0.0,
+            'frequency_penalty'=> 0.0,
         ];
-
-        // Log the payload for debugging
-        Log::info('Sending to LLM', ['payload' => $payload]);
 
         $resp = Http::withHeaders([
             'Accept' => 'application/json',
         ])->timeout(120)->post(config('services.llm.endpoint'), $payload);
 
         if (!$resp->ok() || !isset($resp['choices'][0]['message']['content'])) {
-            $errorDetails = [
+            Log::error('LLM API error', [
                 'status' => $resp->status(),
-                'body' => $resp->body(),
-                'endpoint' => config('services.llm.endpoint'),
-                'request_payload' => $payload
-            ];
-            
-            
-            // Log the error for debugging
-            Log::error('LLM API error', $errorDetails);
-            
-            // Return detailed error for debugging (temporary)
-            return 'LLM API Error: ' . json_encode($errorDetails, JSON_UNESCAPED_UNICODE);
+                'body'   => $resp->body(),
+            ]);
+            return 'Извините, я сейчас недоступен.';
         }
 
         // Clean up special template tokens that some models may return

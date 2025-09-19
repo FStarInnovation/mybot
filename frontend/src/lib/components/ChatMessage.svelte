@@ -76,6 +76,11 @@
   function handleCardAction(event: CustomEvent) {
     dispatch('cardAction', event.detail);
   }
+
+  // Проксируем события от кастомных компонентов наверх
+  function handleCustomComponentAction(event: CustomEvent) {
+    dispatch('customAction', event.detail);
+  }
 </script>
 
 <div class="chat-message" class:user={sender === 'user'} class:bot={sender === 'bot'}>
@@ -160,7 +165,7 @@
     <div class="custom-component-container">
       {#if customComponentData.componentName === 'ProductCard' && customComponentData.props && typeof customComponentData.props.productId === 'number'}
         <div class="product-card-wrapper">
-          <ProductCard productId={customComponentData.props.productId} clickable={false} />
+          <ProductCard productId={customComponentData.props.productId} clickable={false} on:requestPrice={(e) => handleCustomComponentAction(new CustomEvent('customAction', { detail: { type: 'requestPrice', ...e.detail } }))} />
           {#if formattedTimestamp}
             <div class="message-timestamp">{formattedTimestamp}</div>
           {/if}

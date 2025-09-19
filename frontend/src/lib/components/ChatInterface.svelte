@@ -5,6 +5,7 @@
   import { fade, fly } from 'svelte/transition';
   import type { AgUIEventType, AgUICard, AgUIFormField, AgUIListEvent } from '../ag-ui/types'; // Expanded imports
   import { AgUIEventType as AgUIEventTypesEnum } from '../ag-ui/types'; // For using enum values
+  import { formatPrice } from '$lib/utils/product-helpers';
 
   // Определяем свой тип Message, так как AgUIEvent не включает нужные нам поля
   type Message = {
@@ -37,6 +38,40 @@
     if (chatContainer) {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
+
+  // Обработка кастомных действий (например, запрос цены из карточки товара)
+  function handleCustomAction(event: CustomEvent<{ type: string; product?: any }>) {
+    const { type, product } = event.detail || {} as any;
+    if (type === 'requestPrice' && product) {
+      const now = new Date().toISOString();
+      // Добавляем системное сообщение пользователя для контекста
+      messages = [
+        ...messages,
+        {
+          id: (Date.now()).toString(),
+          sender: 'user',
+          type: AgUIEventTypesEnum.TEXT,
+          text: `Покажи цену товара: ${product.name ?? '—'}`,
+          timestamp: now,
+        },
+      ];
+
+      const priceText = typeof product?.price === 'number' ? formatPrice(product.price, 'RUB', 0) : 'Цена недоступна';
+      const replyText = `Стоимость товара «${product?.name ?? 'Товар'}»: ${priceText}`;
+      messages = [
+        ...messages,
+        {
+          id: (Date.now() + 1).toString(),
+          sender: 'bot',
+          type: AgUIEventTypesEnum.TEXT,
+          text: replyText,
+          timestamp: new Date().toISOString(),
+        },
+      ];
+      // Автопрокрутка
+      scrollToBottom();
+    }
+  }
   }
 
   onMount(async () => {
@@ -155,6 +190,7 @@
           toolResult={message.toolResult}
           statusData={message.statusData}
           customComponentData={message.customComponentData}
+          on:customAction={handleCustomAction}
         />
       </div>
     {/each}

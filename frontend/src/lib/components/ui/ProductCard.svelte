@@ -1,18 +1,24 @@
 <script lang="ts">
   import { useProduct } from '$lib/tanstack/product-queries';
   import { goto } from '$app/navigation';
+  import { createEventDispatcher } from 'svelte';
   import { extractTabletsCount, calculatePricePerTablet, formatPrice as formatPriceUtil } from '$lib/utils/product-helpers';
   
   export let productId: string | number;
   export let compact: boolean = false; // Компактный режим отображения
   export let clickable: boolean = true; // Можно ли кликнуть по карточке
   
+  const dispatch = createEventDispatcher();
+  
   // Загружаем данные о товаре с помощью TanStack Query
   const productQuery = useProduct(productId);
   
-  // Форматирование цены
-  function formatPrice(price: number): string {
-    return formatPriceUtil(price, 'RUB', 0);
+  // Безопасное форматирование цены
+  function formatPrice(price: number | null | undefined): string {
+    if (typeof price === 'number' && isFinite(price)) {
+      return formatPriceUtil(price, 'RUB', 0);
+    }
+    return '—';
   }
   
   // Получение количества таблеток из названия продукта
@@ -26,7 +32,7 @@
   // Расчет цены за одну таблетку в блистере
   function getPricePerTablet(product: any): number | null {
     const tabletsCount = getTabletsCount(product);
-    return calculatePricePerTablet(product.price, tabletsCount);
+    return calculatePricePerTablet(product?.price, tabletsCount);
   }
   
   // Форматирование цены за таблетку
@@ -38,8 +44,15 @@
   // Обработчик клика по карточке
   function handleClick() {
     if (clickable && $productQuery.data) {
-      // Навигация на страницу товара
       goto(`/products/${$productQuery.data.id}`);
+    }
+  }
+  
+  // Клик по кнопке «лучший ценник/купить» – отправляем событие в чат
+  function handleBuyClick(event: MouseEvent) {
+    event.stopPropagation();
+    if ($productQuery.data) {
+      dispatch('requestPrice', { product: $productQuery.data });
     }
   }
   
@@ -98,10 +111,10 @@
     {/if}
     
     <div class="product-content">
-      <h3 class="product-name">{$productQuery.data.name}</h3>
+      <h3 class="product-name">{$productQuery.data.name || 'Товар'}</h3>
       
       {#if !compact}
-        <p class="product-description">{$productQuery.data.description}</p>
+        <p class="product-description">{$productQuery.data.description || 'Описание недоступно'}</p>
       {/if}
       
       <div class="product-info">
@@ -133,7 +146,7 @@
       
       {#if !compact}
         <div class="product-actions">
-          <button class="buy-button" disabled={!$productQuery.data.availability}>
+          <button class="buy-button" disabled={!$productQuery.data.availability} on:click={handleBuyClick}>
             {$productQuery.data.availability ? 'Mejor precio ibuprofeno' : 'Sin existencias'}
           </button>
           {#if getPricePerTablet($productQuery.data) !== null}
