@@ -17,16 +17,10 @@ class MemoryService
     {
         // 1. Get recent conversation history
         $recentMessages = $this->shortTerm->getRecentMessages($sessionId);
-        
-        // 2. Search long-term memory if needed
-        $longTermContext = $this->getRelevantLongTermMemory($userMessage, $sessionId);
-        
-        // 3. Format system message with context
-        $systemMessage = $this->formatSystemMessage($longTermContext);
-        
-        // 4. Combine all messages
+
+        // 2. Combine only history and the current user message.
+        //    System prompts / instructions are now handled entirely on the LLM backend (RunPod).
         return array_merge(
-            [['role' => 'system', 'content' => $systemMessage]],
             $recentMessages->toArray(),
             [['role' => 'user', 'content' => $userMessage]]
         );
@@ -68,17 +62,18 @@ class MemoryService
     
     protected function formatSystemMessage(Collection $longTermContext): string
     {
-        $basePrompt = "Ты дружелюбный русскоязычный ассистент. Отвечай кратко и по существу.";
-        
+        // System prompts are no longer injected on the Laravel side.
+        // We keep this method for potential future use, but it returns only
+        // a plain concatenation of long-term context (without any extra
+        // role/instruction text).
+
         if ($longTermContext->isEmpty()) {
-            return $basePrompt;
+            return '';
         }
-        
-        $context = $longTermContext->map(
+
+        return $longTermContext->map(
             fn($item) => "- {$item['content']}"
         )->implode("\n");
-        
-        return "$basePrompt\n\nКонтекст из предыдущих обсуждений:\n$context";
     }
     
     protected function isWorthRemembering(string $question, string $answer): bool

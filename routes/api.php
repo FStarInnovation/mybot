@@ -1,4 +1,4 @@
-https://github.com/nlweb-ai/MSR-Web-Verbs?tab=readme-ov-file<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SiteScanController;
@@ -22,6 +22,31 @@ Route::get('/supabase-test', [SupabaseController::class, 'testQuery']);
 
 Route::post('/query', [LlmBridgeController::class, 'query'])->name('api.query');
 Route::get('/ping', fn() => response()->json(['pong' => true]));
+
+// Simple synchronous LLM connectivity test against RUNPOD_API_URL (/chat)
+Route::get('/llm-test', function () {
+    /** @var \App\Services\LlmGatewayService $llm */
+    $llm = app(\App\Services\LlmGatewayService::class);
+    $messages = [
+        ['role' => 'system', 'content' => 'You are a helpful assistant. Answer briefly.'],
+        ['role' => 'user', 'content' => 'Test: say OK'],
+    ];
+    try {
+        $answer = $llm->chat($messages);
+        return response()->json([
+            'ok' => true,
+            'endpoint' => config('services.llm.endpoint'),
+            'answer' => $answer,
+        ]);
+    } catch (\Throwable $e) {
+        \Log::error('llm-test failed', ['error' => $e->getMessage()]);
+        return response()->json([
+            'ok' => false,
+            'endpoint' => config('services.llm.endpoint'),
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+});
 
 // MCP queue & worker health-check
 Route::get('/health/mcp', [HealthController::class, 'mcp'])->name('health.mcp');

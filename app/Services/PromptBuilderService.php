@@ -16,16 +16,17 @@ class PromptBuilderService
 
     public function buildSystemContent(Collection $longTermContext): string
     {
-        // Берём актуальный системный промт из конфигурации (испанский JSON-schema).
-        $basePrompt = config('llm.system_prompt');
+        // System prompts are now defined and managed on the LLM backend (RunPod).
+        // Here we only serialize long-term context (if any) as a plain text block,
+        // without adding any extra instructions.
 
-        $contextText = '';
         if ($longTermContext->isNotEmpty()) {
-            $lines = $longTermContext->map(fn($item) => "- {$item['content']}")->implode("\n");
-            $contextText = "\n\nКонтекст из предыдущих обсуждений:\n{$lines}";
+            return $longTermContext
+                ->map(fn($item) => "- {$item['content']}")
+                ->implode("\n");
         }
 
-        return $basePrompt . $contextText;
+        return '';
     }
 
     /**

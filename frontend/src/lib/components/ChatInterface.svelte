@@ -29,6 +29,8 @@
   let messages: Message[] = [];
 
   const API_BASE = import.meta.env.PUBLIC_API_BASE ?? '';
+  // Debug: verify where API requests are going
+  console.log('ChatInterface API_BASE =', API_BASE);
 
   let chatContainer: HTMLElement;
   let isTyping = false;
@@ -76,7 +78,9 @@
 
   onMount(async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/chat/history`);
+      const res = await fetch(`${API_BASE}/api/chat/history`, {
+        credentials: 'include',
+      });
       if (res.ok) {
         const data = await res.json();
         messages = data.history?.map((m: any, idx: number) => ({
@@ -109,7 +113,8 @@
       const res = await fetch(`${API_BASE}/api/chat/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: event.detail.text })
+        body: JSON.stringify({ message: event.detail.text }),
+        credentials: 'include',
       });
 
       if (res.ok) {
@@ -134,10 +139,47 @@
     }
   }
   
-  // Функция для показа карточки ибупрофена
-  function testProductCard() {
-    // Карточка с фиксированным ID товара
-    // Здесь используем ID=23, который должен быть ибупрофеном
+  // Функция для показа карточки ибупрофена (с проверкой наличия товара)
+  async function testProductCard() {
+    const tryIds = [23, 1];
+    let chosenId: number | null = null;
+    // 1) Пробуем тестовые ID
+    for (const id of tryIds) {
+      try {
+        const res = await fetch(`${API_BASE}/api/products/${id}`, {
+          credentials: 'include',
+        });
+        if (res.ok) { chosenId = id; break; }
+      } catch {}
+    }
+    // 2) Если не нашли, пробуем взять первый товар из списка
+    if (chosenId === null) {
+      try {
+        const res = await fetch(`${API_BASE}/api/products?limit=1`, {
+          credentials: 'include',
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.products?.length) {
+            chosenId = Number(data.products[0].id);
+          }
+        }
+      } catch {}
+    }
+    // 3) Если всё ещё нет товаров — покажем статус с подсказкой
+    if (chosenId === null) {
+      const now = new Date().toISOString();
+      messages = [...messages, {
+        id: Date.now().toString(),
+        sender: 'bot',
+        type: AgUIEventTypesEnum.STATUS,
+        statusData: { status: 'warning', message: 'Тестовый товар не найден. Добавьте товары в БД, затем повторите.' },
+        timestamp: now,
+      }];
+      await scrollToBottom();
+      return;
+    }
+    // 4) Показать карточку выбранного товара
     const productCardMessage: Message = {
       id: Date.now().toString(),
       sender: 'bot',
@@ -146,15 +188,14 @@
       customComponentData: {
         componentName: 'ProductCard',
         props: { 
-          productId: 23, // Используем фиксированный ID ибупрофена
-          showPricePerTablet: true  // Показывать цену за таблетку
+          productId: chosenId,
+          showPricePerTablet: true
         }
       }
     };
-    
     messages = [...messages, productCardMessage];
-    scrollToBottom();
-    console.log('Показываю карточку товара с ID:', 23);
+    await scrollToBottom();
+    console.log('Показываю карточку товара с ID:', chosenId);
   }
 </script>
 

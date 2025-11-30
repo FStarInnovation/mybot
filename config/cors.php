@@ -8,5 +8,6 @@ return [
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
     'max_age' => 0,
-    'supports_credentials' => false,
+    // Allow cookies (session) for cross-origin requests (required for chat routes using StartSession)
+    'supports_credentials' => true,
 ];
