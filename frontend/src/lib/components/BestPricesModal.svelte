@@ -76,7 +76,6 @@
               class:has-promotion={product.has_promotion}
               on:click={() => handleProductClick(product)}
               type="button"
-              role="button"
               tabindex="0"
               on:keydown={(e) => e.key === 'Enter' && handleProductClick({ detail: { product } })}
             >
