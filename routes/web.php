@@ -17,7 +17,7 @@ Route::get('/healthz', fn () => response()->json(['status' => 'ok']));
 
 // Static SPA entry point
 Route::get('/', function () {
-    return response()->file(public_path('index.html'));
+    return response()->file(public_path('build/index.html'));
 });
 
 // Add a new route for admin dashboard
@@ -195,12 +195,12 @@ Route::get('/memory-test', function () {
 // SPA маршрут для SvelteKit приложения
 // Должен быть в самом конце файла, чтобы не перехватывать другие маршруты
 Route::get('/{path?}', function () {
-    return response()->file(public_path('index.html'));
+    return response()->file(public_path('build/index.html'));
 })->where('path', '^(?!api).*$')->name('spa');
 
 // Catch-all SPA route for SvelteKit app
 Route::fallback(function () {
-    return response()->file(public_path('index.html'));
+    return response()->file(public_path('build/index.html'));
 });
 
 // // 1) Любой GET-запрос на /chat или /chat/... возвращает ваш Blade-шаблон
