@@ -7,18 +7,18 @@ const config = {
   preprocess: vitePreprocess(),
   kit: {
     adapter: adapter({
-      pages: '../public/build',
-      assets: '../public/build',
-      fallback: 'index.html'
+      pages: '../public',
+      assets: '../public',
+      fallback: 'index.html',
+      precompress: false,
+      strict: true
     }),
     alias: {
       '$lib': './src/lib',
       '$components': './src/lib/components',
       '$styles': './src/styles'
     },
-    files: {
-      assets: 'static'
-    },
+    appDir: '_app',
     paths: {
       base: '',
       relative: false
