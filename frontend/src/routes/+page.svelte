@@ -1068,6 +1068,10 @@
     width: 100%;
   }
 
+  .light .api-section {
+    background: transparent;
+  }
+
   .api-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
