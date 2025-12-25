@@ -44,7 +44,7 @@
 
 <div class="best-prices-container">
   <div class="header">
-    <h2 class="title">💊 {data.brand} - Mejores Precios</h2>
+    <h2 id="best-prices-title" class="title">💊 {data.brand} - Mejores Precios</h2>
     <span class="total-products">{data.total_products} productos encontrados</span>
   </div>
   
@@ -71,10 +71,14 @@
         <h3 class="form-title">{formGroup.form}</h3>
         <div class="products-list">
           {#each formGroup.products as product}
-            <div 
+            <button 
               class="product-card"
               class:has-promotion={product.has_promotion}
               on:click={() => handleProductClick(product)}
+              type="button"
+              role="button"
+              tabindex="0"
+              on:keydown={(e) => e.key === 'Enter' && handleProductClick({ detail: { product } })}
             >
               <div class="product-header">
                 <h4 class="product-name">{product.title}</h4>
@@ -101,7 +105,7 @@
                 <span class="source">{product.source_site}</span>
                 <button class="view-button">Ver →</button>
               </div>
-            </div>
+            </button>
           {/each}
         </div>
       </div>

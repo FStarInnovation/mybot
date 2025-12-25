@@ -343,8 +343,19 @@
 
 <!-- Best Prices Modal -->
 {#if showBestPrices && bestPricesData}
-  <div class="modal-overlay" on:click={() => showBestPrices = false}>
-    <div class="modal-content" on:click|stopPropagation>
+  <div 
+    class="modal-overlay" 
+    role="dialog" 
+    aria-modal="true"
+    aria-labelledby="best-prices-title"
+    on:click={() => showBestPrices = false}
+    on:keydown={(e) => e.key === 'Escape' && (showBestPrices = false)}
+  >
+    <div 
+      class="modal-content" 
+      on:click|stopPropagation
+      role="document"
+    >
       <BestPricesModal 
         data={bestPricesData} 
         on:productClick={handleProductClick}
@@ -402,6 +413,7 @@
     );
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
     pointer-events: none;
     opacity: 0.3;
