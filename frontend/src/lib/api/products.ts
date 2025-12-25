@@ -2,6 +2,13 @@ import type { Product, ProductsResponse, ProductQueryParams } from '$lib/types/p
 
 const API_BASE_URL = '/api';
 
+function unwrapData<T>(payload: any): T {
+  if (payload && typeof payload === 'object' && 'data' in payload) {
+    return (payload as any).data as T;
+  }
+  return payload as T;
+}
+
 /**
  * Получение списка товаров с возможностью фильтрации и пагинации
  */
@@ -20,8 +27,9 @@ export async function getProducts(params?: ProductQueryParams): Promise<Products
   if (!response.ok) {
     throw new Error(`Ошибка при получении списка товаров: ${response.status}`);
   }
-  
-  return await response.json();
+
+  const payload = await response.json();
+  return unwrapData<ProductsResponse>(payload);
 }
 
 /**
@@ -34,8 +42,9 @@ export async function getProductById(id: string | number): Promise<Product> {
   if (!response.ok) {
     throw new Error(`Товар с ID ${id} не найден`);
   }
-  
-  return await response.json();
+
+  const payload = await response.json();
+  return unwrapData<Product>(payload);
 }
 
 /**
