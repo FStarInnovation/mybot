@@ -15,7 +15,7 @@
     {
       icon: '📊',
       title: 'Multiple Data Sources',
-      description: 'Connect APIs, upload files, or integrate databases. Support for JSON, CSV, PDF, and more formats.'
+      description: 'Connect APIs, upload files, or integrate databases. Support for XLS, CSV, JSON, PDF, and more formats.'
     },
     {
       icon: '📸',
@@ -176,7 +176,29 @@
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </a>
-          <a href="#api" class="btn btn-outline">
+          <button class="btn btn-outline" on:click={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.xlsx,.xls,.csv,.json,.pdf,.txt,.doc,.docx';
+            input.multiple = true;
+            input.onchange = (e) => {
+              const files = e.target.files;
+              if (files.length > 0) {
+                console.log('Files selected:', files);
+                // Here you would handle file upload
+                alert(`${files.length} file(s) selected. Upload functionality will be implemented.`);
+              }
+            };
+            input.click();
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17,8 12,3 7,8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span>Upload Files</span>
+          </button>
+          <a href="#api" class="btn btn-secondary">
             <span>View API Docs</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -640,6 +662,7 @@
     display: flex;
     gap: 1rem;
     margin-bottom: 4rem;
+    flex-wrap: wrap;
   }
 
   .btn {
@@ -706,6 +729,17 @@
   .light .btn-outline:hover {
     background: rgba(0, 0, 0, 0.1);
     border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  }
+
+  .btn-secondary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
   }
 
   .hero-stats {
