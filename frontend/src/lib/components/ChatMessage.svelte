@@ -165,7 +165,12 @@
     <div class="custom-component-container">
       {#if customComponentData.componentName === 'ProductCard' && customComponentData.props && typeof customComponentData.props.productId === 'number'}
         <div class="product-card-wrapper">
-          <ProductCard productId={customComponentData.props.productId} clickable={false} on:requestPrice={(e) => handleCustomComponentAction(new CustomEvent('customAction', { detail: { type: 'requestPrice', ...e.detail } }))} />
+          <ProductCard
+            productId={customComponentData.props.productId}
+            compact={customComponentData.props.compact ?? false}
+            clickable={customComponentData.props.clickable ?? false}
+            on:requestPrice={(e) => handleCustomComponentAction(new CustomEvent('customAction', { detail: { type: 'requestPrice', ...e.detail } }))}
+          />
           {#if formattedTimestamp}
             <div class="message-timestamp">{formattedTimestamp}</div>
           {/if}

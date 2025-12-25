@@ -18,7 +18,7 @@
 </script>
 
 <div class="promo-buttons-container">
-  <h3 class="promo-title">💊 Ofertas Especiales</h3>
+  <h3 class="promo-title">Ofertas</h3>
   <div class="promo-buttons-grid">
     {#each promoBrands as brand}
       <button 
@@ -26,12 +26,11 @@
         style="--brand-color: {brand.color}"
         on:click={() => handlePromoClick(brand.key)}
       >
-        <span class="brand-icon">💊</span>
+        <span class="brand-dot" aria-hidden="true"></span>
         <div class="brand-info">
           <span class="brand-name">{brand.name}</span>
-          <span class="brand-slogan">Mejor Precio</span>
+          <span class="brand-slogan">Mejor precio</span>
         </div>
-        <span class="arrow">→</span>
       </button>
     {/each}
   </div>
@@ -39,65 +38,51 @@
 
 <style>
   .promo-buttons-container {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    border-radius: 16px;
-    padding: 16px;
-    margin: 16px 0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: transparent;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin: 10px 0;
+    border: 1px solid rgba(0, 0, 0, 0.06);
   }
   
   .promo-title {
-    font-size: 18px;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: #2c3e50;
-    margin: 0 0 12px 0;
-    text-align: center;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+    text-align: left;
   }
   
   .promo-buttons-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
   
   .promo-button {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border: none;
-    border-radius: 12px;
-    background: white;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    background: var(--bg-secondary);
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
     position: relative;
     overflow: hidden;
   }
   
-  .promo-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--brand-color);
-    transition: width 0.3s ease;
-  }
-  
   .promo-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: rgba(var(--accent-primary-rgb), 0.06);
+    border-color: rgba(var(--accent-primary-rgb), 0.25);
   }
-  
-  .promo-button:hover::before {
-    width: 100%;
-    opacity: 0.1;
-  }
-  
-  .brand-icon {
-    font-size: 24px;
+
+  .brand-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--brand-color);
     flex-shrink: 0;
   }
   
@@ -110,29 +95,22 @@
   
   .brand-name {
     font-weight: 600;
-    font-size: 16px;
-    color: #2c3e50;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    line-height: 1.1;
   }
   
   .brand-slogan {
-    font-size: 12px;
-    color: #7f8c8d;
+    font-size: 0.72rem;
+    color: var(--text-secondary);
     font-weight: 500;
-  }
-  
-  .arrow {
-    font-size: 18px;
-    color: var(--brand-color);
-    transition: transform 0.3s ease;
-  }
-  
-  .promo-button:hover .arrow {
-    transform: translateX(4px);
   }
   
   @media (max-width: 768px) {
     .promo-buttons-grid {
-      grid-template-columns: 1fr;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 6px;
     }
   }
 </style>

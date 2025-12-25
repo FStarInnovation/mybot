@@ -88,8 +88,6 @@
   on:click={handleClick}
   on:keydown={e => e.key === 'Enter' && handleClick()}
 >
-  <!-- Очевидное изменение для проверки деплоя -->
-  <div class="deploy-test-banner">ТЕСТ ДЕПЛОЯ v2 {new Date().toISOString().substr(0, 10)}</div>
   {#if $productQuery.isLoading}
     <div class="loading-state">
       <div class="loading-spinner"></div>
@@ -170,8 +168,8 @@
     background-color: var(--bg-secondary);
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
     height: 100%;
   }
   
@@ -187,16 +185,9 @@
   .product-card.compact {
     flex-direction: row;
     align-items: center;
-  }
-  
-  .deploy-test-banner {
-    background-color: #ff5722;
-    color: white;
-    text-align: center;
-    padding: 8px;
-    font-weight: bold;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    padding: 0.5rem;
+    gap: 0.5rem;
+    box-shadow: none;
   }
   
   .product-image {

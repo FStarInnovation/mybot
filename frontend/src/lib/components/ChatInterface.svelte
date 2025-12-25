@@ -2,7 +2,6 @@
   import ChatMessage from './ChatMessage.svelte';
   import ChatInput from './ChatInput.svelte';
   import PromoButtons from './PromoButtons.svelte';
-  import BestPricesModal from './BestPricesModal.svelte';
   import { onMount, tick } from 'svelte';
   import { fade, fly } from 'svelte/transition';
   import type { AgUIEventType, AgUICard, AgUIFormField, AgUIListEvent } from '../ag-ui/types'; // Expanded imports
@@ -29,8 +28,6 @@
   };
 
   let messages: Message[] = [];
-  let showBestPrices = false;
-  let bestPricesData: any = null;
 
   const API_BASE = import.meta.env.PUBLIC_API_BASE ?? '';
   // Debug: verify where API requests are going
@@ -230,18 +227,36 @@
       
       if (res.ok) {
         const data = await res.json();
-        bestPricesData = data;
-        showBestPrices = true;
-        
-        // Add bot response
-        const botMsg: Message = {
-          id: (Date.now() + 1).toString(),
-          sender: 'bot',
-          type: AgUIEventTypesEnum.TEXT,
-          text: `He encontrado ${data.total_products} productos de ${brand}. ¡Te muestro las mejores ofertas!`,
-          timestamp: new Date().toISOString(),
-        };
-        messages = [...messages, botMsg];
+        const firstGroup = data?.products_by_form ? Object.values(data.products_by_form)[0] : null;
+        const firstProduct = firstGroup?.products?.[0] ?? null;
+        const productId = firstProduct?.id ? Number(firstProduct.id) : null;
+
+        if (productId) {
+          const productCardMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            sender: 'bot',
+            type: AgUIEventTypesEnum.CUSTOM,
+            timestamp: new Date().toISOString(),
+            customComponentData: {
+              componentName: 'ProductCard',
+              props: {
+                productId,
+                compact: true,
+                clickable: false,
+              }
+            }
+          };
+          messages = [...messages, productCardMessage];
+        } else {
+          const emptyMsg: Message = {
+            id: (Date.now() + 1).toString(),
+            sender: 'bot',
+            type: AgUIEventTypesEnum.TEXT,
+            text: `No encontré ofertas para ${brand}.`,
+            timestamp: new Date().toISOString(),
+          };
+          messages = [...messages, emptyMsg];
+        }
       } else {
         throw new Error('Failed to fetch prices');
       }
@@ -259,29 +274,6 @@
       isTyping = false;
       await scrollToBottom();
     }
-  }
-  
-  // Handler for product click in best prices modal
-  function handleProductClick(event: CustomEvent<{ product: any }>) {
-    const { product } = event.detail;
-    
-    // Add bot message with product details
-    const botMsg: Message = {
-      id: Date.now().toString(),
-      sender: 'bot',
-      type: AgUIEventTypesEnum.CUSTOM,
-      timestamp: new Date().toISOString(),
-      customComponentData: {
-        componentName: 'ProductCard',
-        props: { 
-          productId: product.id,
-          showPricePerTablet: true
-        }
-      }
-    };
-    messages = [...messages, botMsg];
-    showBestPrices = false;
-    scrollToBottom();
   }
 </script>
 
@@ -340,30 +332,6 @@
     <ChatInput on:sendMessage={handleSendMessage} />
   </div>
 </div>
-
-<!-- Best Prices Modal -->
-{#if showBestPrices && bestPricesData}
-  <div
-    class="modal-overlay"
-    role="presentation"
-    tabindex="0"
-    aria-label="Close modal"
-    on:click={() => showBestPrices = false}
-    on:keydown={(e) => (e.key === 'Escape' || e.key === 'Enter') && (showBestPrices = false)}
-  >
-    <div 
-      class="modal-content" 
-      on:click|stopPropagation
-      role="document"
-    >
-      <BestPricesModal 
-        data={bestPricesData} 
-        on:productClick={handleProductClick}
-        on:close={() => showBestPrices = false}
-      />
-    </div>
-  </div>
-{/if}
 
 <style>
   .test-buttons {
@@ -546,31 +514,6 @@
 
   .chat-input-area {
     /* ChatInput component already has border-top */
-  }
-  
-  /* Modal styles */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    padding: 20px;
-  }
-  
-  .modal-content {
-    background: white;
-    border-radius: 16px;
-    max-width: 800px;
-    width: 100%;
-    max-height: 90vh;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   }
   
   .promo-section {
