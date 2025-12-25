@@ -109,7 +109,7 @@ class ChatController extends Controller
                 'promotion_type',
                 'promotion_details'
             ])
-            ->orderBy('price_per_unit')
+            ->orderBy('price')
             ->get();
 
         // Calculate price per unit for each product
