@@ -67,10 +67,10 @@
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
       isDarkMode = false;
-      document.documentElement.classList.remove('dark');
+      document.body.classList.add('light');
     } else {
       isDarkMode = true;
-      document.documentElement.classList.add('dark');
+      document.body.classList.remove('light');
     }
     
     // Update online status
@@ -99,10 +99,10 @@
   function toggleTheme() {
     isDarkMode = !isDarkMode;
     if (isDarkMode) {
-      document.documentElement.classList.add('dark');
+      document.body.classList.remove('light');
       localStorage.setItem('theme', 'dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      document.body.classList.add('light');
       localStorage.setItem('theme', 'light');
     }
   }
@@ -115,7 +115,7 @@
   }
 </script>
 
-<main class="main-content" class:light={!isDarkMode}>
+<main class="main-content">
   <!-- Navigation Header -->
   <header class:scrolled class="header">
     <nav class="nav-container">
@@ -246,7 +246,7 @@
   </section>
 
   <!-- Use Cases Section -->
-  <section class="use-cases" class:light={!isDarkMode} id="use-cases">
+  <section class="use-cases" id="use-cases">
     <div class="section-header">
       <h2>Perfect for Any Industry</h2>
       <p>From healthcare to finance, transform your data into intelligent insights</p>
@@ -266,7 +266,7 @@
   </section>
 
   <!-- API Section -->
-  <section class="api-section" class:light={!isDarkMode} id="api">
+  <section class="api-section" id="api">
     <div class="api-content">
       <div class="api-text">
         <h2>Simple API Integration</h2>
@@ -310,7 +310,7 @@
   </section>
 
   <!-- Footer -->
-  <footer class="footer" class:light={!isDarkMode}>
+  <footer class="footer">
     <div class="footer-content">
       <div class="footer-brand">
         <span class="brand-text">MyBot</span>
