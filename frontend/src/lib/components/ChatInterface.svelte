@@ -44,6 +44,7 @@
     if (chatContainer) {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
+  }
 
   // Обработка кастомных действий (например, запрос цены из карточки товара)
   function handleCustomAction(event: CustomEvent<{ type: string; product?: any }>) {
@@ -77,7 +78,6 @@
       // Автопрокрутка
       scrollToBottom();
     }
-  }
   }
 
   onMount(async () => {
