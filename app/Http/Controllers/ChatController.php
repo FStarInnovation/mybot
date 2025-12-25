@@ -67,14 +67,32 @@ class ChatController extends Controller
     public function history(Request $request): JsonResponse
     {
         $sessionId = $request->session()->getId();
-        $history = $this->memory->getRecentMessages($sessionId);
 
-        return response()->json([
-            'messages' => $history->map(fn($msg) => [
-                'role' => $msg['role'],
-                'content' => $msg['content']
-            ])->toArray()
-        ]);
+        try {
+            $history = $this->memory->getRecentMessages($sessionId);
+
+            $safeHistory = $history
+                ->filter(fn ($msg) => is_array($msg))
+                ->map(fn ($msg) => [
+                    'role' => $msg['role'] ?? 'assistant',
+                    'content' => $msg['content'] ?? '',
+                    'ts' => $msg['timestamp'] ?? ($msg['ts'] ?? null),
+                ])
+                ->values()
+                ->toArray();
+
+            return response()->json([
+                'history' => $safeHistory,
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Chat history error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'history' => [],
+            ]);
+        }
     }
 
     /**
