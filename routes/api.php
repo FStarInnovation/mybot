@@ -57,7 +57,11 @@ Route::get('/ask', [\App\Http\Controllers\GatewayProxyController::class, 'stream
 Route::post('/tool/ask', [\App\Http\Controllers\GatewayProxyController::class, 'askSync'])->name('api.ask.sync');
 
 // Chat endpoints (session-based) – need session middleware even under API
-Route::middleware(\Illuminate\Session\Middleware\StartSession::class)
+Route::middleware([
+        \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+    ])
     ->group(function () {
         Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'send']);
         Route::get('/chat/history', [\App\Http\Controllers\ChatController::class, 'history']);
