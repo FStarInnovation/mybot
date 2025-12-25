@@ -177,26 +177,15 @@
             </svg>
           </a>
           <button class="btn btn-outline" on:click={() => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.xlsx,.xls,.csv,.json,.pdf,.txt,.doc,.docx';
-            input.multiple = true;
-            input.onchange = (e) => {
-              const files = e.target.files;
-              if (files.length > 0) {
-                console.log('Files selected:', files);
-                // Here you would handle file upload
-                alert(`${files.length} file(s) selected. Upload functionality will be implemented.`);
-              }
-            };
-            input.click();
+            // Open Google Drive folder in new tab
+            window.open('https://drive.google.com/drive/folders/1LHRUV9j5IoFu2GGuWGkOd6aFmoQ1FLW3?usp=share_link', '_blank');
           }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="17,8 12,3 7,8"/>
               <line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
-            <span>Upload Files</span>
+            <span>Download Sample Files</span>
           </button>
           <a href="#api" class="btn btn-secondary">
             <span>View API Docs</span>
