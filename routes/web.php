@@ -98,9 +98,11 @@ Route::get('build/sw.js', function () {
 
 // Explicit routes for Service Worker and Web Manifest when served from Laravel dev server
 Route::get('/service-worker.js', function () {
-    return response()->file(public_path('service-worker.js'), [
+    return response()->file(public_path('build/service-worker.js'), [
         'Content-Type' => 'text/javascript',
-        'Cache-Control' => 'public, max-age=86400',
+        'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma' => 'no-cache',
+        'Expires' => '0',
     ]);
 });
 
