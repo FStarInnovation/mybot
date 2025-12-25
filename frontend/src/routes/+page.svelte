@@ -73,6 +73,10 @@
       document.documentElement.classList.remove('light');
     }
     
+    // Debug theme initialization
+    console.log('Theme initialized:', { isDarkMode, savedTheme });
+    console.log('HTML classes on mount:', document.documentElement.className);
+    
     // Update online status
     const updateOnlineStatus = () => {
       isOnline = navigator.onLine;

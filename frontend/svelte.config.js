@@ -22,6 +22,9 @@ const config = {
     paths: {
       base: '',
       relative: false
+    },
+    version: {
+      name: Date.now().toString()
     }
   }
 };
