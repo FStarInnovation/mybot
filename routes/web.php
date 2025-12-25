@@ -17,7 +17,7 @@ Route::get('/healthz', fn () => response()->json(['status' => 'ok']));
 
 // Static SPA entry point
 Route::get('/', function () {
-    return response()->file(public_path('build/index.html'));
+    return response()->file(public_path('index.html'));
 });
 
 // Add a new route for admin dashboard
