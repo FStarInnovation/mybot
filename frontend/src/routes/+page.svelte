@@ -6,32 +6,32 @@
     {
       icon: '🧠',
       title: 'AI-Powered Analysis',
-      description: 'Advanced language models process your data with deep understanding'
+      description: 'Advanced natural language processing understands context and provides accurate answers based on your data.'
     },
     {
       icon: '📊',
       title: 'Multiple Data Sources',
-      description: 'Upload files or connect APIs for comprehensive data analysis'
+      description: 'Connect APIs, upload files, or integrate databases. Support for JSON, CSV, PDF, and more formats.'
+    },
+    {
+      icon: '📸',
+      title: 'OCR & Barcode Recognition',
+      description: 'Extract text from images and scan barcodes/QR codes instantly. Perfect for processing documents and product information.'
     },
     {
       icon: '⚡',
       title: 'Real-time Responses',
-      description: 'Get instant answers from your processed data using intelligent search'
+      description: 'Get instant answers with our optimized infrastructure. Average response time under 100ms.'
     },
     {
-      icon: '🔗',
-      title: 'API Integration',
-      description: 'Seamlessly connect your existing systems with our powerful API'
+      icon: '🔌',
+      title: 'Easy API Integration',
+      description: 'Simple RESTful API with comprehensive documentation. Integrate in minutes with any platform.'
     },
     {
-      icon: '🛡️',
-      title: 'Secure Processing',
-      description: 'Your data is processed with enterprise-grade security measures'
-    },
-    {
-      icon: '🎯',
-      title: 'Smart Context',
-      description: 'Context-aware responses that understand your specific domain'
+      icon: '🔒',
+      title: 'Enterprise Security',
+      description: 'Bank-level encryption and compliance. Your data is always protected and never shared.'
     }
   ];
   
@@ -39,22 +39,22 @@
     {
       title: 'Healthcare & Pharma',
       description: 'Medical data analysis, drug information, patient records',
-      gradient: 'from-blue-600 to-cyan-600'
+      gradient: 'from-blue-600'
+    },
+    {
+      title: 'Document Processing',
+      description: 'OCR for invoices, contracts, and reports. Barcode scanning for inventory',
+      gradient: 'from-purple-600'
     },
     {
       title: 'Business Intelligence',
-      description: 'Market analysis, reports, KPIs, business metrics',
-      gradient: 'from-purple-600 to-pink-600'
+      description: 'Sales analytics, customer insights, market trends',
+      gradient: 'from-green-600'
     },
     {
-      title: 'Research & Development',
-      description: 'Scientific papers, experimental data, research analysis',
-      gradient: 'from-green-600 to-emerald-600'
-    },
-    {
-      title: 'Customer Support',
-      description: 'Ticket analysis, customer queries, knowledge base',
-      gradient: 'from-orange-600 to-red-600'
+      title: 'R&D Innovation',
+      description: 'Research data analysis, patent searches, scientific literature',
+      gradient: 'from-orange-600'
     }
   ];
   
