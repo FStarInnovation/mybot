@@ -343,12 +343,13 @@
 
 <!-- Best Prices Modal -->
 {#if showBestPrices && bestPricesData}
-  <button 
-    class="modal-overlay" 
-    type="button"
+  <div
+    class="modal-overlay"
+    role="presentation"
+    tabindex="0"
     aria-label="Close modal"
     on:click={() => showBestPrices = false}
-    on:keydown={(e) => e.key === 'Escape' && (showBestPrices = false)}
+    on:keydown={(e) => (e.key === 'Escape' || e.key === 'Enter') && (showBestPrices = false)}
   >
     <div 
       class="modal-content" 
@@ -361,7 +362,7 @@
         on:close={() => showBestPrices = false}
       />
     </div>
-  </button>
+  </div>
 {/if}
 
 <style>

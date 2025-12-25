@@ -102,7 +102,7 @@
               
               <div class="product-footer">
                 <span class="source">{product.source_site}</span>
-                <button class="view-button">Ver →</button>
+                <span class="view-button">Ver →</span>
               </div>
             </button>
           {/each}
