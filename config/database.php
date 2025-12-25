@@ -59,7 +59,12 @@ return [
     ],
 
     'redis' => [
-        'client' => env('REDIS_CLIENT', 'phpredis'),
+        'client' => env(
+            'REDIS_CLIENT',
+            (is_string(env('REDIS_URL')) && str_starts_with(env('REDIS_URL'), 'rediss://'))
+                ? 'predis'
+                : 'phpredis'
+        ),
 
         'options' => [
             'prefix' => env('REDIS_PREFIX', 'mybot_database_'),
