@@ -1,21 +1,18 @@
+/// <reference types="vite/client" />
 import { sveltekit } from '@sveltejs/kit/vite';
-import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
 /** @type {import('vite').UserConfig} */
-export default {
+export default defineConfig({
   plugins: [sveltekit()],
-  server: {
-    port: 5173
-  },
   build: {
-    outDir: '../public/build',
-    emptyOutDir: true
-  },
-  resolve: {
-    alias: {
-      '$lib': resolve('./src/lib'),
-      '$components': resolve('./src/lib/components'),
-      '$styles': resolve('./src/styles')
+    // Add hash to filenames for cache busting
+    rollupOptions: {
+      output: {
+        entryFileNames: `entry/[name].[hash].js`,
+        chunkFileNames: `chunks/[name].[hash].js`,
+        assetFileNames: `assets/[name].[hash].[ext]`
+      }
     }
   }
-};
+});

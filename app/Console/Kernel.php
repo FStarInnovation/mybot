@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\ProcessSiteScans::class,
         \App\Console\Commands\CheckDatabaseConnection::class,
         \App\Console\Commands\ImportFarmaCommand::class,
+        \App\Console\Commands\ImportInsuranceVacumCommand::class,
         \App\Console\Commands\NormalizeRawCommand::class,
     ];
 
