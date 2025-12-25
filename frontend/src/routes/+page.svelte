@@ -652,6 +652,7 @@
     gap: 1rem;
     margin-bottom: 4rem;
     flex-wrap: wrap;
+    justify-content: center;
   }
 
   .btn {
@@ -1308,6 +1309,10 @@
     
     .cta-buttons {
       flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto 4rem;
     }
     
     .btn {
