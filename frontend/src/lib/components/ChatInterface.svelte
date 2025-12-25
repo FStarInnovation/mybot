@@ -1,6 +1,8 @@
 <script lang="ts">
   import ChatMessage from './ChatMessage.svelte';
   import ChatInput from './ChatInput.svelte';
+  import PromoButtons from './PromoButtons.svelte';
+  import BestPricesModal from './BestPricesModal.svelte';
   import { onMount, tick } from 'svelte';
   import { fade, fly } from 'svelte/transition';
   import type { AgUIEventType, AgUICard, AgUIFormField, AgUIListEvent } from '../ag-ui/types'; // Expanded imports
@@ -27,6 +29,8 @@
   };
 
   let messages: Message[] = [];
+  let showBestPrices = false;
+  let bestPricesData: any = null;
 
   const API_BASE = import.meta.env.PUBLIC_API_BASE ?? '';
   // Debug: verify where API requests are going
@@ -197,6 +201,88 @@
     await scrollToBottom();
     console.log('Показываю карточку товара с ID:', chosenId);
   }
+  
+  // Handler for promotional button clicks
+  async function handlePromoClick(event: CustomEvent<{ brand: string }>) {
+    const { brand } = event.detail;
+    
+    // Add user message for context
+    const userMsg: Message = {
+      id: Date.now().toString(),
+      sender: 'user',
+      type: AgUIEventTypesEnum.TEXT,
+      text: `Buscar mejores precios de ${brand}`,
+      timestamp: new Date().toISOString(),
+    };
+    messages = [...messages, userMsg];
+    await scrollToBottom();
+    
+    // Show typing indicator
+    isTyping = true;
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/chat/best-prices`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ brand }),
+        credentials: 'include',
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        bestPricesData = data;
+        showBestPrices = true;
+        
+        // Add bot response
+        const botMsg: Message = {
+          id: (Date.now() + 1).toString(),
+          sender: 'bot',
+          type: AgUIEventTypesEnum.TEXT,
+          text: `He encontrado ${data.total_products} productos de ${brand}. ¡Te muestro las mejores ofertas!`,
+          timestamp: new Date().toISOString(),
+        };
+        messages = [...messages, botMsg];
+      } else {
+        throw new Error('Failed to fetch prices');
+      }
+    } catch (e) {
+      console.error('Failed to load best prices', e);
+      const errorMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        sender: 'bot',
+        type: AgUIEventTypesEnum.TEXT,
+        text: 'Lo siento, no pude cargar las ofertas en este momento. Por favor, inténtalo de nuevo.',
+        timestamp: new Date().toISOString(),
+      };
+      messages = [...messages, errorMsg];
+    } finally {
+      isTyping = false;
+      await scrollToBottom();
+    }
+  }
+  
+  // Handler for product click in best prices modal
+  function handleProductClick(event: CustomEvent<{ product: any }>) {
+    const { product } = event.detail;
+    
+    // Add bot message with product details
+    const botMsg: Message = {
+      id: Date.now().toString(),
+      sender: 'bot',
+      type: AgUIEventTypesEnum.CUSTOM,
+      timestamp: new Date().toISOString(),
+      customComponentData: {
+        componentName: 'ProductCard',
+        props: { 
+          productId: product.id,
+          showPricePerTablet: true
+        }
+      }
+    };
+    messages = [...messages, botMsg];
+    showBestPrices = false;
+    scrollToBottom();
+  }
 </script>
 
 <div class="chat-interface">
@@ -241,6 +327,12 @@
       </div>
     {/if}
   </div>
+  
+  <!-- Promotional buttons -->
+  <div class="promo-section">
+    <PromoButtons on:promoClick={handlePromoClick} />
+  </div>
+  
   <div class="chat-input-area">
     <div class="test-buttons">
       <button class="test-button" on:click={testProductCard}>mejor precio ibuprofeno {Date.now()}</button>
@@ -248,6 +340,19 @@
     <ChatInput on:sendMessage={handleSendMessage} />
   </div>
 </div>
+
+<!-- Best Prices Modal -->
+{#if showBestPrices && bestPricesData}
+  <div class="modal-overlay" on:click={() => showBestPrices = false}>
+    <div class="modal-content" on:click|stopPropagation>
+      <BestPricesModal 
+        data={bestPricesData} 
+        on:productClick={handleProductClick}
+        on:close={() => showBestPrices = false}
+      />
+    </div>
+  </div>
+{/if}
 
 <style>
   .test-buttons {
@@ -429,5 +534,34 @@
 
   .chat-input-area {
     /* ChatInput component already has border-top */
+  }
+  
+  /* Modal styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: 16px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+  
+  .promo-section {
+    padding: 0 16px;
   }
 </style>

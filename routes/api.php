@@ -61,6 +61,7 @@ Route::middleware(\Illuminate\Session\Middleware\StartSession::class)
     ->group(function () {
         Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'send']);
         Route::get('/chat/history', [\App\Http\Controllers\ChatController::class, 'history']);
+        Route::post('/chat/best-prices', [\App\Http\Controllers\ChatController::class, 'getBestPrices']);
     });
 
 // Web-push subscriptions
