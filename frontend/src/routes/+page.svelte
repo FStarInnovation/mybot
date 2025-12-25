@@ -67,10 +67,10 @@
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
       isDarkMode = false;
-      document.body.classList.add('light');
+      document.documentElement.classList.add('light');
     } else {
       isDarkMode = true;
-      document.body.classList.remove('light');
+      document.documentElement.classList.remove('light');
     }
     
     // Update online status
@@ -99,10 +99,10 @@
   function toggleTheme() {
     isDarkMode = !isDarkMode;
     if (isDarkMode) {
-      document.body.classList.remove('light');
+      document.documentElement.classList.remove('light');
       localStorage.setItem('theme', 'dark');
     } else {
-      document.body.classList.add('light');
+      document.documentElement.classList.add('light');
       localStorage.setItem('theme', 'light');
     }
   }
