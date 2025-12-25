@@ -5,6 +5,7 @@ const BASE_PATH = location.pathname.split('/').slice(0, -1).join('/');
 
 // Files that require network-first approach
 const API_ROUTES = ['/api/', '/llm/'];
+const APP_ASSET_PREFIXES = ['/_app/'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -61,8 +62,11 @@ self.addEventListener('fetch', event => {
   // Определяем стратегию кэширования на основе URL
   const url = new URL(event.request.url);
   const isAPIRequest = API_ROUTES.some(route => url.pathname.includes(route));
+  const isAppAsset = APP_ASSET_PREFIXES.some(prefix => url.pathname.startsWith(prefix));
+  const accept = event.request.headers.get('Accept') || '';
+  const isNavigation = event.request.mode === 'navigate' || accept.includes('text/html');
 
-  if (isAPIRequest) {
+  if (isAPIRequest || isNavigation || isAppAsset) {
     // Для API запросов всегда свежие данные (network-first)
     event.respondWith(networkFirst(event.request));
   } else {
