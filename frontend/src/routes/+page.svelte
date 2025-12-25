@@ -98,13 +98,19 @@
   
   function toggleTheme() {
     isDarkMode = !isDarkMode;
+    console.log('Toggling theme, isDarkMode:', isDarkMode);
+    
     if (isDarkMode) {
       document.documentElement.classList.remove('light');
       localStorage.setItem('theme', 'dark');
+      console.log('Removed light class, set dark theme');
     } else {
       document.documentElement.classList.add('light');
       localStorage.setItem('theme', 'light');
+      console.log('Added light class, set light theme');
     }
+    
+    console.log('Current classes:', document.documentElement.className);
   }
   
   function scrollToSection(sectionId: string) {
@@ -126,7 +132,7 @@
         <a href="#features" class="nav-link" on:click={() => scrollToSection('features')}>Features</a>
         <a href="#use-cases" class="nav-link" on:click={() => scrollToSection('use-cases')}>Use Cases</a>
         <a href="#api" class="nav-link" on:click={() => scrollToSection('api')}>API</a>
-        <button class="theme-toggle" on:click={toggleTheme} title="Toggle theme">
+        <button class="theme-toggle" on:click={toggleTheme} aria-label="Toggle theme">
           {#if isDarkMode}
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="5"/>
