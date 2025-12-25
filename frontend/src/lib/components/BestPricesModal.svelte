@@ -1,37 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   
-  export let data: {
-    brand: string;
-    total_products: number;
-    best_price_overall: {
-      title: string;
-      price_per_unit: string;
-      formatted_dosage: string;
-      total_price: string;
-      units: number;
-      unit_label: string;
-    } | null;
-    products_by_form: Array<{
-      form: string;
-      products: Array<{
-        id: number;
-        title: string;
-        brand: string;
-        price_per_unit: string;
-        total_price: string;
-        units: number;
-        unit_label: string;
-        dosage: string;
-        has_promotion: boolean;
-        promotion_type?: string;
-        url: string;
-        source_site: string;
-      }>;
-    }>;
-  };
+  export let data: any;
   
   const dispatch = createEventDispatcher();
+
+  $: formGroups = Array.isArray(data?.products_by_form)
+    ? data.products_by_form
+    : Object.values(data?.products_by_form ?? {});
   
   function formatPrice(price: string): string {
     return `$${price}`;
@@ -66,7 +42,7 @@
   {/if}
   
   <div class="products-by-form">
-    {#each data.products_by_form as formGroup}
+    {#each formGroups as formGroup}
       <div class="form-section">
         <h3 class="form-title">{formGroup.form}</h3>
         <div class="products-list">
@@ -77,7 +53,7 @@
               on:click={() => handleProductClick(product)}
               type="button"
               tabindex="0"
-              on:keydown={(e) => e.key === 'Enter' && handleProductClick({ detail: { product } })}
+              on:keydown={(e) => e.key === 'Enter' && handleProductClick(product)}
             >
               <div class="product-header">
                 <h4 class="product-name">{product.title}</h4>
