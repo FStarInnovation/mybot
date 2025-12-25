@@ -246,7 +246,7 @@
   </section>
 
   <!-- Use Cases Section -->
-  <section id="use-cases" class="use-cases">
+  <section class="use-cases" class:light={!isDarkMode} id="use-cases">
     <div class="section-header">
       <h2>Perfect for Any Industry</h2>
       <p>From healthcare to finance, transform your data into intelligent insights</p>
@@ -266,7 +266,7 @@
   </section>
 
   <!-- API Section -->
-  <section id="api" class="api-section">
+  <section class="api-section" class:light={!isDarkMode} id="api">
     <div class="api-content">
       <div class="api-text">
         <h2>Simple API Integration</h2>
@@ -310,7 +310,7 @@
   </section>
 
   <!-- Footer -->
-  <footer class="footer">
+  <footer class="footer" class:light={!isDarkMode}>
     <div class="footer-content">
       <div class="footer-brand">
         <span class="brand-text">MyBot</span>
@@ -954,6 +954,7 @@
   .use-cases {
     padding: 10rem 2rem;
     background: linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+    transition: background 0.3s ease;
   }
 
   .light .use-cases {
