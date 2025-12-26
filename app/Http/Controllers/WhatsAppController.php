@@ -22,6 +22,25 @@ class WhatsAppController extends Controller
         $messageSid = $request->input('MessageSid');
         $profileName = $request->input('ProfileName');
 
+        // Check for location data from Twilio
+        $latitude = $request->input('Latitude');
+        $longitude = $request->input('Longitude');
+        $address = $request->input('Address');
+
+        // If location was shared, create a message about it
+        if ($latitude && $longitude) {
+            $body = "Mi ubicación es: latitud {$latitude}, longitud {$longitude}";
+            if ($address) {
+                $body .= " ({$address})";
+            }
+            Log::info('WhatsApp location received', [
+                'from' => $from,
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+                'address' => $address,
+            ]);
+        }
+
         if (empty($body)) {
             Log::warning('WhatsApp webhook: empty body', ['from' => $from]);
             return response('OK', 200);
@@ -29,7 +48,7 @@ class WhatsAppController extends Controller
 
         try {
             // Send message to RunPod gateway for AI processing
-            $aiResponse = $this->getAiResponse($body, $from);
+            $aiResponse = $this->getAiResponse($body, $from, $latitude, $longitude);
 
             // Send response back via Twilio
             $this->sendWhatsAppMessage($from, $aiResponse);
@@ -66,7 +85,7 @@ class WhatsAppController extends Controller
     /**
      * Get AI response from RunPod gateway
      */
-    protected function getAiResponse(string $userMessage, string $userPhone): string
+    protected function getAiResponse(string $userMessage, string $userPhone, ?string $latitude = null, ?string $longitude = null): string
     {
         $gatewayUrl = config('services.twilio.runpod_gateway_url');
 
@@ -74,12 +93,19 @@ class WhatsAppController extends Controller
             throw new \Exception('RUNPOD_GATEWAY_URL not configured');
         }
 
+        // Build system prompt with location context if available
+        $systemPrompt = 'Eres Farmabot, un asistente virtual de farmacia. Ayudas a los usuarios a encontrar medicamentos, consultar precios y responder preguntas sobre productos farmacéuticos. Responde de manera concisa y amigable. Limita tus respuestas a 1600 caracteres para WhatsApp.';
+        
+        if ($latitude && $longitude) {
+            $systemPrompt .= " El usuario ha compartido su ubicación: latitud {$latitude}, longitud {$longitude}. Puedes usar esta información para recomendar farmacias cercanas o dar indicaciones relevantes a su zona.";
+        }
+
         $response = Http::timeout(60)->post($gatewayUrl, [
             'model' => 'llama',
             'messages' => [
                 [
                     'role' => 'system',
-                    'content' => 'Eres Farmabot, un asistente virtual de farmacia. Ayudas a los usuarios a encontrar medicamentos, consultar precios y responder preguntas sobre productos farmacéuticos. Responde de manera concisa y amigable. Limita tus respuestas a 1600 caracteres para WhatsApp.',
+                    'content' => $systemPrompt,
                 ],
                 [
                     'role' => 'user',
