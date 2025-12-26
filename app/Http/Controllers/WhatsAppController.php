@@ -130,10 +130,21 @@ class WhatsAppController extends Controller
 
         $client = new Client($accountSid, $authToken);
 
+        // Ensure from number has whatsapp: prefix
+        $fromWhatsApp = str_starts_with($fromNumber, 'whatsapp:') 
+            ? $fromNumber 
+            : 'whatsapp:' . $fromNumber;
+
+        Log::info('Sending WhatsApp message', [
+            'to' => $to,
+            'from' => $fromWhatsApp,
+            'body_length' => strlen($message),
+        ]);
+
         $client->messages->create(
             $to, // To: whatsapp:+5491157232768
             [
-                'from' => 'whatsapp:' . $fromNumber,
+                'from' => $fromWhatsApp,
                 'body' => $message,
             ]
         );
