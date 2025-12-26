@@ -46,11 +46,17 @@ class WhatsAppController extends Controller
                 'body' => $body,
             ]);
 
-            // Send error message to user
-            $this->sendWhatsAppMessage(
-                $from,
-                'Lo siento, hubo un error procesando tu mensaje. Por favor intenta de nuevo.'
-            );
+            // Try to send error message to user (but don't fail if Twilio not configured)
+            try {
+                $this->sendWhatsAppMessage(
+                    $from,
+                    'Lo siento, hubo un error procesando tu mensaje. Por favor intenta de nuevo.'
+                );
+            } catch (\Exception $twilioError) {
+                Log::error('Failed to send error message via Twilio', [
+                    'error' => $twilioError->getMessage(),
+                ]);
+            }
         }
 
         // Twilio expects 200 OK response
@@ -69,6 +75,7 @@ class WhatsAppController extends Controller
         }
 
         $response = Http::timeout(60)->post($gatewayUrl, [
+            'model' => 'llama',
             'messages' => [
                 [
                     'role' => 'system',
@@ -79,8 +86,8 @@ class WhatsAppController extends Controller
                     'content' => $userMessage,
                 ],
             ],
+            'stream' => false,
             'max_tokens' => 500,
-            'temperature' => 0.7,
         ]);
 
         if (!$response->successful()) {
