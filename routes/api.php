@@ -11,6 +11,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PushController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\WhatsAppController;
 
 Route::post('/scan-sites', [SiteScanController::class, 'scan']);
 Route::get('/results', [ResultsController::class, 'index']);
@@ -75,3 +76,7 @@ Route::delete('/push/unsubscribe', [\App\Http\Controllers\Api\PushSubscriptionCo
 // Product endpoints (api prefix is already applied)
 Route::get('products', [ProductController::class, 'index']);
 Route::get('products/{product}', [ProductController::class, 'show']);
+
+// WhatsApp Twilio webhook
+Route::post('/webhook/whatsapp', [WhatsAppController::class, 'webhook']);
+Route::get('/webhook/whatsapp/health', [WhatsAppController::class, 'health']);

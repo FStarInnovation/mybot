@@ -39,4 +39,11 @@ return [
         'base' => env('GATEWAY_URL', rtrim(env('RUNPOD_API_URL', 'http://localhost:10051'), '/')),
     ],
 
+    'twilio' => [
+        'account_sid' => env('TWILIO_ACCOUNT_SID'),
+        'auth_token' => env('TWILIO_AUTH_TOKEN'),
+        'whatsapp_number' => env('TWILIO_WHATSAPP_NUMBER'),
+        'runpod_gateway_url' => env('RUNPOD_GATEWAY_URL', 'https://lepweaehjlas8o-10051.proxy.runpod.net/chat'),
+    ],
+
 ];

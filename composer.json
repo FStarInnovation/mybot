@@ -15,7 +15,8 @@
         "laravel/tinker": "^2.8",
         "minishlink/web-push": "^9.0",
         "phpoffice/phpspreadsheet": "^2.3",
-        "predis/predis": "^3.0"
+        "predis/predis": "^3.0",
+        "twilio/sdk": "^8.10"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
