@@ -23,6 +23,10 @@ build:
 
 start:
   command: |
+    # Clear route cache to ensure new routes are loaded
+    php artisan route:clear
+    php artisan config:clear
+    
     # php-fpm in foreground (flag -F)
     php-fpm -F &
 
