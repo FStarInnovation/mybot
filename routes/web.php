@@ -28,12 +28,7 @@ Route::get('/test-index', function () {
 
 // Static SPA entry point
 Route::get('/', function () {
-    $content = file_get_contents(public_path('build/index.html'));
-    return response()->make($content, 200)
-        ->header('Content-Type', 'text/html')
-        ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-        ->header('Pragma', 'no-cache')
-        ->header('Expires', '0');
+    return file_get_contents(public_path('build/index.html'));
 });
 
 // Add a new route for admin dashboard
