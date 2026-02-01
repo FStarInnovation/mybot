@@ -106,6 +106,13 @@
     z-index: 1000; /* Ensure it's above other content */
   }
   
+  /* Hide theme toggle on mobile to avoid conflict with hamburger menu */
+  @media (max-width: 768px) {
+    .theme-toggle-container {
+      display: none;
+    }
+  }
+  
   .update-button-container {
     position: fixed;
     bottom: 1rem;
