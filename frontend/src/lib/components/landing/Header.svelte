@@ -160,6 +160,8 @@
     background: none;
     border: none;
     cursor: pointer;
+    position: relative;
+    z-index: 1001;
   }
   
   .mobile-menu-btn span {
