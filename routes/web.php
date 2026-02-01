@@ -15,6 +15,17 @@ use App\Models\SearchQuery;
 // Health‑check endpoint for load balancer / platform probes
 Route::get('/healthz', fn () => response()->json(['status' => 'ok']));
 
+// Test route to check index.html
+Route::get('/test-index', function () {
+    $path = public_path('build/index.html');
+    return response()->json([
+        'exists' => file_exists($path),
+        'size' => file_exists($path) ? filesize($path) : 0,
+        'readable' => file_exists($path) ? is_readable($path) : false,
+        'content_sample' => file_exists($path) ? substr(file_get_contents($path), 0, 200) : 'N/A'
+    ]);
+});
+
 // Static SPA entry point
 Route::get('/', function () {
     return response()->file(public_path('build/index.html'), [
