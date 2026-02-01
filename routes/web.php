@@ -28,7 +28,9 @@ Route::get('/test-index', function () {
 
 // Static SPA entry point
 Route::get('/', function () {
-    return response()->file(public_path('build/index.html'), [
+    $content = file_get_contents(public_path('build/index.html'));
+    return response($content, 200, [
+        'Content-Type' => 'text/html',
         'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
         'Pragma' => 'no-cache',
         'Expires' => '0',
