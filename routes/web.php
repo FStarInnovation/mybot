@@ -28,7 +28,15 @@ Route::get('/test-index', function () {
 
 // Static SPA entry point
 Route::get('/', function () {
-    return file_get_contents(public_path('build/index.html'));
+    $path = public_path('build/index.html');
+    if (!file_exists($path)) {
+        return 'File not found: ' . $path;
+    }
+    $content = file_get_contents($path);
+    if ($content === false) {
+        return 'Could not read file: ' . $path;
+    }
+    return response($content)->header('Content-Type', 'text/html');
 });
 
 // Add a new route for admin dashboard
