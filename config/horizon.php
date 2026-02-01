@@ -1,25 +1,18 @@
 <?php
 
 return [
-    'default' => 'redis',
+    'use' => false, // Временно отключено из-за проблем с Redis
+    'defaults' => [
+        'supervisor-1' => [
+            'connection' => 'redis',
+            'queue' => ['default'],
+            'balance' => 'auto',
+            'processes' => 1,
+            'tries' => 3,
+        ],
+    ],
     'environments' => [
-        'production' => [
-            'supervisor-normalize' => [
-                'connection' => 'redis',
-                'queue' => ['normalize'],
-                'balance' => 'simple',
-                'processes' => 3,
-                'tries' => 3,
-            ],
-        ],
-        'local' => [
-            'supervisor-normalize' => [
-                'connection' => 'redis',
-                'queue' => ['normalize'],
-                'balance' => 'simple',
-                'processes' => 1,
-                'tries' => 1,
-            ],
-        ],
+        'production' => [],
+        'local' => [],
     ],
 ];
