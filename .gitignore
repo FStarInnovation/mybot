@@ -47,3 +47,8 @@ lerna-debug.log*
 *.sw?
 .env
 composer.lock
+
+# Obsidian workspace (user-specific, not shared)
+wiki/.obsidian/workspace.json
+wiki/.obsidian/workspace-mobile.json
+wiki/.obsidian/graph.json
