@@ -32,6 +32,9 @@
 ### CIAN
 - [CIAN: Авторизация и WAF](concepts/cian-auth.md) — браузерные куки, WAF 403, ротация, Playwright
 
+### Финуслуги — Процессы
+- [Оформление каско](concepts/finuslugi-kasko-oformlenie.md) — 5 шагов: расчёт → выбор СК → данные → осмотр → оплата
+
 ### LLM / Промпты
 - [Prompt Engineering](concepts/prompt-engineering.md) — паттерны сборки промптов: system/tool/glue/context
 - [Model Routing](concepts/model-routing.md) — маршрутизация между LLM-моделями по типу задачи
@@ -41,6 +44,7 @@
 
 ## Raw Sources
 
+- `raw/articles/finuslugi-kasko-oformlenie.md` — Урок Школы Агента: оформление полиса каско
 - `raw/reports/CIAN_Analytics_slides.md` — Содержимое презентации аналитики (9 слайдов)
 - `raw/reports/cian_api.md` — CIAN API карточки объявления (микросервисы)
 - `raw/reports/cian_scraper_guide.md` — Гайд по сбору данных CIAN
