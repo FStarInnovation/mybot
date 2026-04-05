@@ -49,4 +49,4 @@ updated: 2026-04-05
 
 ## See also
 
-- [[summaries/architecture-plan|Архитектурный план]]
+- [[entities/nlweb-mcp-server|NLWeb MCP Server]]

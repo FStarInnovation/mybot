@@ -32,15 +32,8 @@ Provider-адаптеры добавляют маленькие промпты-�
 ### Context Assembly
 Контекст собирается программно из нескольких источников (не один большой промпт, а композиция).
 
-## Применение в MyBot
-
-- Собирать prompt программно: system + tools + memory + user message
-- Каждый инструмент должен иметь и schema, и развёрнутый prompt
-- Адаптировать формат под конкретного провайдера (LLaMA vs Claude vs GPT)
-
 ## See also
 
 - [[concepts/model-routing|Model Routing]]
 - [[concepts/provider-adapters|Provider Adapters]]
-- [[concepts/tool-calling|Tool Calling]]
 - [[summaries/quadratic-prompts-research|Quadratic Prompts Research]]

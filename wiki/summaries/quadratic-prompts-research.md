@@ -44,16 +44,8 @@ updated: 2026-04-05
 - `message.helper.ts` — обработка сообщений
 - `aiToolsSpec.ts` — каталог инструментов
 
-## Применимость к MyBot
-
-- Паттерн разделения system/prompt messages
-- Идея tool prompts (контекст для инструментов)
-- Provider adapters для мультимодельности
-- Model routing для выбора оптимальной модели
-
 ## See also
 
 - [[concepts/prompt-engineering|Prompt Engineering]]
 - [[concepts/model-routing|Model Routing]]
 - [[concepts/provider-adapters|Provider Adapters]]
-- [[concepts/tool-calling|Tool Calling]]

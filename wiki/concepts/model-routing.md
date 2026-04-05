@@ -21,13 +21,6 @@ updated: 2026-04-05
 - Критерии: тип задачи, сложность, требуемые capabilities
 - Каждая модель имеет свой adapter для трансформации формата
 
-## Применение в MyBot
-
-Потенциально:
-- Простые запросы → Mistral-7B (быстро, дёшево)
-- Сложные запросы с tool calling → LLaMA3 (полный функционал)
-- Или роутинг на облачные API для специфических задач
-
 ## Trade-offs
 
 | Подход | Плюсы | Минусы |
@@ -40,5 +33,4 @@ updated: 2026-04-05
 
 - [[concepts/prompt-engineering|Prompt Engineering]]
 - [[concepts/provider-adapters|Provider Adapters]]
-- [[entities/llama3-chat-server|LLaMA3 Chat Server]]
 - [[summaries/quadratic-prompts-research|Quadratic Prompts Research]]
