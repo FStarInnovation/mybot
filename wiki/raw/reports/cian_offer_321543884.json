@@ -1,0 +1,88 @@
+{
+  "id": 321543884,
+  "cianId": 321543884,
+  "objectGuid": "27ed6f34-406d-4c75-86c2-06ab6b06663e",
+  "category": "houseSale",
+  "status": "published",
+  "dealType": "sale",
+  "offerType": "suburban",
+  "userId": 120438844,
+  "publishedUserId": 120438844,
+  "cianUserId": 120438844,
+  "totalArea": "248.0",
+  "creationDate": "2025-09-05T13:41:38.103",
+  "editDate": "2026-03-13T18:10:26.861897+00:00",
+  "bargainTerms": {
+    "price": 48500000,
+    "currency": "rur"
+  },
+  "geo": {
+    "address": [
+      "Московская область",
+      "Истра муниципальный округ",
+      "д. Турово",
+      "10"
+    ],
+    "coordinates": {
+      "lat": 55.905447,
+      "lng": 37.10282
+    },
+    "undergrounds": [
+      {
+        "name": "Нахабино",
+        "time": 17,
+        "type": "transport"
+      },
+      {
+        "name": "Аникеевка",
+        "time": 19,
+        "type": "transport"
+      },
+      {
+        "name": "Опалиха",
+        "time": 24,
+        "type": "transport"
+      }
+    ]
+  },
+  "building": {
+    "materialType": "brick",
+    "floorsCount": 2,
+    "totalArea": "248.0",
+    "houseMaterialType": "brick"
+  },
+  "land": {
+    "area": "10.0",
+    "areaUnitType": "sotka",
+    "status": "individualHousingConstruction"
+  },
+  "phones": [
+    {
+      "countryCode": "+7",
+      "number": "9855395423"
+    }
+  ],
+  "photos": {
+    "count": 16,
+    "urls": [
+      "https://images.cdn-cian.ru/images/2767777167-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777171-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777174-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777181-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777185-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777193-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777215-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777231-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777242-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777255-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777273-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777287-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777299-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777305-1.jpg",
+      "https://images.cdn-cian.ru/images/2767777317-1.jpg"
+    ]
+  },
+  "description": "Арт. 113586414 Представляем вашему вниманию стильный загородный дом 10 с большой террасой, площадью 248м2, построенный по авторскому проекту известного архитектора на лесном участке размером 10 соток, расположенном в камерном коттеджном поселке Турово парк, в 25 км от Москвы по Волоколамскому шоссе.",
+  "url": "https://www.cian.ru/sale/suburban/321543884/",
+  "_source": "SSR offerData extracted from HTML page"
+}

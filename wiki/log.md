@@ -25,6 +25,14 @@
 - entities/nlweb.md
 - entities/nlweb-mcp-server.md
 
+## [2026-04-05] ingest | CIAN API Research
+
+Источники: `raw/reports/cian_api.md`, `raw/reports/cian_scraper_guide.md`, `raw/reports/cian_offer_321543884.json`
+Создано 4 страницы:
+- summaries/cian-api-research.md
+- entities/cian-search-api.md, cian-ssr-parser.md
+- concepts/cian-auth.md
+
 ## [2026-04-05] cleanup | Удаление неактуальных страниц MyBot
 
 Удалено 30 страниц: Laravel, RunPod, Redis, Qdrant, Telegram, WhatsApp, Rossko и т.д.
