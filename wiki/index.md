@@ -6,6 +6,7 @@
 
 ## Summaries
 
+- [CIAN Аналитика рынка](summaries/cian-analytics.md) — ~507K объявлений, доли собственников/агентов/застройщиков, региональная разбивка
 - [CIAN API — Исследование](summaries/cian-api-research.md) — Search API, SSR-парсинг, статистика объявлений, структура продавцов
 - [Quadratic Prompts Research](summaries/quadratic-prompts-research.md) — исследование промптов Quadratic: сборка, routing, provider adapters
 
@@ -40,6 +41,7 @@
 
 ## Raw Sources
 
+- `raw/reports/CIAN_Analytics_slides.md` — Содержимое презентации аналитики (9 слайдов)
 - `raw/reports/cian_api.md` — CIAN API карточки объявления (микросервисы)
 - `raw/reports/cian_scraper_guide.md` — Гайд по сбору данных CIAN
 - `raw/reports/cian_offer_321543884.json` — Пример данных одного объявления
